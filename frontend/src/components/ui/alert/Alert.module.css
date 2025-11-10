@@ -1,0 +1,19 @@
+.alertBox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #FF5151;
+    background-color: #FFF6F6;
+    color: #232323;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.icon {
+    color: #dc3545;
+    flex-shrink: 0;
+}

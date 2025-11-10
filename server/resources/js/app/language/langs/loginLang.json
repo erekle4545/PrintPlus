@@ -1,0 +1,77 @@
+{
+
+  "login": {
+    "GE": "შესვლა",
+    "US": "Login",
+    "RU": "Авторизоваться"
+  },
+  "rememberPassword": {
+    "GE": "დაიმახსოვრე პაროლი",
+    "US": "Remember the password",
+    "RU": "Запомнить пароль"
+  },
+  "notMatch": {
+    "GE": "პაროლი არ ემთხვევა",
+    "US": "The password does not match",
+    "RU": "Пароль не подходит"
+  },
+  "passwordMust": {
+    "GE": "პაროლი უნდა იყოს ან აღემოატებოდეს 8 სიმბოლოს",
+    "US": "Password must be equal to or greater than 8 characters",
+    "RU": "Пароль должен быть равен или больше 8 символов"
+  },
+  "passwordIsRequired": {
+    "GE": "პაროლის მითითება აუცილებელია",
+    "US": "A password is required",
+    "RU": "Требуется пароль"
+  },
+  "enterPassword": {
+    "GE": "შეიყვანეთ პაროლი",
+    "US": "Enter Password",
+    "RU": "Введите пароль"
+  },
+  "password": {
+    "GE": "პაროლი",
+    "US": "Password",
+    "RU": "пароль"
+  },
+  "emailCouldNotBeFound": {
+    "GE": "ელ-ფოსტა ვერ მოიძებნა",
+    "US": "Email could not be found",
+    "RU": "Электронная почта не найдена"
+  },
+  "pleaseEnterAnEmail": {
+    "GE": "გთხოვთ შეიყვანეთ ელ-ფოსტა",
+    "US": "Please enter an email",
+    "RU": "Пожалуйста, введите адрес электронной почты"
+  },"emailIsRequired": {
+    "GE": "ელ-ფოსტის მითითება აუცილებელია",
+    "US": "A email is required",
+    "RU": "Требуется ссылка на электронную почту"
+  },
+  "enterEmail": {
+    "GE": "შეიყვანეთ ელ-ფოსტა",
+    "US": "Enter email",
+    "RU": "Введите адрес электронной почты"
+  },
+  "email": {
+    "GE": "ელ-ფოსტა",
+    "US": "Email",
+    "RU": "Эл. почта"
+  },
+  "authorizationFailed": {
+    "GE": "ავტორიზაცია ვერ შესრულდა",
+    "US": "Authorization failed",
+    "RU": "Авторизация не удалась"
+  },
+  "emailOrPasswordIsIncorrect": {
+    "GE": "ელ-ფოსტა ან პაროლი არასწორია",
+    "US": "Email or password is incorrect",
+    "RU": "Email или пароль указан неверно"
+  },
+  "authorizationSuccessfully": {
+    "GE": "ავტორიზაცია წარმატებით განხორციელდა",
+    "US": "Authorization successfully implemented",
+    "RU": "Авторизация успешно выполнена"
+  }
+}

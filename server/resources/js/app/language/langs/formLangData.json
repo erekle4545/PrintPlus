@@ -1,0 +1,339 @@
+{
+
+  "welcome": {
+    "GE": "მოგესალმებით",
+    "US": "Welcome",
+    "RU": "Добро пожаловать"
+  },
+  "seeStatistics": {
+    "GE": "იხილეთ სტატისტიკა",
+    "US": "See statistics",
+    "RU": "Посмотреть статистику"
+  },
+  "saveButton": {
+    "GE": "შენახვა",
+    "US": "Save",
+    "RU": "Сохранять"
+  },
+  "realtor": {
+    "GE": "რეალტორი",
+    "US": "Realtor",
+    "RU": "Риэлтор"
+  },
+  "pageName": {
+    "GE": "გვერდი",
+    "US": "Page",
+    "RU": "Страница"
+  },
+  "title": {
+    "GE": "სათაური",
+    "US": "Title",
+    "RU": "Заголовок"
+  },
+  "name": {
+    "GE": "სახელი",
+    "US": "Name",
+    "RU": "Имя"
+  },
+  "tags": {
+    "GE": "თეგები",
+    "US": "Tags",
+    "RU": "Теги"
+  },
+  "text": {
+    "GE": "ტექსტი",
+    "US": "Text",
+    "RU": "Текст"
+  },
+  "companyName": {
+      "GE": "კომპანიის სახელი",
+      "US": "Company Name",
+      "RU": "Название компании"
+  },
+  "idNumber":  {
+    "GE": "საიდენთიფიკაციო კოდი",
+    "US": "ID number",
+    "RU": "идентификационный номер"
+  },
+  "code":  {
+    "GE": "კოდი",
+    "US": "Number",
+    "RU": "номер"
+  },
+  "phone":  {
+    "GE": "ტელეფონი",
+    "US": "Phone",
+    "RU": "Телефон"
+  },
+  "address":  {
+    "GE": "მისამართი",
+    "US": "Address",
+    "RU": "Адрес"
+  },
+  "add":  {
+    "GE": "დამატება",
+    "US": "Add",
+    "RU": "Добавлять"
+  },
+  "delete":  {
+    "GE": "წაშლა",
+    "US": "Delete",
+    "RU": "Удалить"
+  },
+  "update":  {
+    "GE": "განახლება",
+    "US": "Update",
+    "RU": "Обновлять"
+  },
+  "tools":  {
+    "GE": "ხელსაწყოები",
+    "US": "Tools",
+    "RU": "Инструменты"
+  },
+  "noRecords":  {
+    "GE": "ჩანაწერები არ არის",
+    "US": "No records",
+    "RU": "Нет записей"
+  },
+  "date":  {
+    "GE": "თარიღი",
+    "US": "Date",
+    "RU": "свидание"
+  },
+  "groupedText":  {
+    "GE": "დაჯგუფებისთვის ჩააგდეთ სვეტის სახელწოდება",
+    "US": "Throw column name for grouping",
+    "RU": "Бросить имя столбца для группировки"
+  },
+  "begin": {
+    "GE": "დასაწყისი",
+    "US": "Begin",
+    "RU": "Начинать"
+  },
+  "end": {
+    "GE": "დასასრული",
+    "US": "End",
+    "RU": "Конец"
+  },
+  "clearDate": {
+    "GE": "გასუფთავება",
+    "US": "Clear Date",
+    "RU": "Очистить "
+  },
+  "search": {
+    "GE": "ძებნა",
+    "US": "Search",
+    "RU": "Поиск "
+  },
+  "position": {
+    "GE": "პოზიცია",
+    "US": "Position",
+    "RU": "Должность "
+  },
+  "employees": {
+    "GE": "თანამშრომლები",
+    "US": "Employees",
+    "RU": "Сотрудники"
+  },
+  "name_surname": {
+    "GE": "სახელი და გვარი",
+    "US": "Name and surname",
+    "RU": "Имя и фамилия"
+  },
+  "password": {
+    "GE": "პაროლი",
+    "US": "Password",
+    "RU": "пароль"
+  },
+  "email": {
+    "GE": "ელ-ფოსტა",
+    "US": "Email",
+    "RU": "Эл. адрес"
+  },
+  "password_confirmation": {
+    "GE": "გაიმეორე პაროლი",
+    "US": "password confirm",
+    "RU": "подтвердить пароль"
+  },
+  "position_name": {
+    "GE": "პოზიციის დასახელება",
+    "US": "Name of the position",
+    "RU": "Название должности"
+  },
+  "permission": {
+    "GE": "ნებართვა",
+    "US": "permission",
+    "RU": "разрешение"
+  },
+  "projects": {
+    "GE": "პროექტები",
+    "US": "Projects",
+    "RU": "Проекты"
+  },
+  "ceo": {
+    "GE": "დირექტორი",
+    "US": "Ceo",
+    "RU": "директор"
+  },
+  "accountant": {
+    "GE": "ბუღალტერი",
+    "US": "Accountant",
+    "RU": "Бухгалтер"
+  },
+  "addCompany": {
+    "GE": "კომპანიის დამატება",
+    "US": "Add Company",
+    "RU": "Добавить компанию"
+  },
+  "company": {
+    "GE": "კომპანია",
+    "US": "Company",
+    "RU": "Компания"
+  },
+  "s": {
+    "GE": "ს პროექტი",
+    "US": "'s Project",
+    "RU": "проект"
+  },
+  "constructionCompanies": {
+    "GE": "სამშენებლო კომპანიები",
+    "US": "Construction companies",
+    "RU": "Строительные компании"
+  },
+  "dictionary": {
+    "GE": "ლექსიკონი",
+    "US": "Dictionary",
+    "RU": "толковый словарь"
+  },
+  "slug": {
+    "GE": "ბმული",
+    "US": "Slug",
+    "RU": "ссылка"
+  },
+  "keywords": {
+    "GE": "Meta საკვანძო სიტყვები",
+    "US": "Meta keywords",
+    "RU": "Мета ключевые слова"
+  },
+  "description": {
+    "GE": "გვერდის აღწერა",
+    "US": "Page Description",
+    "RU": "Описание страницы"
+  },
+  "menu": {
+    "GE": "მენიუ",
+    "US": "Menu",
+    "RU": "Menu"
+  },
+  "editPage": {
+    "GE": "გვერდის რედაქტირება",
+    "US": "Edit Page",
+    "RU": "Отредактируйте страницу"
+  },
+  "editCategory": {
+    "GE": "კატეგორიის რედაქტირება",
+    "US": "Edit Category",
+    "RU": "Отредактируйте Категория"
+  },
+  "allPage": {
+    "GE": "ყველა გვერდი",
+    "US": "All Page",
+    "RU": "Все страницы"
+  },
+
+  "addPage": {
+    "GE": "გვერდის დამატება",
+    "US": "Add Page",
+    "RU": "Добавить страницу"
+  },"addCategory": {
+    "GE": "კატეგორიის დამატება",
+    "US": "Add Category",
+    "RU": "Добавить Категория"
+  },
+  "allCategory": {
+    "GE": "ყველა კატეგორია",
+    "US": "All Category",
+    "RU": "Все Категория"
+  },"addPost": {
+    "GE": "პოსტის დამატება",
+    "US": "Add Post",
+    "RU": "Добавить Post"
+  },
+  "allPost": {
+    "GE": "ყველა პოსტი",
+    "US": "All Post",
+    "RU": "Все Post"
+  },
+  "addSlider": {
+    "GE": "სლაიდის დამატება",
+    "US": "Add Slider",
+    "RU": "Добавить Slider"
+  },
+  "allSlider": {
+    "GE": "ყველა სლაიდი",
+    "US": "All Slider",
+    "RU": "Все Slider"
+  },
+  "tasks": {
+    "GE": "თასკები",
+    "US": "Tasks",
+    "RU": "Tasks"
+  },
+  "allGallery": {
+      "GE": "ყველა გალერეა",
+      "US": "All Gallery",
+      "RU": "Все Gallery"
+  },
+  "link": {
+  "GE": "ვიდეოს ლინკი",
+  "US": "Link of video",
+  "RU": "Link of video"
+},
+  "addTeam": {
+  "GE": "გუნდის წევრის დამატება",
+  "US": "Add team",
+  "RU": "Add team"
+},
+  "allTeam": {
+  "GE": "ყველა გუინდის წევრი",
+  "US": "All team",
+  "RU": "All team"
+},
+  "siteName": {
+    "GE": "საიტის სახელი",
+    "US": "Site Name",
+    "RU": "Site Name"
+  },
+  "registry": {
+    "GE": "სერთიფიკატის რეესტრი",
+    "US": "Certificate Register",
+    "RU": "Certificate Register"
+  },
+  "lastName": {
+    "GE": "გვარი",
+    "US": "Last Name",
+    "RU": "Last Name"
+  },
+  "personalNumber": {
+    "GE": "პირადი ნომერი",
+    "US": "Personal number",
+    "RU": "Personal number"
+  },
+  "addRegistry": {
+    "GE": "სერთიფიკატის დამატება",
+    "US": "Add Registry ",
+    "RU": "Add Registry"
+  },"allRegistry": {
+  "GE": "ყველა სერთიფიკატი",
+  "US": "All Registry ",
+  "RU": "All Registry"
+},"addMembers": {
+  "GE": "წევრების დამატება",
+  "US": "Add Members  ",
+  "RU": "Add Members "
+},"allMembers": {
+  "GE": "ყველა წევრი",
+  "US": "All Members  ",
+  "RU": "All Members "
+}
+}

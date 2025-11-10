@@ -1,0 +1,9 @@
+ssh root@31.97.38.2
+Laravel4545@
+
+
+
+phpmyadmin: 
+Username: shop_user
+Password: Laravel4545@
+address: http://31.97.38.2/phpmyadmin

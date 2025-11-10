@@ -1,0 +1,243 @@
+/* ===== Calculate Page Styles ===== */
+.calculate-page-container{
+    background-color: #FAFAFB;
+    border:3px #D4D3DA solid ;
+    border-radius: 16px;
+    padding: 3rem 5rem 5rem 5rem ;
+}
+
+/* Card */
+.calculate-card {
+    background: #F3F3F4;
+    border: 2px solid #D3D3D3;
+    border-radius: 11px;
+}
+
+/* ---- Tabs (pills) ---- */
+.seg-pills {
+    /*background: #f3f6fa;*/
+
+    /*border: 1px solid var(--line);*/
+    /*border-radius: 999px;*/
+    padding: 6px;
+    display: flex;
+    gap: 8px;
+}
+
+.seg-pills .btn {
+    border: none;
+
+}
+
+.seg-pills .btn-outline-secondary {
+    /*background: #eef2f5;*/
+    background-color: #E3E3E9;
+
+    color: #6b7280;
+}
+
+.btn-teal {
+    background: var(--teal);
+    color: #fff;
+}
+.btn-teal:focus {
+    box-shadow: 0 0 0 0.2rem rgba(32, 200, 194, 0.25);
+}
+
+/* პირველი აქტიური პილი – გამოკვეთილად */
+/*.seg-pills .nav-item:first-child .btn-teal {*/
+/*    !*box-shadow: 0 8px 20px rgba(32, 200, 194, 0.28),*!*/
+/*    !*inset 0 -2px 0 rgba(0, 0, 0, 0.05);*!*/
+/*    !*font-weight: 700;*!*/
+/*    background-color: #5C5B64;*/
+/*}*/
+
+/* ---- Slider visuals ---- */
+.slider {
+    position: relative;
+    padding-top: 18px;
+}
+
+.slider-track {
+    position: relative;
+    height: 8px;
+    border-radius: 999px;
+    background: #e9edf2;
+    overflow: hidden;
+}
+
+.slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: var(--teal);
+}
+
+/* tick-like dots over the track */
+.slider-dots {
+    position: absolute;
+    top:-1rem;
+    inset: 0;
+    background: repeating-linear-gradient(
+            to right,
+            transparent 0,
+            transparent 9%,
+            rgba(0, 0, 0, 0.12) 9.5%,
+            transparent 10%
+    );
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* native input layered on top */
+.slider-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 28px;
+    margin: 0;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--teal);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    position: relative;
+    z-index: 2;
+}
+.slider-input::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--teal);
+}
+
+.slider-badge {
+    position: absolute;
+    top: -10px;
+    transform: translate(-50%, -100%);
+    background: var(--teal);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 0.28rem 0.6rem;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 6px rgba(32, 200, 194, 0.35);
+    white-space: nowrap;
+}
+
+/* ---- Price chip ---- */
+.price-chip {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 24px;
+    color: #52BDBD;
+    background: transparent;
+    border: 2px dashed var(--gray-border);
+    border-radius: 12px;
+    width: 90px;
+    text-align: center;
+    padding: 0.10rem 0.7rem;
+}
+
+/* ---- Square teal checkboxes ---- */
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #cfd8e3;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    vertical-align: middle;
+}
+
+.form-check-input:hover {
+    border-color: #b8c5d6;
+}
+
+.form-check-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(32, 200, 194, 0.18);
+    border-color: var(--teal);
+}
+
+.form-check-input:checked {
+    background-color: var(--teal);
+    border-color: var(--teal);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' d='M6.2 11.2L2.7 7.7l1.4-1.4 2.1 2.1L12 2.6l1.4 1.4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px 12px;
+}
+
+.form-check-input:disabled {
+    background-color: #f2f4f7;
+    border-color: #e3e8ef;
+    cursor: not-allowed;
+}
+
+.form-check-label {
+    margin-left: 0.4rem;
+    color: #6b7280;
+}
+
+/* ---- Table styles ---- */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+.table thead tr:first-child th:first-child {
+    border-top-left-radius: 12px;
+}
+.table thead tr:first-child th:last-child {
+    border-top-right-radius: 12px;
+}
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
+.table thead .bg-info {
+    background: var(--teal) !important;
+}
+.table thead .bg-info-subtle {
+    background: #dff6f5 !important;
+}
+.table tbody tr:nth-child(odd) td {
+    background: #fbfcfe;
+}
+.table td,
+.table th {
+    border-color: #dfe6ee !important;
+}
+
+/* Tablets: 768px–991.98px */
+@media (max-width: 768px) {
+    .calculate-page-container{
+        padding: 1rem  ;
+    }
+
+    .calculate-card {
+        padding: 0;
+        background: transparent;
+        border: none;
+    }
+}

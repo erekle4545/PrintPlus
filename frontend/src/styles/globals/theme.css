@@ -1,0 +1,41 @@
+:root {
+    --teal: #52BDBD;
+    --ink: #343a40;
+    --line: #e8edf2;
+    --soft: #f6f8fb;
+    --gray-border:#908F99;
+    --google-blue: #518EF8;
+
+
+    --bg: #ffffff;
+    --border: #e7e7ea;
+    --muted: #6f7281;
+    --teal-pressed: #3ea39d;
+    --warn-bg: #fff4f3;
+    --warn-border: #ffcfcc;
+    --card: #f8f9fb;
+    --shadow: 0 8px 20px rgba(0, 0, 0, .06);
+    --radius: 16px;
+}
+
+/*@media (prefers-color-scheme: dark) {*/
+/*    :root {*/
+/*        --background: #0a0a0a;*/
+/*        --foreground: #ededed;*/
+/*    }*/
+/*}*/
+
+/*@media (prefers-color-scheme: dark) {*/
+/*    html {*/
+/*        color-scheme: dark;*/
+/*    }*/
+/*}*/
+
+.my-text-blue{
+    color:var(--teal);
+}
+
+.my-text-link{
+    color:var(--ink);
+}
+
