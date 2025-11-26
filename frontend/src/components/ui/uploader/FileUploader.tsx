@@ -1,6 +1,5 @@
 'use client'
 
-
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import styles from '../../../styles/modules/FileUploader.module.css';
 
@@ -24,17 +23,20 @@ export interface FileItem {
     response: string | null;
     error: string | null;
     uploadedAt: string | null; // ISO time
+    quantity?: number; // ახალი ველი
 }
 
 export interface FileUploaderProps {
-    uploadUrl: string; // required endpoint: accepts multipart/form-data
+    uploadUrl: string;
     headers?: Record<string, string>;
-    fieldName?: string; // default: 'file'
-    accept?: string; // default: '*/*'
-    multiple?: boolean; // default: true
-    maxSizeMB?: number; // default: 50
-    autoUpload?: boolean; // default: true
+    fieldName?: string;
+    accept?: string;
+    multiple?: boolean;
+    maxSizeMB?: number;
+    autoUpload?: boolean;
     className?: string;
+    showQuantity?: boolean; // ახალი prop
+    defaultQuantity?: number; // ახალი prop
     onComplete?: (items: FileItem[]) => void;
     onError?: (items: FileItem[]) => void;
 }
@@ -60,6 +62,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                                                        maxSizeMB = 50,
                                                        autoUpload = true,
                                                        className = '',
+                                                       showQuantity = false,
+                                                       defaultQuantity = 1,
                                                        onComplete,
                                                        onError,
                                                    }) => {
@@ -83,6 +87,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 response: null,
                 error: null,
                 uploadedAt: null,
+                quantity: defaultQuantity,
             }));
 
             incoming.forEach((it) => {
@@ -95,14 +100,19 @@ const FileUploader: React.FC<FileUploaderProps> = ({
             setItems((prev) => [...incoming, ...prev]);
 
             if (autoUpload) {
-                // start queued uploads async
                 setTimeout(() => incoming.forEach((it) => it.status === 'queued' && startUpload(it.id)), 0);
             }
         },
-        [autoUpload, maxSizeBytes]
+        [autoUpload, maxSizeBytes, defaultQuantity]
     );
 
-    const openPicker = () => fileInputRef.current?.click();
+    const updateQuantity = useCallback((id: string, newQty: number) => {
+        setItems((prev) =>
+            prev.map((item) =>
+                item.id === id ? { ...item, quantity: Math.max(1, newQty) } : item
+            )
+        );
+    }, []);
 
     const startUpload = useCallback(
         (id: string) => {
@@ -150,7 +160,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 };
 
                 xhr.open('POST', uploadUrl);
-                // optional headers (e.g., Authorization)
                 Object.entries(headers || {}).forEach(([k, v]) => {
                     try {
                         xhr.setRequestHeader(k, v);
@@ -158,12 +167,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 });
                 const form = new FormData();
                 form.append(fieldName, target.file, target.name);
+                // რაოდენობის გაგზავნა
+                if (showQuantity && target.quantity) {
+                    form.append('quantity', target.quantity.toString());
+                }
                 xhr.send(form);
 
                 return next;
             });
         },
-        [headers, fieldName, uploadUrl]
+        [headers, fieldName, uploadUrl, showQuantity]
     );
 
     const removeItem = useCallback((id: string) => {
@@ -199,30 +212,28 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
     return (
         <div className={`${styles.wrap} ${className || ''}`}>
-            {/* Header */}
-            {/*<div className={styles.header}>ატვირთეთ ფაილი/ფაილები</div>*/}
-
             {/* Dropzone */}
             <div
                 className={styles.dropzone}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
-
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
                 aria-label="ფაილების არჩევა ან გადათრევა"
             >
                 <div className={styles.dropLeft}>
-          <span className={styles.cloudIcon} aria-hidden>
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M19.35 10.04A7.49 7.49 0 0 0 5.5 8.11a5.5 5.5 0 1 0-1.55 10.77h14.9A4.15 4.15 0 0 0 19.35 10.04ZM12 12v6m0-6-3 3m3-3 3 3" stroke="#111" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </span>
+                    <span className={styles.cloudIcon} aria-hidden>
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path d="M19.35 10.04A7.49 7.49 0 0 0 5.5 8.11a5.5 5.5 0 1 0-1.55 10.77h14.9A4.15 4.15 0 0 0 19.35 10.04ZM12 12v6m0-6-3 3m3-3 3 3" stroke="#111" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </span>
                     <span className={styles.dropText}>ფოტოს/ფაილის ჩატვირთვა</span>
                 </div>
 
-                <button type="button" className={styles.pickBtn + ' title_font'} onClick={() => fileInputRef.current?.click()}>არჩევა</button>
+                <button type="button" className={styles.pickBtn + ' title_font'} onClick={() => fileInputRef.current?.click()}>
+                    არჩევა
+                </button>
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -266,6 +277,25 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                             <div className={styles.progressWrap} aria-hidden={it.status !== 'uploading'}>
                                 <div className={styles.progressBar} style={{ width: `${it.progress}%` }} />
                             </div>
+
+                            {/* რაოდენობის სელექტორი */}
+                            {showQuantity && it.status !== 'uploading' && (
+                                <div className="d-flex align-items-center mt-2">
+                                    <button
+                                        className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
+                                        onClick={() => updateQuantity(it.id, (it.quantity || 1) - 1)}
+                                    >
+                                        -
+                                    </button>
+                                    <span className="mx-1 qty-span-item">{it.quantity || 1}</span>
+                                    <button
+                                        className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
+                                        onClick={() => updateQuantity(it.id, (it.quantity || 1) + 1)}
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <button
@@ -300,6 +330,3 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 };
 
 export default FileUploader;
-
-
-
