@@ -74,10 +74,27 @@ a {
   transition: all 0.3s ease;
 }
 
+
+.my-btn-danger {
+    background-color: var(--my-danger);
+    padding: 10px 20px 10px 20px;
+    color: #fff;
+    border-radius: 2rem;
+    border: 1px solid transparent;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
 .my-btn-blue:hover {
   background-color: #fff;
   color: #52BDBD;
   border-color: #52BDBD;
+}
+
+.my-btn-danger:hover {
+  background-color: #fff;
+  color: var(--my-danger);
+  border-color: var(--my-danger);
 }
 
 .my-btn-dark {
@@ -96,10 +113,6 @@ a {
   color: #5C5B64;
   border-color: #5C5B64;
 }
-
-
-
-
 
 
 .my-btn-light {

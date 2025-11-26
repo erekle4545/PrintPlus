@@ -1,0 +1,70 @@
+/* Wrapper for relative positioning */
+.lang-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* closed-state pill button */
+.lang-select-btn {
+    width: 80px;
+    height: 40px;
+    padding: 7px 18px 9px 15px;
+    display: flex;
+    font-size: 16px;
+    color: #fff;
+    border-radius: 33px;
+    border: 1px solid #666;
+
+    cursor: pointer;
+    outline: none;
+    background: transparent;
+    /* arrow */
+    background-image: url("data:image/svg+xml,%3Csvg width='13' height='8' viewBox='0 0 13 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6.5 7L12 1' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 13px 8px;
+
+    /* remove default button styles */
+}
+
+/* dropdown card – დავუტოვე შენი სტილი */
+.lang-card {
+    position: absolute;
+    top: 110%;
+    right: 0;
+
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 10px 18px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    min-width: 70px;
+    z-index: 1000;
+}
+
+.lang-option {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+
+    font-size: 16px;
+    line-height: 1.2;
+    color: #2b2b2b;
+    outline: none;
+}
+
+.lang-active {
+    color: #24c2c2;
+}
+
+.lang-divider {
+    width: 100%;
+    border-bottom: 1px dashed #e2e2e2;
+    margin: 6px 0;
+}

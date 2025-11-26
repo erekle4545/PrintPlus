@@ -4,7 +4,7 @@ import classNames from 'classnames';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?:
         | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'
-        | 'my-btn-blue' | 'my-btn-dark' | 'my-btn-light' | 'my-btn-light-outline';
+        | 'my-btn-blue' | 'my-btn-dark' | 'my-btn-light' | 'my-btn-danger' | 'my-btn-light-outline';
     size?: 'sm' | 'lg';
     className?: string;
     children?: React.ReactNode;
@@ -37,6 +37,7 @@ const Button: React.FC<ButtonProps> = ({
         variant === 'my-btn-blue' ||
         variant === 'my-btn-dark' ||
         variant === 'my-btn-light' ||
+        variant === 'my-btn-danger' ||
         variant === 'my-btn-light-outline';
 
     const btnClass = classNames(

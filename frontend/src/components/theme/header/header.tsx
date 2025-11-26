@@ -16,6 +16,7 @@ import {usePathname} from "next/navigation";
 import Cover from "@/components/theme/header/cover/cover";
 import DesktopMenu from "@/components/theme/header/menu/desktopMenu";
 import DropdownAuth from "@/components/theme/header/auth/dropdownAuth";
+import LangSwitcher from "@/components/theme/header/language/LangSwitcher";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -62,13 +63,30 @@ export default function Header() {
 
                         <div className="d-flex align-items-center gap-1">
                             <div className='me-xl-4 me-md-3 d-none d-md-block'>
-                                <select
-                                    className="form-select form-select-sm bg-transparent text-white border-secondary lang-select">
-                                    <option className='text-dark'>ქარ</option>
-                                    <option className='text-dark'>ENG</option>
-                                </select>
+                                <LangSwitcher/>
+                                {/*<div className="me-xl-4 me-md-3 d-none d-md-block">*/}
+                                {/*    <div className="lang-card">*/}
+                                {/*        <button className="lang-option lang-active">*/}
+                                {/*            Eng*/}
+                                {/*        </button>*/}
+
+                                {/*        <div className="lang-divider"></div>*/}
+
+                                {/*        <button className="lang-option">*/}
+                                {/*            ქარ*/}
+                                {/*        </button>*/}
+                                {/*        <div className="lang-divider"></div>*/}
+
+                                {/*        <button className="lang-option">*/}
+                                {/*            Pyc*/}
+                                {/*        </button>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+
                             </div>
-                            <button className='border-0 bg-transparent'><SearchIcon className="top-menu-icon"/></button>
+                            <button className='border-0 bg-transparent'>
+                                <SearchIcon className="top-menu-icon"/>
+                            </button>
 
                             <div className="cart-hover-wrapper">
                                 <button className="border-0 bg-transparent">

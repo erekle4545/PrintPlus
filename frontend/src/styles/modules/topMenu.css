@@ -39,22 +39,6 @@
 
 }
 
-.lang-select{
-    width: 80px;
-    height: 40px;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    padding: 7px 18px 9px 15px;
-    font-size: 16px;
-    border-radius: 33px;
-    border: 1px solid #666;
-    background-color: #1e1e1e;
-    background-image: url("data:image/svg+xml,%3Csvg width='13' height='8' viewBox='0 0 13 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6.5 7L12 1' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.6rem center;
-    background-size: 13px 8px;
-}
 
 
 /* Dropdown menu ძირითადი სტილები */

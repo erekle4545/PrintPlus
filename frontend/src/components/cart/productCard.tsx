@@ -1,9 +1,7 @@
-// components/ProductCard.tsx
+'use client';
 
-'use client'; // ✅ ეს აუცილებელია თუ იყენებ useState/useCart hooks
-
-import { useCart } from '@/features/cart/context/CartContext';
 import { Product } from '@/types/product/productTypes';
+import {useCart} from "@/features/cart/hooks/useCart";
 
 interface Props {
     product: Product;
@@ -18,7 +16,19 @@ export default function ProductCard({ product }: Props) {
             <div className="card-body">
                 <h5>{product.name}</h5>
                 <p>{product.price} ₾</p>
-                <button onClick={() => addItem({ ...product, quantity: 1 })} className="btn btn-primary">
+                <button
+                    onClick={() =>
+                        addItem({
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image,
+                            quantity: 1,
+                            discount: product.discount,
+                        })
+                    }
+                    className="btn btn-primary"
+                >
                     დამატება
                 </button>
             </div>

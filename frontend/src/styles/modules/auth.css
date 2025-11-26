@@ -2,19 +2,8 @@
     /*width: 356px !important;*/
 }
 
-.auth-card-panel{
-    border-radius: 16px;
-    width: 300px;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    z-index: 1050;
-}
+
+
 
 
 .auth-title{
@@ -122,5 +111,21 @@
         width: 92vw;
         left: 50%;
         transform: translateX(-50%);
+    }
+}
+
+@media (min-width: 1024px){
+    .auth-card-panel{
+        border-radius: 16px;
+        width: 356px;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-10px);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        z-index: 1050;
     }
 }

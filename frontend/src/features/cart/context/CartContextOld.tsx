@@ -1,16 +1,18 @@
-"use client";
+'use client';
 
 import {
     createContext,
+    useContext,
     useEffect,
     useRef,
     useState,
     ReactNode,
-} from "react";
-import { CartItem } from "@/types/cart/cartTypes";
-import { toast } from "react-toastify";
+} from 'react';
+import { CartItem } from '@/types/cart/cartTypes';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export interface CartContextType {
+interface CartContextType {
     items: CartItem[];
     addItem: (item: CartItem) => void;
     removeItem: (id: number) => void;
@@ -19,24 +21,21 @@ export interface CartContextType {
     total: number;
 }
 
-// ❗ CartContext-ს ვაექსპორტებთ, რომ useCart ჰუქში გამოვიყენოთ
-export const CartContext = createContext<CartContextType | undefined>(
-    undefined
-);
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const isFirstRender = useRef(true);
 
     const [items, setItems] = useState<CartItem[]>(() => {
-        if (typeof window === "undefined") return [];
+        if (typeof window === 'undefined') return [];
         try {
-            const saved = localStorage.getItem("cart");
+            const saved = localStorage.getItem('cart');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed)) return parsed;
             }
         } catch (err) {
-            console.error("localStorage parse error:", err);
+            console.error('localStorage parse error:', err);
         }
         return [];
     });
@@ -47,27 +46,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             isFirstRender.current = false;
             return;
         }
-        localStorage.setItem("cart", JSON.stringify(items));
+        localStorage.setItem('cart', JSON.stringify(items));
     }, [items]);
 
     // Sync across tabs
     useEffect(() => {
         const syncCart = (event: StorageEvent) => {
-            if (event.key === "cart" && event.newValue) {
+            if (event.key === 'cart' && event.newValue) {
                 try {
                     const parsed = JSON.parse(event.newValue);
                     if (Array.isArray(parsed)) {
                         setItems(parsed);
-                        // toast.info("🔄 კალათა განახლდა სხვა ტაბიდან");
+                        toast.info('🔄 კალათა განახლდა სხვა ტაბიდან');
                     }
                 } catch (err) {
-                    console.error("Sync parse error:", err);
+                    console.error('Sync parse error:', err);
                 }
             }
         };
 
-        window.addEventListener("storage", syncCart);
-        return () => window.removeEventListener("storage", syncCart);
+        window.addEventListener('storage', syncCart);
+        return () => window.removeEventListener('storage', syncCart);
     }, []);
 
     const addItem = (item: CartItem) => {
@@ -78,34 +77,32 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             if (exists) {
                 updated = true;
                 return prev.map((i) =>
-                    i.id === item.id
-                        ? { ...i, quantity: i.quantity + item.quantity }
-                        : i
+                    i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
                 );
             }
             return [...prev, item];
         });
 
         updated
-            ? toast.info("პროდუქტის რაოდენობა განახლდა")
-            : toast.success("დაემატა კალათაში");
+            ? toast.info('პროდუქტის რაოდენობა განახლდა')
+            : toast.success('დაემატა კალათაში');
     };
 
     const removeItem = (id: number) => {
         setItems((prev) => prev.filter((i) => i.id !== id));
-        toast.warn("პროდუქტი წაიშალა კალათიდან");
+        toast.warn('პროდუქტი წაიშალა კალათიდან');
     };
 
     const updateQuantity = (id: number, quantity: number) => {
         setItems((prev) =>
             prev.map((i) => (i.id === id ? { ...i, quantity } : i))
         );
-        // toast.info("რაოდენობა განახლდა");
+        toast.info('რაოდენობა განახლდა');
     };
 
     const clearCart = () => {
         setItems([]);
-        toast.error("კალათა გასუფთავდა");
+        toast.error('კალათა გასუფთავდა');
     };
 
     const total = items.reduce((sum, item) => {
@@ -122,4 +119,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             {children}
         </CartContext.Provider>
     );
+};
+
+export const useCart = () => {
+    const context = useContext(CartContext);
+    if (!context) {
+        throw new Error('useCart must be used within a CartProvider');
+    }
+    return context;
 };
