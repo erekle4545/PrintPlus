@@ -1,0 +1,128 @@
+
+
+
+.nestable-item{
+    padding:0.5rem;
+    border:1px solid #d2cece;
+    border-radius: 0.5rem;
+}
+
+.nestable-item:hover{
+    cursor: grabbing;
+    padding:0.5rem;
+    border:1px solid #c24141;
+    border-radius: 0.5rem;
+}
+
+.nestable-item-name{
+    font-weight: 600;
+    /*padding: 0.3rem;*/
+    align-items: center;
+}
+.nestable-item-name:hover{
+    color: #c24141;
+}
+
+.is-dragging{
+    background-color: #e3e3e3 !important;
+}
+
+/*nestTable*/
+
+.nestable {
+    position: relative;
+    background-color: #fafafa;
+    padding:1rem;
+    border-radius: 0.5rem;
+}
+
+
+
+.nestable .nestable-list {
+    margin: 0;
+    padding: 0 0 0 40px;
+    /*list-style-type: none;*/
+}
+.nestable > .nestable-list {
+    padding: 0;
+}
+.nestable-item,
+.nestable-item-copy {
+    margin: 10px 0 0;
+}
+.nestable-item:first-child,
+.nestable-item-copy:first-child {
+    margin-top: 0;
+}
+.nestable-item .nestable-list,
+.nestable-item-copy .nestable-list {
+    margin-top: 10px;
+}
+.nestable-item {
+    position: relative;
+}
+.nestable-item.is-dragging .nestable-list {
+    pointer-events: none;
+}
+.nestable-item.is-dragging * {
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+}
+.nestable-item.is-dragging:before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #caf0f8;
+    border: 1px dashed #4682b4;
+    border-radius: 5px;
+}
+.nestable-item-icon {
+    margin-right: 5px;
+    cursor: pointer;
+}
+.nestable-drag-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    pointer-events: none;
+}
+.nestable-drag-layer > .nestable-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+}
+.nestable-icon {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+.nestable-icon:before {
+    content: '-';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+.icon-plus-gray {
+    width: 20px;
+    height: 20px;
+    /*background-image: url("https://www.iconsdb.com/icons/preview/gray/plus-4-xxl.png");*/
+}
+.icon-minus-gray {
+    width: 20px;
+    height: 20px;
+    /*background-image: url("https://www.iconsdb.com/icons/preview/gray/plus-4-xxl.png");*/
+}
+.nestable-item--with-children .nestable-item-name .d-flex .delete{
+    display: none;
+}

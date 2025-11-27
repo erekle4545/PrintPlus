@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models\Core;
+
+use App\Helpers\Core\Multitenant;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Team extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'status',
+        'date',
+        'template_id'
+    ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function info(){
+        return $this->hasOne(TeamLanguage::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function infos(){
+        return $this->hasMany(TeamLanguage::class);
+    }
+
+    public function covers(){
+        return $this->morphToMany(Multitenant::getModel('Files'),'coverable')->withPivot('cover_type');
+    }
+
+}

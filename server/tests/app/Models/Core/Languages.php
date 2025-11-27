@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models\Core;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Languages extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'label',
+        'code',
+        'Location',
+        'default',
+        'status'
+    ];
+}

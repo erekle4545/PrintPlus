@@ -2,51 +2,44 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
+use Dotenv\Util\Str;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
+use phpseclib3\Crypt\Hash;
 
 class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
-
-        $permission_data = ['create','view','update','delete'];
-        // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-
-        // create permissions
-        $templates = array_values(config('menu.templates'));
-        foreach ($permission_data as $permissionRow){
-            foreach ($templates as $row){
-                $templateKey  = str_replace('_',' ',$row['key']);
-                Permission::create([
-                    'name'=>"{$permissionRow} {$templateKey}",
-                    'guard_name'=>'web']);
-            }
-        }
-        // create roles and assign created permissions
+        $permission = Permission::create([
+            'name'=>'super_admin'
+        ]);
 
         $role = Role::create([
-            'name'=>'super_admin',
-            'guard_name'=>'web'
+            'name'=>'Super admin'
         ]);
-        $role->givePermissionTo(Permission::all());
 
-        // Create User
-        User::factory()->count(1)->create([
+
+        $rolePermission =  Role::where('id',$role->id)->first();
+
+        $rolePermission->permissions()->sync([$permission->id]);
+
+        User::create([
             'id'=>1,
-            'name' => 'ერეკლე გიორგაძე',
+            'name' => 'Super Admin',
             'email' => 'admin@mail.com',
-            'phone'=> '598550011',
-            'status'=>'1',
+            'phone'=> '598555555',
+            'role_id' => $role->id,
+            'user_status'=>'1',
             'password' => bcrypt('Flex4545@')
-        ])->each(function ($user){
-            $user->assignRole('super_admin');
-        });
+        ]);
     }
 }

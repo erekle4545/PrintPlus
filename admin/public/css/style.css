@@ -1,0 +1,247 @@
+@font-face {  font-family: "FiraGO";  src: url( "../fonts/FiraGO-Bold.woff");}
+@font-face {  font-family: "FiraGOUPP-Bold";  src: url( "../fonts/FiraGOUPP-Bold.ttf");}
+@font-face {  font-family: "FiraGOUPP-Medium";  src: url( "../fonts/FiraGOUPP-Medium.ttf");}
+@font-face {  font-family: "FiraGOUPP-Regular";  src: url( "../fonts/FiraGOUPP-Regular.ttf");}
+@font-face {  font-family: "FiraGO-Book";  src: url( "../fonts/FiraGO-Book.woff");}
+@font-face {  font-family: "FiraGO-Regukar";  src: url( "../fonts/FiraGO-Regular.woff");}
+
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-100.ttf") format("truetype");
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-200.ttf") format("truetype");
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-300.ttf") format("truetype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-400.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-500.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-600.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-700.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-800.ttf") format("truetype");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-900.ttf") format("truetype");
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-100-Italic.ttf") format("truetype");
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-200-Italic.ttf") format("truetype");
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-300-Italic.ttf") format("truetype");
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-400-Italic.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-500-Italic.ttf") format("truetype");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-600-Italic.ttf") format("truetype");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-700-Italic.ttf") format("truetype");
+    font-weight: 700;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-800-Italic.ttf") format("truetype");
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-900-Italic.ttf") format("truetype");
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+.title_font {font-family: "FiraGOUPP-Medium" !important;}
+.text_font{font-family: "FiraGO-Book" !important;}
+
+.card-title {font-family: "FiraGOUPP-Medium" !important;}
+.button_font{font-family: "FiraGOUPP-Medium" !important;}
+.font_form_title{
+    font-family: "FiraGOUPP-Regular";
+}
+
+.font_form_text{
+    font-family: "FiraGO-Book";
+}
+
+.lang li{
+    /*padding: 0rem 0.5rem;*/
+}
+.lang li button{
+    border:none;
+    background: none;
+}
+
+.lang li button:hover{
+    color:blue;
+}
+
+/*Page style*/
+
+.added_page_side{
+    padding-top:0.5rem;
+    font-size: 0.8rem;
+}
+
+.added_page_class_list li {
+    border-bottom:1px dashed #232323;
+    padding:1em;
+    list-style:none;
+}
+.added_page_class_list a {
+
+    font-weight: bold;
+    /*color:#232323;*/
+}
+
+
+@media (min-width: 576px) {
+
+}
+
+@media (max-width: 768px) {
+   .hidden_text_768{
+       display:none;
+   }
+}
+
+@media (min-width: 992px) {  }
+
+@media (min-width: 1200px) { }
+.form-error-messages-text{
+    font-size: small;
+    color:red;
+}
+
+.container-fluid, .container-lg, .container-md, .container-sm, .container-xl {
+    width: 98% !important;
+}
+.MuiTypography-h6{
+    font-family: "FiraGOUPP-Medium" !important;
+}
+
+.MuiTableSortLabel-root {
+    font-family: "FiraGOUPP-Bold" !important;
+}
+.MuiInput-input{
+    font-family: "FiraGOUPP-Medium" !important;
+}
+
+.MuiTableCell-body{
+    font-family: "FiraGO-Book" !important;
+}
+
+.MuiListItem-root{
+    font-family: "FiraGOUPP-Bold" !important;
+}
+
+.swal2-styled{
+    font-family: "FiraGOUPP-Bold" !important;
+}
+.swal2-title{
+    font-family: "FiraGOUPP-Medium" !important;
+}
+
+.employeesAlert{
+    background: #dcdcdc; padding:1rem;
+}
+.swal2-confirm , .swal2-cancel{font-family: "FiraGOUPP-Medium" !important;}
+

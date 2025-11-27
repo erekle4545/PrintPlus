@@ -1,42 +1,18 @@
 {
     "private": true,
-    "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build"
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
     },
     "devDependencies": {
-        "@vitejs/plugin-react": "^4.3.1",
-        "axios": "^1.7.7",
-        "laravel-vite-plugin": "^1.0.0",
-        "vite": "^5.0.0"
-    },
-    "dependencies": {
-        "@emotion/react": "^11.13.3",
-        "@emotion/styled": "^11.13.0",
-        "@mui/icons-material": "^6.0.1",
-        "@mui/material": "^6.0.1",
-        "antd": "^5.20.3",
-        "dotenv": "^16.4.5",
-        "html-react-parser": "^5.1.15",
-        "install": "^0.13.0",
-        "jodit-react": "^4.1.2",
-        "moment": "^2.30.1",
-        "npm": "^10.8.3",
-        "react": "^18.3.1",
-        "react-alert": "^7.0.3",
-        "react-alert-template-basic": "^1.0.2",
-        "react-animation": "^1.2.2",
-        "react-bootstrap": "^2.10.4",
-        "react-copy-to-clipboard": "^5.1.0",
-        "react-dom": "^18.3.1",
-        "react-helmet": "^6.1.0",
-        "react-hook-form": "^7.53.0",
-        "react-messenger-customer-chat": "^0.8.0",
-        "react-query": "^3.39.3",
-        "react-router-dom": "^6.26.1",
-        "sweetalert2": "^11.12.4",
-        "swiper": "^11.1.12",
-        "xlsx": "^0.18.5"
+        "axios": "^0.21.4",
+        "laravel-mix": "^6.0.49",
+        "lodash": "^4.17.19",
+        "postcss": "^8.1.14"
     }
 }

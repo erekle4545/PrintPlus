@@ -22,7 +22,7 @@ class CreateFilesTable extends Migration
             $table->text("data");
             $table->string("output_path",2000)->nullable();
             $table->timestamps();
-            $table->foreignIdFor(\App\Models\Files::class,'folder_id')->nullable();
+            $table->foreignIdFor(\App\Models\Core\Files::class,'folder_id')->nullable();
             $table->foreignIdFor(\App\Models\User::class,'user_id')->nullable();
         });
     }

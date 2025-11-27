@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Files;
-use App\Models\Folder;
+use App\Models\Core\Files;
+use App\Models\Core\Folder;
 use Illuminate\Database\Seeder;
 
 class FileSeeder extends Seeder
