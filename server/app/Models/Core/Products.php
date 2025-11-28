@@ -47,6 +47,36 @@ class Products extends Model
         return $this->hasMany(ProductsLanguage::class);
     }
 
+    // additionals
+
+    public function materials()
+    {
+        return $this->belongsToMany(Material::class, 'product_materials')
+            ->withPivot('price', 'is_default')
+            ->withTimestamps();
+    }
+
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_sizes')
+            ->withPivot('price', 'is_default')
+            ->withTimestamps();
+    }
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_colors')
+            ->withPivot('price', 'is_default')
+            ->withTimestamps();
+    }
+
+    public function extras()
+    {
+        return $this->belongsToMany(Extra::class, 'product_extras')
+            ->withPivot('price', 'is_default')
+            ->withTimestamps();
+    }
+
     /**
      * Page may have multiple covers
      */

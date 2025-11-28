@@ -140,9 +140,31 @@
       <path value="$PROJECT_DIR$/server/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/server/vendor/intervention/image" />
       <path value="$PROJECT_DIR$/server/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/server/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/server/vendor/maximebf/debugbar" />
+      <path value="$PROJECT_DIR$/server/vendor/symfony/polyfill-iconv" />
+      <path value="$PROJECT_DIR$/server/vendor/asm89/stack-cors" />
+      <path value="$PROJECT_DIR$/server/vendor/facade/ignition" />
+      <path value="$PROJECT_DIR$/server/vendor/facade/ignition-contracts" />
+      <path value="$PROJECT_DIR$/server/vendor/facade/flare-client-php" />
+      <path value="$PROJECT_DIR$/server/vendor/laravel/ui" />
+      <path value="$PROJECT_DIR$/server/vendor/barryvdh/laravel-debugbar" />
+      <path value="$PROJECT_DIR$/server/vendor/kalnoy/nestedset" />
+      <path value="$PROJECT_DIR$/server/vendor/arrilot/laravel-widgets" />
+      <path value="$PROJECT_DIR$/server/vendor/laravel/helpers" />
+      <path value="$PROJECT_DIR$/server/vendor/spatie/url" />
+      <path value="$PROJECT_DIR$/server/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/server/vendor/fruitcake/laravel-cors" />
+      <path value="$PROJECT_DIR$/server/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/server/vendor/spatie/macroable" />
+      <path value="$PROJECT_DIR$/server/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/server/vendor/spatie/menu" />
+      <path value="$PROJECT_DIR$/server/vendor/spatie/laravel-menu" />
+      <path value="$PROJECT_DIR$/server/vendor/laravel-lang/lang" />
+      <path value="$PROJECT_DIR$/server/vendor/swiftmailer/swiftmailer" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>
