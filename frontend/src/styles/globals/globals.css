@@ -2,19 +2,19 @@
 
 @font-face {
   font-family: "FiraGO";
-  src: url( "../../assets/fonts/FiraGOUPP-Regular.ttf")
+  src: url("../../shared/assets/fonts/FiraGOUPP-Regular.ttf")
   format("truetype");
 }
 
 @font-face {
   font-family: "FiraGOUPP-Bold";
-  src: url( "../../assets/fonts/FiraGOUPP-Bold.ttf")
+  src: url("../../shared/assets/fonts/FiraGOUPP-Bold.ttf")
   format("truetype");
 }
 
 @font-face {
   font-family: "FiraGO-Book";
-  src: url( "../../assets/fonts/FiraGO-Book.ttf")
+  src: url("../../shared/assets/fonts/FiraGO-Book.ttf")
   format("truetype");
 }
 

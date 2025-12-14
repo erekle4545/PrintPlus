@@ -43,7 +43,7 @@
 .cart-box-inside{
     align-content: center;
     height: 160px;
-    background-image: url("../../assets/icons/cart/bg-inside.svg");
+    background-image: url("../../shared/assets/icons/cart/bg-inside.svg");
     background-repeat: no-repeat;
     background-position: center;
 }

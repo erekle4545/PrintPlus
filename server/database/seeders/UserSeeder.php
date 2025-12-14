@@ -2,44 +2,59 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
-use App\Models\Role;
 use App\Models\User;
-use Dotenv\Util\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use phpseclib3\Crypt\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        $permission = Permission::create([
-            'name'=>'super_admin'
+        // Permissions
+        $permission_data = ['create', 'view', 'update', 'delete'];
+
+        // Reset cached permissions
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Create permissions
+        foreach ($permission_data as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web',
+            ]);
+        }
+
+        // Create roles
+        $superAdmin = Role::firstOrCreate([
+            'name' => 'super_admin',
+            'guard_name' => 'web',
         ]);
 
-        $role = Role::create([
-            'name'=>'Super admin'
+        $customer = Role::firstOrCreate([
+            'name' => 'customer',
+            'guard_name' => 'web',
         ]);
 
+        // Assign permissions
+        $superAdmin->givePermissionTo(Permission::all());
 
-        $rolePermission =  Role::where('id',$role->id)->first();
-
-        $rolePermission->permissions()->sync([$permission->id]);
-
-        User::create([
-            'id'=>1,
-            'name' => 'Super Admin',
-            'email' => 'admin@mail.com',
-            'phone'=> '598555555',
-            'role_id' => $role->id,
-            'user_status'=>'1',
-            'password' => bcrypt('Flex4545@')
+        $customer->givePermissionTo([
+            'create',
+            'view',
         ]);
+
+        // Create Super Admin User
+        $user = User::firstOrCreate(
+            ['email' => 'admin@mail.com'],
+            [
+                'name' => 'ერეკლე გიორგაძე',
+                'phone' => '598197373',
+                'password' => bcrypt('Flex4545@'),
+            ]
+        );
+
+        $user->assignRole('super_admin');
     }
 }

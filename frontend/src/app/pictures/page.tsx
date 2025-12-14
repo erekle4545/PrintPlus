@@ -1,15 +1,15 @@
 'use client';
 
-import Cover from "@/components/theme/header/cover/cover";
+import Cover from "@/shared/components/theme/header/cover/cover";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Form } from "react-bootstrap";
-import TealCheckbox from "@/components/ui/tealCheckbox/tealCheckbox";
-import { HeaderTitle } from "@/components/theme/page/components/headerTitle";
-import CheckIcon from '@/assets/icons/check/check.svg';
-import InfoIcon from '@/assets/icons/info/info.svg';
-import FileUploader from "@/components/ui/uploader/FileUploader";
-import OrderSidebar from "@/components/ui/orderSidebar/OrderSidebar";
+import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
+import { HeaderTitle } from "@/shared/components/theme/page/components/headerTitle";
+import CheckIcon from '@/shared/assets/icons/check/check.svg';
+import InfoIcon from '@/shared/assets/icons/info/info.svg';
+import FileUploader from "@/shared/components/ui/uploader/FileUploader";
+import OrderSidebar from "@/shared/components/ui/orderSidebar/OrderSidebar";
 
 export default function PicturePage() {
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);

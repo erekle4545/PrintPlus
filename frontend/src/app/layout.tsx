@@ -4,12 +4,12 @@ import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles/index.css";
-
 import { CartProvider } from "@/features/cart/context/CartContext";
-import AOSProvider from "@/components/providers/AOSProvider";
-import Header from "@/components/theme/header/header";
-import Footer from "@/components/theme/footer/footer";
+import AOSProvider from "@/shared/providers/AOSProvider";
+import Header from "@/shared/components/theme/header/header";
+import Footer from "@/shared/components/theme/footer/footer";
 import ProductList from "@/app/pages/products/productList";
+import {AuthProvider} from "@/context/AuthContext";
 
 export const metadata: Metadata = {
     title: "Print Plus",
@@ -24,21 +24,22 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body>
-        <CartProvider>
-            <AOSProvider/>
-                <Header />
+        <AuthProvider>
+            <CartProvider>
+                <AOSProvider/>
+                    <Header />
 
-                {/* აქ ჩაემატება შესაბამისი გვერდი (main content) */}
-                {children}
+                    {children}
 
-                <ToastContainer
-                    position="top-right"
-                    autoClose={3000}
-                    theme="colored"
-                />
-                <Footer />
-                {/*<ProductList/>*/}
-        </CartProvider>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={3000}
+                        theme="colored"
+                    />
+                    <Footer />
+                    {/*<ProductList/>*/}
+            </CartProvider>
+        </AuthProvider>
         </body>
         </html>
     );

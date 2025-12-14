@@ -55,7 +55,7 @@
     "RU": "Проекты"
   },
   "products": {
-    "GE": "პროდუცტები",
+    "GE": "პროდუქცია",
     "US": "products",
     "RU": "products"
   },
@@ -167,5 +167,25 @@
     "GE": "სერვიცები",
     "US": "Services",
     "RU": "Services"
+  },
+  "colors": {
+    "GE": "ფერები",
+    "US": "colors",
+    "RU": "colors"
+  },
+  "sizes": {
+    "GE": "ზომები",
+    "US": "sizes",
+    "RU": "sizes"
+  },
+  "extras": {
+    "GE": "დამატებითი",
+    "US": "extras",
+    "RU": "extras"
+  },
+  "options": {
+    "GE": "ოფშენები",
+    "US": "options",
+    "RU": "options"
   }
 }

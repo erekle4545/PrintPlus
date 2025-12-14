@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import styles from "../Profile.module.css";
-import Button from "@/components/ui/button/Button";
+import Button from "@/shared/components/ui/button/Button";
 
 export default function OrdersHistory() {
     const router = useRouter();

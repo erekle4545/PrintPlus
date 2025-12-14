@@ -7,13 +7,13 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
-import {HeaderTitle} from "@/components/theme/page/components/headerTitle";
-import Cover from "@/components/theme/header/cover/cover";
-import TealCheckbox from "@/components/ui/tealCheckbox/tealCheckbox";
-import QuantityStepper from "@/components/ui/quantity/QuantityStepper";
-import Button from "@/components/ui/button/Button";
-import Cart from '@/assets/icons/cart/shopping_cart_outline.svg';
-import ArrowRightLine from '@/assets/icons/menu/arrow-right-line.svg';
+import {HeaderTitle} from "@/shared/components/theme/page/components/headerTitle";
+import Cover from "@/shared/components/theme/header/cover/cover";
+import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
+import QuantityStepper from "@/shared/components/ui/quantity/QuantityStepper";
+import Button from "@/shared/components/ui/button/Button";
+import Cart from '@/shared/assets/icons/cart/shopping_cart_outline.svg';
+import ArrowRightLine from '@/shared/assets/icons/menu/arrow-right-line.svg';
 
 
 // ----- Types

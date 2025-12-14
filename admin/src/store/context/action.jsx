@@ -1,6 +1,7 @@
 export const  Action = {
     AUTH: 'AUTH',
     NOTIFY: 'NOTIFY',
+    LOADING: 'LOADING',
     ACCESS_TOKEN: 'ACCESS_TOKEN',
     R_TOKEN: 'R_TOKEN',
     CART: 'CART',

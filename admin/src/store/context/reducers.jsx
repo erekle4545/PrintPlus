@@ -4,6 +4,8 @@ const reducers = (state, action) => {
     switch(action.type){
         case Action.AUTH:
             return {...state, auth: action.payload};
+        case Action.LOADING:
+            return {...state, loading: action.payload};
         case Action.NOTIFY:
             return {...state, notify: action.payload};
         case Action.R_TOKEN:

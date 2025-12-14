@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from "next/image";
-import Button from "@/components/ui/button/Button";
+import Button from "@/shared/components/ui/button/Button";
 
 const About = () => {
     return (

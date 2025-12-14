@@ -3,83 +3,53 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Core\Size;
 use Illuminate\Http\Request;
 
 class SizesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Size::latest()->paginate(10);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'width' => 'required|integer|min:1',
+            'height' => 'required|integer|min:1',
+            'value' => 'required|string',
+            'base_price' => 'nullable|numeric|min:0'
+        ]);
+
+        $size = Size::create($validated);
+        return response()->json($size, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show(Size $size)
     {
-        //
+        return response()->json($size);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function update(Request $request, Size $size)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'width' => 'required|integer|min:1',
+            'height' => 'required|integer|min:1',
+            'value' => 'required|string',
+            'base_price' => 'nullable|numeric|min:0'
+        ]);
+
+        $size->update($validated);
+        return response()->json($size);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function destroy(Size $size)
     {
-        //
+        $size->delete();
+        return response()->json(null, 204);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

@@ -22,6 +22,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import ProductAttributes from "../../components/ProductAttributes/ProductAttributes";
 
 const CreateProduct = () => {
     // use Hooks
@@ -48,6 +49,13 @@ const CreateProduct = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // Product Attributes
+    const [productAttributes, setProductAttributes] = useState({
+        colors: [],
+        sizes: [],
+        extras: []
+    });
+
     const { register, handleSubmit, setValue, formState: { errors }, watch, reset } = useForm();
 
     const resets = () => {
@@ -64,6 +72,11 @@ const CreateProduct = () => {
             keepSubmitCount: false,
         });
         setText('');
+        setProductAttributes({
+            colors: [],
+            sizes: [],
+            extras: []
+        });
     }
     // End form Data
 
@@ -87,7 +100,14 @@ const CreateProduct = () => {
         setSelectedCategory(e.target.value);
     };
 
+    // Handle Attributes Change
+    const handleAttributesChange = (attributes) => {
+        setProductAttributes(attributes);
+    };
+
     // get edit Data
+    // CreateProduct.jsx
+
     const getEditData = () => {
         setLoading(true)
         http.get(`product/${params.id}`, {
@@ -115,6 +135,11 @@ const CreateProduct = () => {
 
                     const coversData = response.data.data.info.covers
                     setUpdatedCovers(coversData)
+
+                    // Load Product Attributes - შეცვალე attributes -> product_attributes
+                    if (response.data.data.product_attributes) {
+                        setProductAttributes(response.data.data.product_attributes);
+                    }
                 }
             }
         }).catch(err => {
@@ -126,19 +151,20 @@ const CreateProduct = () => {
 
     // create form
     const create = (data) => {
+        const requestData = {
+            ...data,
+            language_id: state.form_active_lang.activeLangId ?? 1,
+            category_id: selectedCategory,
+            status: pageStatus === true ? 1 : 2,
+            cover_id: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.id) : null,
+            cover_type: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.coverType) : null,
+            text: text,
+            attributes: productAttributes
+        };
+
         if (params.id) {
             // update Page
-            http.post('product/update/' + params.id,
-                {
-                    ...data,
-                    language_id: state.form_active_lang.activeLangId ?? 1,
-                    category_id: selectedCategory,
-                    status: pageStatus === true ? 1 : 2,
-                    cover_id: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.id) : null,
-                    cover_type: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.coverType) : null,
-                    text: text,
-                }
-            ).then((response) => {
+            http.post('product/update/' + params.id, requestData).then((response) => {
                 if (response.status === 200) {
                     setAddSuccess(true)
                     toast.success('Product Updated!')
@@ -149,17 +175,7 @@ const CreateProduct = () => {
             });
         } else {
             // create
-            http.post('product',
-                {
-                    ...data,
-                    language_id: state.form_active_lang.activeLangId ?? 1,
-                    category_id: selectedCategory,
-                    status: pageStatus === true ? 1 : 2,
-                    cover_id: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.id) : null,
-                    cover_type: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.coverType) : null,
-                    text: text,
-                }
-            ).then((response) => {
+            http.post('product', requestData).then((response) => {
                 if (response.status === 200) {
                     setAddSuccess(true)
                     toast.success('Product Created!')
@@ -269,6 +285,15 @@ const CreateProduct = () => {
                                                         placeholder={translate('text', state.lang.code)}
                                                     />
                                                     {errors.text && <div className='form-error-messages-text font_form_text'>{errors.text.message}</div>}
+                                                </div>
+
+                                                {/* Product Attributes Component */}
+                                                <div className="mb-3">
+                                                    <ProductAttributes
+                                                        productId={params.id}
+                                                        initialData={productAttributes}
+                                                        onChange={handleAttributesChange}
+                                                    />
                                                 </div>
                                             </div>
                                             {/*End first Section*/}

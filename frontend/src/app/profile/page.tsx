@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import styles from "./Profile.module.css";
-import { HeaderTitle } from "@/components/theme/page/components/headerTitle";
-import TextField from "@/components/ui/textfield/Textfield";
-import { Alert } from "@/components/ui/alert/alert";
-import TealCheckbox from "@/components/ui/tealCheckbox/tealCheckbox";
-import Button from "@/components/ui/button/Button";
+import { HeaderTitle } from "@/shared/components/theme/page/components/headerTitle";
+import TextField from "@/shared/components/ui/textfield/Textfield";
+import { Alert } from "@/shared/components/ui/alert/alert";
+import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
+import Button from "@/shared/components/ui/button/Button";
 
 export default function ProfileForm() {
     const [cityOpen, setCityOpen] = useState(false);

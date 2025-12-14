@@ -8,7 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Color extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'slug', 'base_price'];
+    protected $fillable = [
+        'name',
+        'value',
+        'type',
+        'colors',
+        'base_price'
+    ];
+
+    protected $casts = [
+        'colors' => 'array',
+        'base_price' => 'decimal:2'
+    ];
 
     public function products()
     {

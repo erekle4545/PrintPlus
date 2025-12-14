@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import Cover from "@/components/theme/header/cover/cover";
+import Cover from "@/shared/components/theme/header/cover/cover";
 
 export default function NotFound() {
     return (

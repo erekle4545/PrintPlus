@@ -24,4 +24,7 @@ export const RouteLinks = {
     createRegistry:'registry/create',
     members:'members',
     createMembers:'members/create',
+    colors:'options/colors',
+    sizes:'options/sizes',
+    extras:'options/extras',
 }

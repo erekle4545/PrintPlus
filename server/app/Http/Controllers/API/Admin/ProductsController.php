@@ -39,7 +39,7 @@ class ProductsController extends Controller
             $category->where('status', $request->status);
         }
 
-            $category->orderBy('created_at', 'desc');
+        $category->orderBy('created_at', 'desc');
 
         return new ProductResource($category->paginate(10));
     }
@@ -63,6 +63,7 @@ class ProductsController extends Controller
                 'date'=>Carbon::parse($request->date),
                 'category_id'=>$request->category_id,
             ]);
+
             $categoryLanguage = ProductsLanguage::create([
                 'products_id'=>$category->id,
                 'language_id'=>$request->language_id,
@@ -83,6 +84,39 @@ class ProductsController extends Controller
                         'cover_type'     => $request->cover_type[$key],
                         'coverable_type' => Multitenant::getModel('ProductsLanguage'),
                         'coverable_id'   => $categoryLanguage->id,
+                    ]);
+                }
+            }
+
+            // Get attributes from request
+            $attributes = $request->input('attributes');
+
+            // Attach Colors
+            if ($attributes && !empty($attributes['colors'])) {
+                foreach ($attributes['colors'] as $color) {
+                    $category->colors()->attach($color['id'], [
+                        'price' => $color['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ]);
+                }
+            }
+
+            // Attach Sizes
+            if ($attributes && !empty($attributes['sizes'])) {
+                foreach ($attributes['sizes'] as $size) {
+                    $category->sizes()->attach($size['id'], [
+                        'price' => $size['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ]);
+                }
+            }
+
+            // Attach Extras
+            if ($attributes && !empty($attributes['extras'])) {
+                foreach ($attributes['extras'] as $extra) {
+                    $category->extras()->attach($extra['id'], [
+                        'price' => $extra['custom_price'] ?? 0,
+                        'is_default' => 0
                     ]);
                 }
             }
@@ -115,15 +149,55 @@ class ProductsController extends Controller
 
         try {
             //Find page with id and language id
-            $Products = $model::with(['info' => function ($query) use ($request) {
-                $query->where('language_id', $request->language_id);
-            }, 'info.covers'])->findOrFail($id);
+            $Products = $model::with([
+                'info' => function ($query) use ($request) {
+                    $query->where('language_id', $request->language_id);
+                },
+                'info.covers',
+                'colors',
+                'sizes',
+                'extras'
+            ])->findOrFail($id);
 
             //if we can not find Category with id and language, select very first Category ignoring Language
             if (is_null($Products->info)) {
-                $Products = $model::with(['info','info.covers'])->findOrFail($id);
+                $Products = $model::with(['info','info.covers', 'colors', 'sizes', 'extras'])->findOrFail($id);
             }
 
+            // Format attributes for frontend
+            $productAttributes = [
+                'colors' => $Products->colors->map(function($color) {
+                    return [
+                        'id' => $color->id,
+                        'name' => $color->name,
+                        'value' => $color->value,
+                        'type' => $color->type,
+                        'base_price' => $color->base_price,
+                        'custom_price' => $color->pivot->price
+                    ];
+                })->toArray(),
+                'sizes' => $Products->sizes->map(function($size) {
+                    return [
+                        'id' => $size->id,
+                        'name' => $size->name,
+                        'value' => $size->value,
+                        'width' => $size->width,
+                        'height' => $size->height,
+                        'base_price' => $size->base_price,
+                        'custom_price' => $size->pivot->price
+                    ];
+                })->toArray(),
+                'extras' => $Products->extras->map(function($extra) {
+                    return [
+                        'id' => $extra->id,
+                        'name' => $extra->name,
+                        'base_price' => $extra->base_price,
+                        'custom_price' => $extra->pivot->price
+                    ];
+                })->toArray(),
+            ];
+
+            $Products->product_attributes = $productAttributes;
 
         } catch (\Exception $e) {
             return response(['result' => 'not found'], 404)->header('Content-Type', 'application/json');
@@ -142,6 +216,8 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        DB::beginTransaction();
+
         try {
             //Find Page
             $category = Products::with(['info' => function ($query) use ($request) {
@@ -183,10 +259,6 @@ class ProductsController extends Controller
                 $category->info->text = $request->text ?: " ";
 
                 $category->info->save();
-                //sleep(10);
-                //event(new MenuChanged());
-
-                return new ProductResource($category);
 
             }else{
 
@@ -199,8 +271,53 @@ class ProductsController extends Controller
                     'text' => $request->text,
                 ]);
             }
+
+            // Get attributes from request
+            $attributes = $request->input('attributes');
+
+            // Sync Colors
+            $colorSync = [];
+            if ($attributes && !empty($attributes['colors'])) {
+                foreach ($attributes['colors'] as $color) {
+                    $colorSync[$color['id']] = [
+                        'price' => $color['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ];
+                }
+            }
+            $category->colors()->sync($colorSync);
+
+            // Sync Sizes
+            $sizeSync = [];
+            if ($attributes && !empty($attributes['sizes'])) {
+                foreach ($attributes['sizes'] as $size) {
+                    $sizeSync[$size['id']] = [
+                        'price' => $size['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ];
+                }
+            }
+            $category->sizes()->sync($sizeSync);
+
+            // Sync Extras
+            $extraSync = [];
+            if ($attributes && !empty($attributes['extras'])) {
+                foreach ($attributes['extras'] as $extra) {
+                    $extraSync[$extra['id']] = [
+                        'price' => $extra['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ];
+                }
+            }
+            $category->extras()->sync($extraSync);
+
+            DB::commit();
+
+            return new ProductResource($category);
+
         } catch (\Exception $e) {
-            return response(['result' => 'not found'], 404)->header('Content-Type', 'application/json');
+            DB::rollBack();
+            return response(['result' => 'not found', 'error' => $e->getMessage()], 404)->header('Content-Type', 'application/json');
         }
     }
 
@@ -220,6 +337,7 @@ class ProductsController extends Controller
             //  Menu::where(['category_id' => $id])->delete();
             ProductsLanguage::where(['products_id' => $id])->delete();
             Products::where('id', $id)->delete();
+            // Pivot tables წაიშლება cascade-ით
         }
         return response(['result' => $category], 200)->header('Content-Type', 'application/json');
 

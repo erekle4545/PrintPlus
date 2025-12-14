@@ -31,6 +31,9 @@ import Settings from "../modules/settings/settings";
 
 import Login from "../modules/login/login";
 import NotFound from "../components/tamplate/notFound";
+import Colors from "@/modules/options/colors.jsx";
+import Sizes from "@/modules/options/sizes.jsx";
+import Extras from "@/modules/options/extras.jsx";
 
 function Router() {
     return (
@@ -53,6 +56,14 @@ function Router() {
                     <Route path="menu" element={<MenuList />} />
                     <Route path="menu/edit/:id" element={<MenuList />} />
 
+
+                     {/*Options*/}
+                    <Route path={'options'}>
+                        <Route path="colors" element={<Colors />} />
+                        <Route path="sizes" element={<Sizes />} />
+                        <Route path="extras" element={<Extras />} />
+
+                    </Route>
                     {/* Page */}
                     <Route path="page/create" element={<CreatePage />} />
                     <Route path="page/edit/:id" element={<CreatePage />} />

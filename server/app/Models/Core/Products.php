@@ -49,33 +49,36 @@ class Products extends Model
 
     // additionals
 
+    // additionals
+
     public function materials()
     {
-        return $this->belongsToMany(Material::class, 'product_materials')
+        return $this->belongsToMany(Material::class, 'product_materials', 'product_id', 'material_id')
             ->withPivot('price', 'is_default')
             ->withTimestamps();
     }
 
     public function sizes()
     {
-        return $this->belongsToMany(Size::class, 'product_sizes')
+        return $this->belongsToMany(Size::class, 'product_sizes', 'product_id', 'size_id')
             ->withPivot('price', 'is_default')
             ->withTimestamps();
     }
 
     public function colors()
     {
-        return $this->belongsToMany(Color::class, 'product_colors')
+        return $this->belongsToMany(Color::class, 'product_colors', 'product_id', 'color_id')
             ->withPivot('price', 'is_default')
             ->withTimestamps();
     }
 
     public function extras()
     {
-        return $this->belongsToMany(Extra::class, 'product_extras')
+        return $this->belongsToMany(Extra::class, 'product_extras', 'product_id', 'extra_id')
             ->withPivot('price', 'is_default')
             ->withTimestamps();
     }
+
 
     /**
      * Page may have multiple covers

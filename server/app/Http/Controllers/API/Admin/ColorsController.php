@@ -3,83 +3,54 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Core\Color;
 use Illuminate\Http\Request;
 
 class ColorsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        return Color::latest()->paginate(10);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'value' => 'required|string',
+            'type' => 'required|in:word,gradient',
+            'colors' => 'nullable|array',
+            'base_price' => 'nullable|numeric|min:0'
+        ]);
+
+        $color = Color::create($validated);
+
+        return response()->json($color, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show(Color $color)
     {
-        //
+        return response()->json($color);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function update(Request $request, Color $color)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'value' => 'required|string',
+            'type' => 'required|in:word,gradient',
+            'colors' => 'nullable|array',
+            'base_price' => 'nullable|numeric|min:0'
+        ]);
+
+        $color->update($validated);
+        return response()->json($color);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function destroy(Color $color)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $color->delete();
+        return response()->json(null, 204);
     }
 }

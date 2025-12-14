@@ -1,4 +1,4 @@
-import ProductCard from '@/components/cart/productCard';
+import ProductCard from '@/shared/components/cart/productCard';
 
 const products = [
     {

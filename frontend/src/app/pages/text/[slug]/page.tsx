@@ -1,5 +1,5 @@
-import Cover from "@/components/theme/header/cover/cover";
-import {HeaderTitle} from "@/components/theme/page/components/headerTitle";
+import Cover from "@/shared/components/theme/header/cover/cover";
+import {HeaderTitle} from "@/shared/components/theme/page/components/headerTitle";
 
 export default function TextPage({ params }: { params: { page: string } }) {
     return (<>

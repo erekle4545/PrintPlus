@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\API\Admin\AuthController;
 use App\Http\Controllers\API\Admin\CategoryController;
+use App\Http\Controllers\API\Admin\ColorsController;
 use App\Http\Controllers\API\Admin\DashboardController;
 use App\Http\Controllers\API\Admin\DictionaryController;
+use App\Http\Controllers\API\Admin\ExtrasController;
 use App\Http\Controllers\API\Admin\FilesController;
 use App\Http\Controllers\API\Admin\FoldersController;
 use App\Http\Controllers\API\Admin\GalleryController;
@@ -12,14 +15,15 @@ use App\Http\Controllers\API\Admin\OptionsController;
 use App\Http\Controllers\API\Admin\PagesController;
 use App\Http\Controllers\API\Admin\PostsController;
 use App\Http\Controllers\API\Admin\ProductsController;
+use App\Http\Controllers\API\Admin\RoleController;
 use App\Http\Controllers\API\Admin\ServicesController;
 use App\Http\Controllers\API\Admin\SettingsController;
+use App\Http\Controllers\API\Admin\SizesController;
 use App\Http\Controllers\API\Admin\SliderController;
 use App\Http\Controllers\API\Admin\TeamController;
+use App\Http\Controllers\API\Web\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\Admin\RoleController;
-use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +141,10 @@ Route::group(['prefix' => 'v1','middleware'=>'auth:sanctum'],function () {
         Route::resource('settings', SettingsController::class);
         Route::post('settings/update/{id}', [SettingsController::class,'update']);
         Route::delete('settings/delete/{id}', [SettingsController::class,'destroy']);
+
+        Route::apiResource('colors', ColorsController::class);
+        Route::apiResource('sizes', SizesController::class);
+        Route::apiResource('extras', ExtrasController::class);
 });
 
 Route::group(['prefix' => 'v1'], function () {
@@ -144,3 +152,22 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+
+// Public routes
+Route::prefix('web')->group(function () {
+
+    // Laravel Authentication
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+
+    // Social Authentication
+    Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
+    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+});
+
+// Protected routes
+Route::prefix('web')->middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [\App\Http\Controllers\API\Web\AuthController::class, 'logout']);
+    Route::get('/user', [\App\Http\Controllers\API\Web\AuthController::class, 'user']);
+    Route::post('/refresh', [\App\Http\Controllers\API\Web\AuthController::class, 'refresh']);
+});

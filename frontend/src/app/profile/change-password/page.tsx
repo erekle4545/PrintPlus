@@ -2,9 +2,9 @@
 
 import React from "react";
 import styles from "../Profile.module.css";
- import TextField from "@/components/ui/textfield/Textfield";
-import { Alert } from "@/components/ui/alert/alert";
-import Button from "@/components/ui/button/Button";
+ import TextField from "@/shared/components/ui/textfield/Textfield";
+import { Alert } from "@/shared/components/ui/alert/alert";
+import Button from "@/shared/components/ui/button/Button";
 
 export default function ChangePassword() {
 

@@ -10,9 +10,21 @@ const SidebarNav = () => {
     let http = useHttp();
     // Language Translate
     const {state,dispatch} = useContext(Context);
-    const translate = (translateName)=>{
-        return  LangData[translateName][state.lang.code]?LangData[translateName][state.lang.code]:LangData[translateName][localStorage.getItem('lang')]
-    }
+    const translate = (translateName) => {
+        if (!LangData[translateName]) {
+            return translateName;
+        }
+
+        const currentLang = state.lang.code;
+        const storedLang = localStorage.getItem('lang');
+
+        return (
+            LangData[translateName][currentLang] ||
+            LangData[translateName][storedLang] ||
+            translateName
+        );
+    };
+
     // End translate Lang
 
     // User Request
@@ -125,12 +137,24 @@ const SidebarNav = () => {
 
                   <li className="sidebar-item">
                       <a data-bs-target="#product" data-bs-toggle="collapse" className="sidebar-link collapsed">
-                          <i className="align-middle me-2 fas fa-fw fa-car"></i> <span
+                          <i className="align-middle me-2 fas fa-fw fa-cart-plus"></i> <span
                           className="align-middle">{translate('products')}</span>
                       </a>
                       <ul id="product" className="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
                           <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.createProduct}><span>{translate('add')}</span></NavLink></li>
                           <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.products}><span>{translate('all')}</span></NavLink>  </li>
+
+                      </ul>
+                  </li>
+                  <li className="sidebar-item">
+                      <a data-bs-target="#options" data-bs-toggle="collapse" className="sidebar-link collapsed">
+                          <i className="align-middle me-2 fas fa-fw fa-list-ol"></i> <span
+                          className="align-middle">{translate('options')}</span>
+                      </a>
+                      <ul id="options" className="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+                          <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.colors}><span>{translate('colors')}</span></NavLink></li>
+                          <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.sizes}><span>{translate('sizes')}</span></NavLink>  </li>
+                          <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.extras}><span>{translate('extras')}</span></NavLink>  </li>
 
                       </ul>
                   </li>

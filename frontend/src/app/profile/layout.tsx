@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
 import styles from "./Profile.module.css";
-import UserIcon from "@/assets/icons/user/userProfileIcon.svg";
-import MyDetailsIcon from "@/assets/icons/user/my_details.svg";
-import OrderHistoryIcon from "@/assets/icons/user/order-history.svg";
-import AttentionIcon from "@/assets/icons/user/attention.svg";
-import KeyIcon from "@/assets/icons/user/key.svg";
-import LogOutIcon from "@/assets/icons/user/logout.svg";
+import UserIcon from "@/shared/assets/icons/user/userProfileIcon.svg";
+import MyDetailsIcon from "@/shared/assets/icons/user/my_details.svg";
+import OrderHistoryIcon from "@/shared/assets/icons/user/order-history.svg";
+import AttentionIcon from "@/shared/assets/icons/user/attention.svg";
+import KeyIcon from "@/shared/assets/icons/user/key.svg";
+import LogOutIcon from "@/shared/assets/icons/user/logout.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Cover from "@/components/theme/header/cover/cover";
-import {HeaderTitle} from "@/components/theme/page/components/headerTitle";
+import Cover from "@/shared/components/theme/header/cover/cover";
+import {HeaderTitle} from "@/shared/components/theme/page/components/headerTitle";
 import {NavLink} from "react-bootstrap";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {

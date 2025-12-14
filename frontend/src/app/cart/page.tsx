@@ -5,12 +5,12 @@ import Image from "next/image";
 import {  X } from "lucide-react";
 import styles from "./Cart.module.css";
 import {useCart} from "@/features/cart/hooks/useCart";
-import Cover from "@/components/theme/header/cover/cover";
-import CartIsEmptyIcon from "@/assets/icons/cart/bg-inside.svg";
-import Button from "@/components/ui/button/Button";
+import Cover from "@/shared/components/theme/header/cover/cover";
+import CartIsEmptyIcon from "@/shared/assets/icons/cart/bg-inside.svg";
+import Button from "@/shared/components/ui/button/Button";
 import {useRouter} from "next/navigation";
-import RemoveIcon from "@/assets/icons/delete/remove.svg";
-import WhiteShoppingCart from "@/assets/icons/cart/shopping-cart-white.svg";
+import RemoveIcon from "@/shared/assets/icons/delete/remove.svg";
+import WhiteShoppingCart from "@/shared/assets/icons/cart/shopping-cart-white.svg";
  export default function Cart() {
      const router = useRouter();
 

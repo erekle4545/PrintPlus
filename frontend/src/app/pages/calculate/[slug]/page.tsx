@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { GEL } from '@/utils/currency';
-import Cover from '@/components/theme/header/cover/cover';
-import { HeaderTitle } from '@/components/theme/page/components/headerTitle';
-import TealCheckbox from "@/components/ui/tealCheckbox/tealCheckbox";
+import { GEL } from '@/shared/utils/currency';
+import Cover from '@/shared/components/theme/header/cover/cover';
+import { HeaderTitle } from '@/shared/components/theme/page/components/headerTitle';
+import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
 
 // --- Types & data ---
 type ProductKey = 'outdoor_banner' | 'sticker' | 'backlit' | 'photo_paper' | 'vinyl';

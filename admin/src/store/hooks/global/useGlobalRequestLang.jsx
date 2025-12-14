@@ -5,9 +5,11 @@ const UseGlobalRequestLang = () => {
     let {dispatch} = useContext(Context)
     let http = useHttp();
     const formLang = () => {
+        // on loading
+        dispatch({type:'LOADING',payload:true});
+
         http.get('languages').then((response)=>{
-            console.log(response)
-            if(response.status === 200){
+             if(response.status === 200){
                 // set  all language
                 dispatch({type:'FORM_LANG',payload:response.data});
                 // find default language
@@ -17,6 +19,8 @@ const UseGlobalRequestLang = () => {
             }
         }).catch((err)=>{
             console.log(err.response)
+        }).finally(()=>{
+            dispatch({type:'LOADING',payload:false});
         });
     }
 

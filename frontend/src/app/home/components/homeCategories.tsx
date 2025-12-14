@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import Button from "@/components/ui/button/Button";
-import Cat1 from "../../../assets/icons/home/cat_1.svg"
-import Cat2 from "../../../assets/icons/home/cat_2.svg"
-import Cat3 from "../../../assets/icons/home/cat_3.svg"
+import Button from "@/shared/components/ui/button/Button";
+import Cat1 from "@/shared/assets/icons/home/cat_1.svg"
+import Cat2 from "@/shared/assets/icons/home/cat_2.svg"
+import Cat3 from "@/shared/assets/icons/home/cat_3.svg"
 const HomeCategories = () => {
 
     return (
