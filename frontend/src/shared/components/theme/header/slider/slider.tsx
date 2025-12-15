@@ -41,7 +41,7 @@ const Slider = () => {
 
             </Swiper>
 
-            {/* ✅ pagination div moved OUTSIDE Swiper */}
+            {/*  pagination div moved OUTSIDE Swiper */}
             <div className="custom-pagination d-flex gap-2 justify-content-center mt-3 mb-3" />
         </div>
     );

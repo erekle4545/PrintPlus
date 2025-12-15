@@ -156,6 +156,15 @@ Route::group(['prefix' => 'v1'], function () {
 // Public routes
 Route::prefix('web')->group(function () {
 
+    // Languages
+    Route::get('/languages', [\App\Http\Controllers\API\Web\LanguageController::class, 'index']);
+    Route::get('/languages/active', [\App\Http\Controllers\API\Web\LanguageController::class, 'getActive']);
+
+    // Dictionary
+    Route::get('/dictionary/{lang}', [\App\Http\Controllers\API\Web\DictionaryController::class, 'getByLanguage']);
+
+    Route::get('/translations/{lang}', [\App\Http\Controllers\API\Web\DictionaryController::class, 'getTranslations']);
+
     // Laravel Authentication
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);

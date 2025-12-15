@@ -1,4 +1,3 @@
 <?php
 
-                return ['test'=>'ტესტი',
-	 ];
+                return [ ];

@@ -155,7 +155,7 @@ export default function Page() {
                             </form>
 
                             <div className="text-center">
-                                <Link href="/frontend/src/app/login" className="text_font text-decoration-none">
+                                <Link href="/frontend/src/app/%5Blang%5D/login" className="text_font text-decoration-none">
                                     უკვე გაქვთ ანგარიში? შესვლა
                                 </Link>
                             </div>

@@ -383,7 +383,7 @@
   {"code": "UA","label": "Ukraine","phone": "380" },
   {"code": "UG","label": "Uganda","phone": "256" },
   {
-   "code": "US",
+   "code": "EN",
    "label": "United States",
    "phone": "1",
    "suggested": true

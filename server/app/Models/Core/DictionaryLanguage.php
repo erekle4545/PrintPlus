@@ -1,19 +1,1 @@
-<?php
-
-namespace App\Models\Core;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class DictionaryLanguage extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'dictionary_id',
-        'language_id',
-        'value',
-    ];
-
-
-}
+<?phpnamespace App\Models\Core;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;class DictionaryLanguage extends Model{    use HasFactory;    protected $fillable = [        'dictionary_id',        'language_id',        'value',    ];// Dictionary.php-ში    public function dictionary()    {        return $this->belongsTo(Dictionary::class);    }    public function language()    {        return $this->belongsTo(Languages::class);    }}
