@@ -1,68 +1,96 @@
+// shared/components/theme/header/menu/desktopMenu.tsx
 'use client';
 
+import { MenuItem } from '@/types/menu/menu';
 import Link from 'next/link';
+import { useState } from 'react';
 import MenuArrow from '@/shared/assets/icons/menu/menuArrow.svg';
+import LocalizedLink from '@/shared/components/LocalizedLink/LocalizedLink';
 
-export default function DesktopMenu() {
+interface DesktopMenuProps {
+    items: MenuItem[];
+}
+
+export default function DesktopMenu({ items }: DesktopMenuProps) {
+    const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+    const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
+
+    const renderMenuItem = (item: MenuItem, depth: number = 0) => {
+        if (!item.active) return null;
+
+        const hasChildren = item.children && item.children.length > 0;
+        const menuLink = item.info?.link || item.info?.slug || '#';
+
+        if (depth === 0) {
+            // Top level menu items
+            if (hasChildren) {
+                return (
+                    <div
+                        key={item.id}
+                        className="dropdown"
+                        onMouseEnter={() => setActiveDropdown(item.id)}
+                        onMouseLeave={() => {
+                            setActiveDropdown(null);
+                            setActiveSubmenu(null);
+                        }}
+                    >
+                        <div className="menu-link d-inline-flex align-items-center gap-1">
+                            {item.info?.title} <MenuArrow />
+                        </div>
+                        <ul className={`dropdown-menu ${activeDropdown === item.id ? 'show' : ''}`}>
+                            {item.children?.map((child) => renderMenuItem(child, depth + 1))}
+                        </ul>
+                    </div>
+                );
+            } else {
+                return (
+                    <LocalizedLink key={item.id} href={menuLink} className="menu-link">
+                        {item.info?.title}
+                    </LocalizedLink>
+                );
+            }
+        } else if (depth === 1) {
+            // First level dropdown items
+            if (hasChildren) {
+                return (
+                    <li
+                        key={item.id}
+                        className="dropdown-submenu position-relative"
+                        onMouseEnter={() => setActiveSubmenu(item.id)}
+                        onMouseLeave={() => setActiveSubmenu(null)}
+                    >
+                        <div className="dropdown-item d-inline-flex align-items-center gap-1">
+                            {item.info?.title} <MenuArrow />
+                        </div>
+                        <ul className={`dropdown-menu position-absolute ${activeSubmenu === item.id ? 'show' : ''}`}>
+                            {item.children?.map((child) => renderMenuItem(child, depth + 1))}
+                        </ul>
+                    </li>
+                );
+            } else {
+                return (
+                    <li key={item.id}>
+                        <LocalizedLink href={menuLink} className="dropdown-item">
+                            {item.info?.title}
+                        </LocalizedLink>
+                    </li>
+                );
+            }
+        } else {
+            // Deeper nested items (depth 2+)
+            return (
+                <li key={item.id}>
+                    <LocalizedLink href={menuLink} className="dropdown-item">
+                        {item.info?.title}
+                    </LocalizedLink>
+                </li>
+            );
+        }
+    };
 
     return (
         <div className="main-menu d-none d-xl-flex align-items-center gap-4">
-            <div className="dropdown">
-                <div className="menu-link d-inline-flex align-items-center gap-1">
-                    ჩვენ შესახებ <MenuArrow />
-                </div>
-                <ul className="dropdown-menu">
-                    <li>
-                        <Link href="/pages/about" className="dropdown-item">კომპანია</Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/gallery" className="dropdown-item">გალერეა</Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/brands" className="dropdown-item">ბრენდი</Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/products" className="dropdown-item">პროდუქტები</Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/calculate/page" className="dropdown-item">კალკულატორის გვერდი</Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/borders" className="dropdown-item">ჩარცოები</Link>
-                    </li>
-                    <li>
-                        <Link href="/pages/text/test" className="dropdown-item">ტექსტური გვერდი</Link>
-                    </li>
-                </ul>
-            </div>
-            <div className="dropdown">
-                <div className="menu-link d-inline-flex align-items-center gap-1">
-                    მომსახურება <MenuArrow />
-                </div>
-                <ul className="dropdown-menu">
-                    <li className="dropdown-submenu position-relative">
-                        <div className="dropdown-item d-inline-flex align-items-center gap-1">
-                            ბრენდი <MenuArrow />
-                        </div>
-                        <ul className="dropdown-menu position-absolute">
-                            <li>
-                                <Link href="/services/print-on-pillows" className="dropdown-item">ბალიშზე ბეჭდვა</Link>
-                            </li>
-                            <li>
-                                <Link href="/services/mugs" className="dropdown-item">ჭიქებზე ბეჭდვა</Link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <Link href="/services/design" className="dropdown-item">დიზაინი</Link>
-                    </li>
-                </ul>
-            </div>
-
-            <Link href="/pages/products" className="menu-link">პროდუქტები</Link>
-            <Link href="/faq" className="menu-link">FAQ</Link>
+            {items.map((item) => renderMenuItem(item))}
         </div>
     );
 }
-
-

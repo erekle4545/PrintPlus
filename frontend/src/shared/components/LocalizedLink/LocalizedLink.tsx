@@ -24,7 +24,7 @@ const LocalizedLink: React.FC<LocalizedLinkProps> = ({
     // თუ href უკვე იწყება ენით, არ დავამატოთ ხელახლა
     const localizedHref = href.startsWith(`/${lang}`)
         ? href
-        : `/${lang}${href}`;
+        : `/${lang}/${href}`;
 
     return (
         <Link

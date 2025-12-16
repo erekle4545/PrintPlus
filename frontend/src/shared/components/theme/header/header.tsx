@@ -1,3 +1,4 @@
+// shared/components/theme/header/Header.tsx
 'use client';
 
 import { useState } from 'react';
@@ -10,21 +11,22 @@ import SearchIcon from '@/shared/assets/icons/menu/searchIcon.svg';
 import PhoneFill from '@/shared/assets/icons/menu/phone-fill.svg';
 import MobMenuIcon from '@/shared/assets/icons/menu/mobMenuIcon.svg';
 import CloseMobIcon from '@/shared/assets/icons/menu/closeMobIcon.svg';
-import MenuArrow from '@/shared/assets/icons/menu/menuArrow.svg';
 import DropdownCart from "@/shared/components/theme/header/cart/dropdownCart";
 import Slider from "@/shared/components/theme/header/slider/slider";
 import DesktopMenu from "@/shared/components/theme/header/menu/desktopMenu";
+import MobileMenu from "@/shared/components/theme/header/menu/mobileMenu";
 import LangSwitcher from "@/shared/components/theme/header/language/LangSwitcher";
 import AuthDropdownWrapper from "@/shared/components/theme/header/auth/AuthDropdownWrapper";
 import LocalizedLink from '@/shared/components/LocalizedLink/LocalizedLink';
-import {useLanguage} from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { useMenu } from "../../../hooks/useMenu";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [submenuOpen, setSubmenuOpen] = useState(false);
     const pathname = usePathname();
     const params = useParams();
     const { t } = useLanguage();
+    const { menu, loading, error } = useMenu();
 
     // შეამოწმეთ არის თუ არა home page
     const isHomePage = pathname === `/${params.lang}`;
@@ -62,8 +64,18 @@ export default function Header() {
                             </button>
                         </div>
 
-                        {/*Desktop*/}
-                        <DesktopMenu/>
+                        {/*Desktop Menu*/}
+                        {loading ? (
+                            <div className="d-none d-xl-flex align-items-center">
+                                <span className="spinner-border spinner-border-sm text-white" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </span>
+                            </div>
+                        ) : error ? (
+                            <div className="d-none d-xl-block text-white-50 small">{error}</div>
+                        ) : (
+                            <DesktopMenu items={menu} />
+                        )}
 
                         <div className="d-flex align-items-center gap-1">
                             <div className='me-xl-4 me-md-3 d-none d-md-block'>
@@ -100,59 +112,12 @@ export default function Header() {
                         </div>
                     </div>
 
-                    {menuOpen && (
-                        <div className="container position-relative px-0 d-xl-none">
-                            <div className="d-xl-none container res-menu d-flex flex-column gap-2 bg-white text-black rounded-3 shadow mt-2 p-3">
-                                <div className={`rounded-2 overflow-hidden ${submenuOpen ? 'my-bg-color' : 'bg-'}`}>
-                                    <button
-                                        className="w-100 d-flex fw-bolder align-items-center position-relative px-3 py-2 bg-transparent border-0"
-                                        onClick={() => setSubmenuOpen(prev => !prev)}
-                                    >
-                                        <span className="position-absolute start-0 ps-3">
-                                            <MenuArrow
-                                                style={{
-                                                    transform: submenuOpen ? "rotate(180deg)" : "rotate(0deg)",
-                                                    transition: "transform 0.2s ease",
-                                                    color: submenuOpen ? 'white' : 'black'
-                                                }}
-                                            />
-                                        </span>
-                                        <span className={`mx-auto ${submenuOpen ? 'text-white' : 'text-dark'}`}>
-                                            საერთაშორისო ბაღდა
-                                        </span>
-                                    </button>
-
-                                    {submenuOpen && (
-                                        <div className="d-flex flex-column rounded-bottom-2 text-center px-3 py-2 bg-white text-black">
-                                            <LocalizedLink href="/about" className="text-decoration-none">
-                                                ბაღზე ბაღდა
-                                            </LocalizedLink>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {[
-                                    { text: "ბროლობით ბაღდა", href: "/services" },
-                                    { text: "კავზე ბაღდა", href: "/products" },
-                                    { text: "გალერეა", href: "/pictures" }
-                                ].map((item, index) => (
-                                    <div key={index} className="p-1 rounded-2 overflow-hidden">
-                                        <LocalizedLink href={item.href} className="text-decoration-none">
-                                            <div className="w-100 d-flex align-items-center position-relative">
-                                                <span className="position-absolute start-0 ps-3" style={{ width: '16px' }}></span>
-                                                <span className="mx-auto border-bottom text-dark fw-semibold">
-                                                    {item.text}
-                                                </span>
-                                            </div>
-                                        </LocalizedLink>
-                                    </div>
-                                ))}
-
-                                <button className="d-block d-sm-none my-btn-color-bg rounded-pill px-4 py-2 mt-2 d-flex align-items-center justify-center gap-2">
-                                    <PhoneFill className="top-menu-icon" />  {t('contact','კონტაქტი')}
-                                </button>
-                            </div>
-                        </div>
+                    {/* Mobile Menu */}
+                    {menuOpen && !loading && !error && (
+                        <MobileMenu
+                            items={menu}
+                            onClose={() => setMenuOpen(false)}
+                        />
                     )}
                 </div>
 

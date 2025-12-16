@@ -155,6 +155,11 @@ Route::group(['prefix' => 'v1'], function () {
 
 // Public routes
 Route::prefix('web')->group(function () {
+    // Menu
+    Route::get('/menu', [\App\Http\Controllers\API\Web\MenuController::class, 'index']);
+    // page
+    Route::get('/pages/{slug}', [\App\Http\Controllers\API\Web\PageController::class, 'show']);
+
 
     // Languages
     Route::get('/languages', [\App\Http\Controllers\API\Web\LanguageController::class, 'index']);

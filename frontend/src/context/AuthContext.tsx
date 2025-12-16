@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useRouter } from 'next/navigation';
 import { useHttp } from '@/shared/hooks/useHttp';
 import { User, AuthResponse, AuthContextType } from '@/types/auth/auth';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -77,12 +78,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
                     localStorage.setItem('token', response.token);
                 }
                 setUser(response.user);
+                toast.success('წარმატებით შეხვედით სისტემაში');
                 router.push('/dashboard');
                 return { success: true };
             }
 
+            toast.error('შესვლა ვერ მოხერხდა');
             return { success: false, errors: { general: 'შესვლა ვერ მოხერხდა' } };
         } catch (error: any) {
+            toast.error(error.errors?.general || 'შესვლა ვერ მოხერხდა');
             return {
                 success: false,
                 errors: error.errors || { general: 'შესვლა ვერ მოხერხდა' },
@@ -108,12 +112,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
                     localStorage.setItem('token', response.token);
                 }
                 setUser(response.user);
+                toast.success('წარმატებით დარეგისტრირდით');
                 router.push('/dashboard');
                 return { success: true };
             }
 
+            toast.error('რეგისტრაცია ვერ მოხერხდა');
             return { success: false, errors: { general: 'რეგისტრაცია ვერ მოხერხდა' } };
         } catch (error: any) {
+            toast.error(error.errors?.general || 'რეგისტრაცია ვერ მოხერხდა');
             return {
                 success: false,
                 errors: error.errors || { general: 'რეგისტრაცია ვერ მოხერხდა' },
@@ -133,9 +140,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
         } catch (error) {
             console.error('Social login failed:', error);
-            if (typeof window !== 'undefined') {
-                alert('სოციალური ქსელით შესვლა ვერ მოხერხდა');
-            }
+            toast.error('სოციალური ქსელით შესვლა ვერ მოხერხდა');
         }
     };
 
@@ -145,8 +150,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 url: '/logout',
                 method: 'POST',
             });
+            toast.success('წარმატებით გამოხვედით სისტემიდან');
         } catch (error) {
             console.error('Logout error:', error);
+            toast.error('გამოსვლისას მოხდა შეცდომა');
         } finally {
             if (typeof window !== 'undefined') {
                 localStorage.removeItem('token');
@@ -168,6 +175,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
         } catch (error) {
             console.error('Token refresh failed:', error);
+            toast.error('სესიის განახლება ვერ მოხერხდა');
             logout();
         }
     };
