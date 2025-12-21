@@ -5,19 +5,56 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import Image from 'next/image';
 import 'swiper/css';
+import {useLanguage} from "@/context/LanguageContext";
 
-const products = [
-    { title: 'ჩარჩოები', image: '/assets/img/example/image.png' },
-    { title: 'საკანცელარიო ნივთები', image: '/assets/img/example/image.png' },
-    { title: 'სტიკერები', image: '/assets/img/example/image.png' },
-    { title: 'საოჯახო ალბომები', image: '/assets/img/example/image.png' },
-    { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-    { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-    { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-    { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-];
+// const products = [
+//     { title: 'ჩარჩოები', image: '/assets/img/example/image.png' },
+//     { title: 'საკანცელარიო ნივთები', image: '/assets/img/example/image.png' },
+//     { title: 'სტიკერები', image: '/assets/img/example/image.png' },
+//     { title: 'საოჯახო ალბომები', image: '/assets/img/example/image.png' },
+//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
+//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
+//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
+//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
+// ];
 
-const OurProductsCarousel = () => {
+
+interface Product {
+    id: number;
+    price: number;
+    sizes:object,
+    info: productInfo
+}
+
+interface productInfo{
+    title:string,
+    description:string,
+    slug:string,
+    covers:covers
+}
+
+interface covers{
+    name:string,
+    path:string,
+    type:string
+    extension:string,
+    data:string,
+    output_path:string
+}
+
+interface OurProductsCarouselProps {
+    products: Product[];
+    locale: string;
+}
+
+const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({
+     products,
+     locale
+ }) => {
+    const { t } = useLanguage();
+
+    if (products.length === 0) return null;
+
     const arrowStyle = {
         zIndex: 5555,
         fontSize: '30px',

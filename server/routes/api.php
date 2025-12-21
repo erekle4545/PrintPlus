@@ -157,8 +157,12 @@ Route::group(['prefix' => 'v1'], function () {
 Route::prefix('web')->group(function () {
     // Menu
     Route::get('/menu', [\App\Http\Controllers\API\Web\MenuController::class, 'index']);
+    // home
+    Route::get('/home', [\App\Http\Controllers\API\Web\HomeController::class, 'index']);
     // page
     Route::get('/pages/{slug}', [\App\Http\Controllers\API\Web\PageController::class, 'show']);
+   // products
+    Route::get('/products', [\App\Http\Controllers\API\Web\ProductController::class, 'index']);
 
 
     // Languages

@@ -1,163 +1,1 @@
-<?php
-
-namespace App\Console\Commands;
-
-use App\Helpers\Core\Multitenant;
-use App\Models\Core\Languages;
-use App\Models\Core\Menu;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\App;
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-
-class GenerateRoutes extends Command
-{
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'routes:generate';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Reads Menus table in database and generates new routes for web';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
-    {
-
-        $file = Base_path('routes/dynamic.php');
-
-        if (!File::isWritable($file)) {
-            Log::info('no writable', []);
-            $this->error('file '.$file.' is not writable, or missing.');
-            return;
-        }
-
-        $routes = [];
-        $home_stub = "Route::get('/:lang', [App\Http\Controllers\Web\HomeController::class,'index'])";
-
-//        Get all languages
-        $languages = Languages::query()->get();
-        $languagesCount = Languages::query()->count();
-
-        foreach ($languages as $langKey => $langValue) {
-            $route  = strtr($home_stub, [':lang' => strtolower($langValue->code)]);
-            array_push($routes, $route);
-        }
-        //Get ALl pages
-        $menus =  Multitenant::getModel('Menu')::with([
-            'infos',
-           // 'covers',
-            'page.info',
-            'page.covers'
-        ])->orderBy('order', 'asc')->get()->toTree();
-
-        $traverse = function ($collection, $parent = null) use (&$traverse, &$menus, $languages,$languagesCount) {
-            foreach ($collection as $key => $menu) {
-
-                foreach ($menu->infos as $k => $v) {
-                    $lang_abbr = '';
-                    if ($languagesCount >= 1) {
-                        $lang = array_first($languages, function ($language, $key) use ($v) {
-                            return $language->id === $v->language_id;
-                        });
-                        $lang_abbr = strtolower($lang['code']) .'/';
-                    }
-
-                    if (!is_null($parent)) {
-                        $menu->infos[$k]->slug = array_key_exists($k, $parent->infos->toArray()) ? $parent->infos[$k]->slug . '/' .$v->slug : $lang_abbr . $v->slug;
-                    } else {
-                        $menu->infos[$k]->slug = $lang_abbr . $v->slug;
-                    }
-                }
-
-                //If node has child elements call recursively
-                if ($menu->children) {
-                    $traverse($menu->children, $menu);
-                }
-            }
-        };
-
-        $routeGen = function ($collection) use (&$routeGen, $menus, &$routes) {
-
-            $stub = "Route::get('/:slug',[ App\Http\Controllers\Web\:nameController::class,':method'])";
-            Log::info('collection', $collection->toArray());
-            foreach ($collection as $key => $menu) {
-
-                if (!isset($menu->meta['custom_link']) || $menu->meta['custom_link'] == false) {
-                    foreach ($menu->infos as $k => $v) {
-                        $type = array_values(config('page.templates'))[array_search($menu->page->template_id, array_column(config('page.templates'), 'id'))];
-
-                        $controller = Str::ucfirst($type['name']);
-                        $method = 'index';
-
-                        if (array_key_exists('ref', $type)) {
-                            list($controller,$method) = explode('|', $type['ref']);
-                            $controller = $controller;
-                            $method = $method;
-                        }
-
-                        $strParams  = [':slug' => $v->slug, ':name' => $controller, ':method' => $method];
-                        $route      = strtr($stub, $strParams);
-                        array_push($routes, $route);
-
-                        /**
-                         * add Show route to some page types
-                         */
-                        $type = collect(config('page.templates'))->filter(function ($type) use ($menu) {
-                            return $type['id'] == $menu->page->template_id;
-                        });
-
-                        $type = $type[key($type->toArray())];
-
-                        if ($type['show'] === true) {
-                            $strParamsShow  = [':slug' => $v->slug . '/{show}', ':name' => $controller, ':method' => 'show'];
-                            $routeShow      = strtr($stub, $strParamsShow);
-                            array_push($routes, $routeShow);
-                        }
-                    }
-                }
-
-                if ($menu->children) {
-                    $routeGen($menu->children);
-                }
-            }
-        };
-
-        $traverse($menus);
-        $routeGen($menus);
-        File::put($file, "<?php". PHP_EOL);
-
-        foreach ($routes as $rt) {
-            File::append(
-                $file,
-                PHP_EOL.'    '.$rt.';'
-            );
-        }
-
-        File::append($file, PHP_EOL);
-        Artisan::call('route:cache');
-        $this->info('New routes generated successfully.');
-    }
-}
+<?phpnamespace App\Console\Commands;use App\Helpers\Core\Multitenant;use App\Models\Core\Languages;use App\Models\Core\Menu;use Illuminate\Support\Facades\File;use Illuminate\Support\Facades\Artisan;use Illuminate\Support\Facades\Log;use Illuminate\Support\Facades\App;use Illuminate\Console\Command;use Illuminate\Support\Str;class GenerateRoutes extends Command{    /**     * The name and signature of the console command.     *     * @var string     */    protected $signature = 'routes:generate';    /**     * The console command description.     *     * @var string     */    protected $description = 'Reads Menus table in database and generates new routes for web';    /**     * Create a new command instance.     *     * @return void     */    public function __construct()    {        parent::__construct();    }    /**     * Execute the console command.     *     * @return mixed     */    public function handle()    {        $file = Base_path('routes/dynamic.php');        if (!File::isWritable($file)) {            $this->error('file '.$file.' is not writable, or missing.');            return;        }        $routes = [];        $home_stub = "Route::get('/:lang', [App\Http\Controllers\Web\HomeController::class,'index'])";        // Get all languages        $languages = Languages::query()->get();        $languagesCount = Languages::query()->count();        foreach ($languages as $langKey => $langValue) {            $route  = strtr($home_stub, [':lang' => strtolower($langValue->code)]);            array_push($routes, $route);        }        // Get All pages        $menus =  Multitenant::getModel('Menu')::with([            'infos',            'page.info',            'page.covers'        ])->orderBy('order', 'asc')->get()->toTree();        $traverse = function ($collection, $parent = null) use (&$traverse, &$menus, $languages, $languagesCount) {            foreach ($collection as $key => $menu) {                foreach ($menu->infos as $k => $v) {                    $lang_abbr = '';                    if ($languagesCount >= 1) {                        $lang = array_first($languages, function ($language, $key) use ($v) {                            return $language->id === $v->language_id;                        });                        $lang_abbr = strtolower($lang['code']) .'/';                    }                    if (!is_null($parent)) {                        $menu->infos[$k]->slug = array_key_exists($k, $parent->infos->toArray()) ? $parent->infos[$k]->slug . '/' .$v->slug : $lang_abbr . $v->slug;                    } else {                        $menu->infos[$k]->slug = $lang_abbr . $v->slug;                    }                }                // If node has child elements call recursively                if ($menu->children) {                    $traverse($menu->children, $menu);                }            }        };        $routeGen = function ($collection) use (&$routeGen, $menus, &$routes) {            $stub = "Route::get('/:slug',[ App\Http\Controllers\Web\:nameController::class,':method'])";            Log::info('collection', $collection->toArray());            foreach ($collection as $key => $menu) {                if (!isset($menu->meta['custom_link']) || $menu->meta['custom_link'] == false) {                    // შემოწმება: არსებობს თუ არა page                    if (!$menu->page) {                        Log::warning("Menu ID {$menu->id} has no associated page, skipping route generation");                        // გაგრძელება children-ით თუ არსებობს                        if ($menu->children) {                            $routeGen($menu->children);                        }                        continue;                    }                    foreach ($menu->infos as $k => $v) {                        $type = array_values(config('page.templates'))[array_search($menu->page->template_id, array_column(config('page.templates'), 'id'))];                        $controller = Str::ucfirst($type['name']);                        $method = 'index';                        if (array_key_exists('ref', $type)) {                            list($controller,$method) = explode('|', $type['ref']);                            $controller = $controller;                            $method = $method;                        }                        $strParams  = [':slug' => $v->slug, ':name' => $controller, ':method' => $method];                        $route      = strtr($stub, $strParams);                        array_push($routes, $route);                        /**                         * add Show route to some page types                         */                        $type = collect(config('page.templates'))->filter(function ($type) use ($menu) {                            return $type['id'] == $menu->page->template_id;                        });                        $type = $type[key($type->toArray())];                        if (isset($type['show']) && $type['show'] === true) {                            $strParamsShow  = [':slug' => $v->slug . '/{show}', ':name' => $controller, ':method' => 'show'];                            $routeShow      = strtr($stub, $strParamsShow);                            array_push($routes, $routeShow);                        }                    }                }                if ($menu->children) {                    $routeGen($menu->children);                }            }        };        $traverse($menus);        $routeGen($menus);        File::put($file, "<?php". PHP_EOL);        foreach ($routes as $rt) {            File::append(                $file,                PHP_EOL.'    '.$rt.';'            );        }        File::append($file, PHP_EOL);        Artisan::call('route:cache');        $this->info('New routes generated successfully.');    }}

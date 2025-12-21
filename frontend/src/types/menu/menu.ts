@@ -3,6 +3,7 @@ export interface MenuItem {
     id: number;
     type: string;
     page_id: number | null;
+    category_id: number | null;
     meta: Record<string, any> | null;
     active: boolean;
     order: number;
@@ -16,7 +17,7 @@ export interface MenuItem {
         language_id: number;
         title: string;
         link: string | null;
-        slug: string | null;
+        slug: string ;
     };
     children?: MenuItem[];
 }

@@ -74,8 +74,11 @@ const MenuList = () => {
     // End form state
     // Menu widget draggable
     const renderItem = ({ item }) =>
-        <div className='d-flex justify-content-between   align-items-center m' style={{ color: params.id == item.id ? 'darkseagreen' : null }}>
-            <p className={'mb-0 align-items-center'}>{item.info ? item.info.title : 'არ არის ნათარგმნი'}</p>
+        <div className='d-flex justify-content-between  text_font  align-items-center ' style={{ color: params.id == item.id ? 'darkseagreen' : null }}>
+            <div className={'mb-0 align-items-center '}>{item.info ? item.info.title : 'არ არის ნათარგმნი'}
+
+                <div className='text-danger small text_font small'>{item?.category_id ?'კატეგორია':'გვერდი'}</div>
+            </div>
             <div className='d-flex'>
                 <Link to={`/menu/edit/${item.id}`}>
                     <IconButton aria-label="edit" disabled={params.id == item.id ? 'disabled' : null} style={{ color: params.id == item.id ? 'darkseagreen' : null }} fontSize="small" size='small'>
@@ -246,7 +249,7 @@ const MenuList = () => {
                         <div className="row">
                             <div className='col-xl-4 col-md-5 col-sm-7'>
                                 <h4 className='text-left title_font'>მენიუს მართვა</h4>
-                                {loading.menuSort ? <p className='text-center p-5'>Loading Menu...</p> : <Nestable
+                                {loading.menuSort ? <p className='text-center p-5'>მენიუ იტვირთება..</p> : <Nestable
                                     items={sortMenuData}
                                     renderItem={renderItem}
                                     onChange={menuSortUpdate}
@@ -311,10 +314,14 @@ const MenuList = () => {
                                                     />
                                                     {errors.slug && <div className='form-error-messages-text font_form_text'>{errors.slug.message}</div>}
                                                 </div>
-                                                <div className="mb-3 " style={{ display: actionIndividualUrl === true ? 'none' : 'block' }}>
-                                                    <label htmlFor="combo-box" className='pb-2 font_form_title font-weight-bold'>მენიუს გვერდი</label>
-                                                    <FormControl sx={{ width: '100%', padding: '0.2px' }} size="small">
-                                                        <InputLabel id="pages">{translate('pageName', state.lang.label)}</InputLabel>
+                                                <div className="mb-3 "
+                                                      style={{display: actionIndividualUrl === true ? 'none' : 'block'}}>
+                                                    <label htmlFor="combo-box"
+                                                           className='pb-2 font_form_title font-weight-bold'>მენიუს
+                                                        გვერდი</label>
+                                                    <FormControl sx={{width: '100%', padding: '0.2px'}} size="small">
+                                                        <InputLabel
+                                                            id="pages">{translate('pageName', state.lang.label)}</InputLabel>
                                                         <Select
                                                             labelId="pages"
                                                             id="page"
@@ -323,7 +330,8 @@ const MenuList = () => {
                                                             label="page"
                                                         >
                                                             {options.pages.map((item) => {
-                                                                return <MenuItem key={item.id} value={item.id}>{item.info.title}</MenuItem>
+                                                                return <MenuItem key={item.id}
+                                                                                 value={item.id}>{item.info.title}</MenuItem>
                                                             })}
                                                         </Select>
                                                     </FormControl>

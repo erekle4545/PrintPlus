@@ -45,9 +45,9 @@ export async function generateMetadata({
 }
 
 export default async function LangLayout({
-                                             children,
-                                             params,
-                                         }: {
+     children,
+     params,
+ }: {
     children: React.ReactNode;
     params: Promise<{ lang: string }>; // Promise type
 }) {

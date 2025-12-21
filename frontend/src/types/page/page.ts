@@ -29,19 +29,26 @@ export const PAGE_TEMPLATES = {
 } as const;
 
 export interface PageInfo {
-    title: string;
     slug: string;
-    text: string;
-    content: string;
-    meta_title?: string;
-    meta_description?: string;
+    title:string,
+    description:string,
+    text:string,
+    covers:PageCover[]
 }
 
-export interface PageCover {
-    id: number;
-    url: string;
-    type: string;
+export interface PageCover{
+    output_path:string,
+    path:string,
+    cover_type:number
 }
+
+
+export interface TextPages {
+    id: number;
+    template_id:number,
+    info:PageInfo
+}
+
 
 export interface PagePost {
     id: number;
@@ -54,8 +61,17 @@ export interface PagePost {
 
 export interface PageCategory {
     id: number;
-    title: string;
-    slug: string;
+    page:PageData,
+    info:CategoryInfo
+}
+export interface CategoryInfo {
+    id:number,
+    title:string,
+    description:string,
+    text:string,
+    covers: PageCover[],
+    slug:string,
+    language_id:number
 }
 
 export interface PageData {

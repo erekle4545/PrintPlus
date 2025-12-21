@@ -1,7 +1,17 @@
 export interface Product {
     id: number;
-    name: string;
+    category_id: number;
     price: number;
-    image: string;
-    discount?: number;
+    info:ProductInfo
 }
+
+export interface ProductInfo {
+    id: number;
+    product_id: number;
+    language_id: number;
+    description: number;
+    title: number;
+    price: number;
+}
+
+

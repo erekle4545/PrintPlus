@@ -10,6 +10,22 @@ const nextConfig: NextConfig = {
         });
         return config;
     },
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '8000',
+                pathname: '/storage/**',
+            },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '8000',
+                pathname: '/uploads/**',
+            },
+        ],
+    },
     // i18n config-ი სრულიად წაშალეთ - App Router-ში არ გამოიყენება
 };
 

@@ -15,7 +15,7 @@ class CreateCategoriesTable extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('page_id')->index();
+            $table->unsignedInteger('page_id')->nullable()->index();
             $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
             $table->boolean('status');
             $table->date('date');

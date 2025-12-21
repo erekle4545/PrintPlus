@@ -22,7 +22,7 @@ const LocalizedLink: React.FC<LocalizedLinkProps> = ({
     const lang = (params?.lang as string) || defaultLanguage;
 
     // თუ href უკვე იწყება ენით, არ დავამატოთ ხელახლა
-    const localizedHref = href.startsWith(`/${lang}`)
+    const localizedHref = href?.startsWith(`/${lang}`)
         ? href
         : `/${lang}/${href}`;
 

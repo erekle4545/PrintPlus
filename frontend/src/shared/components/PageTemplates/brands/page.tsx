@@ -1,44 +1,64 @@
-'use client';
-
-import Link from "next/link";
+// shared/components/PageTemplates/brands/page.tsx
 import Image from "next/image";
 import Cover from "@/shared/components/theme/header/cover/cover";
 import {HeaderTitle} from "@/shared/components/theme/page/components/headerTitle";
+import LocalizedLink from "@/shared/components/LocalizedLink/LocalizedLink";
+import {getFirstImage} from "@/shared/utils/imageHelper";
+import {generateSlug} from "@/shared/utils/mix";
 
-const brands = [
-    { slug: "/pages/brands/nike", name: "ბალიშზე ბეჭდვა" },
-    { slug: "/pages/brands/adidas", name: "ბრელოკზე ბეჭდვა" },
-    { slug: "/pages/brands/puma", name: "კეპზე ბეჭდვა" },
-    { slug: "/pages/brands/puma-test", name: "კეპზე ბეჭდვა" },
-];
+interface BrandPageProps {
+    page: {
+        id:number,
+        info: {
+            slug: string;
+            title: string;
+        };
+    };
+    products: any[]; // ან Product[] თუ type გაქვს
+}
 
-export default function BrandsPage() {
-    return (<>
-        <Cover/>
-        <div className="container py-4">
-            <HeaderTitle title={'ბრენდების სია'} slug={[]}/>
-            <ul className="row py-3 list-unstyled g-4">
-                {brands.map((brand) => (
-                    <li
-                        data-aos="zoom-in"
-                        key={brand.slug}
-                        className="col-12 col-md-4 col-sm-6 col-xl-3 d-flex"
-                    >
-                        <div className="brand-card text-center p-3 w-100 h-100 d-flex flex-column justify-content-between">
-                            <Link href={brand.slug}>
-                                <Image
-                                    src={'/assets/img/products/pro_2.png'}
-                                    alt={brand.name}
-                                    width={200}
-                                    height={200}
-                                    className="img-box "
-                                />
-                                <h4 className="mt-3 title_font fw-bolder">{brand.name}</h4>
-                            </Link>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    </>);
+export default function BrandsPage({page, products}: BrandPageProps) {
+    // url
+    const url = generateSlug(page.info?.slug,page.id,'c');
+
+    return (
+        <>
+            <Cover/>
+            <div className="container py-4">
+                <HeaderTitle title={`${page.info?.title}`} slug={url}/>
+                <ul className="row py-3 list-unstyled g-4">
+                    {products?.map((product) => {
+                        const img = getFirstImage(product.info?.covers);
+                        const url = generateSlug(
+                            page.info?.slug + '/' + product.info?.slug,
+                            product.id,
+                            'c'
+                        );
+
+                        return (
+                            <li
+                                key={product.id}
+                                className="col-12 col-md-4 col-sm-6 col-xl-3 d-flex"
+                            >
+                                <div className="brand-card text-center p-3 w-100 h-100 d-flex flex-column justify-content-between">
+                                    <LocalizedLink href={url}>
+                                        <Image
+                                            src={img}
+                                            alt={product.info?.name || ''}
+                                            width={200}
+                                            height={200}
+                                            className="img-box"
+                                        />
+                                        <h4 className="mt-3 title_font fw-bolder">
+                                            {product.info?.name}
+                                        </h4>
+                                    </LocalizedLink>
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
+        </>
+    );
 }

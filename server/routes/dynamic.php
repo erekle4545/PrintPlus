@@ -11,5 +11,6 @@
     Route::get('/ka/test-2/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
     Route::get('/en/test-2',[ App\Http\Controllers\Web\TextController::class,'index']);
     Route::get('/en/test-2/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
-    Route::get('/ka/test-3',[ App\Http\Controllers\Web\TextController::class,'index']);
-    Route::get('/ka/test-3/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
+    Route::get('/ka/chveni-istoria-da-mizani',[ App\Http\Controllers\Web\AboutController::class,'index']);
+    Route::get('/ka/servisebi',[ App\Http\Controllers\Web\TextController::class,'index']);
+    Route::get('/ka/servisebi/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);

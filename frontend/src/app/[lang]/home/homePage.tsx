@@ -1,23 +1,85 @@
+
+// app/[lang]/home/homePage.tsx
+
 import React from 'react';
-import HomeCategories from "@/app/[lang]/home/components/homeCategories";
-import OurServices from "@/app/[lang]/home/components/ourServices";
+ import OurServices from "@/app/[lang]/home/components/ourServices";
 import OurProductsCarousel from "@/app/[lang]/home/components/ourProductsCarousel";
 import About from "@/app/[lang]/home/components/about";
+import HomeTextPages from "@/app/[lang]/home/components/homeTextPages";
+import {number} from "prop-types";
+ import {PageData, PageInfo, TextPages} from "@/types/page/page";
+import {GlobalInfo} from "@/types/globalTypes";
 
 interface HomePageProps {
-    lang?: string;
+    lang: string;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ lang }) => {
+interface HomeData {
+    text_pages: Array<TextPages>;
+    services: PageData  | null;
+    featured_products: Array<{
+        id: number;
+        info:GlobalInfo
+    }>;
+    about: TextPages | null;
+}
+
+async function getHomeData(locale: string): Promise<HomeData> {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/home?locale=${locale}`,
+            {
+                next: { revalidate: 1 },
+                headers: {
+                    'Accept': 'application/json',
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch home data');
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error('Error fetching home data:', error);
+        return {
+            text_pages: [],
+            services: null,
+            featured_products: [],
+            about:null,
+        };
+    }
+}
+
+const HomePage = async ({ lang }: HomePageProps) => {
+    // Fetch data on server
+    const homeData = await getHomeData(lang);
+
     return (
         <main className="container">
+            <HomeTextPages
+                homeTextPages={homeData?.text_pages}
+                locale={lang}
+            />
 
-            <HomeCategories />
-            <OurServices />
-            <OurProductsCarousel />
-            <About />
+            <OurServices
+                services={homeData.services}
+            />
+
+            {/*<OurProductsCarousel*/}
+            {/*    products={homeData.featured_products}*/}
+            {/*    locale={lang}*/}
+            {/*/>*/}
+
+            <About
+                AboutProps={homeData?.about}
+            />
         </main>
     );
 };
 
 export default HomePage;
+
+

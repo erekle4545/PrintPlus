@@ -48,9 +48,9 @@ interface TranslationsResponse {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({
-                                                                      children,
-                                                                      initialLang
-                                                                  }) => {
+      children,
+      initialLang
+  }) => {
     const [currentLanguage, setCurrentLanguage] = useState<Language | null>(null);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [translations, setTranslations] = useState<Translations>({});

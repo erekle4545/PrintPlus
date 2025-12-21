@@ -125,6 +125,7 @@ const CreateCategory = () => {
                     ...data,
                     language_id: state.form_active_lang.activeLangId ?? 1,
                     status: pageStatus === true ? 1 : 2,
+                    assign_page: actionPageInMenu === true ? 1 : 0,
                     cover_id: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.id) : null,
                     cover_type: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.coverType) : null,
                     description: text,
@@ -147,6 +148,7 @@ const CreateCategory = () => {
                     ...data,
                     language_id: state.form_active_lang.activeLangId ?? 1,
                     status: pageStatus === true ? 1 : 2,
+                    assign_page: actionPageInMenu === true ? 1 : 0,
                     page_id: selectedPage,
                     cover_id: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.id) : null,
                     cover_type: Array.isArray(state.selected_covers) ? state.selected_covers.map(item => item.coverType) : null,
@@ -272,7 +274,7 @@ const CreateCategory = () => {
                                                         <InputLabel
                                                             id="demo-simple-select-autowidth-label">კატეგორია</InputLabel>
                                                         <Select
-                                                            required
+
                                                             labelId="demo-simple-select-autowidth-label"
                                                             id="page_template"
                                                             value={selectedPage}
@@ -304,10 +306,15 @@ const CreateCategory = () => {
                                 <div className="card-header" style={{ borderBottom: "1px dashed #a2a2a2" }}>
                                     <UseButtonBar />
                                 </div>
-                                <div className="card-header"
-                                     style={{ borderBottom: "1px dashed #a2a2a2", background: '#fff' }}>
+                                <div className="card-header" style={{ borderBottom: "1px dashed #a2a2a2", background: '#fff' }}>
                                     <div className="row ">
-                                        <div className='col-12 text-center align-middle page-statuses'>
+                                        <div className='col-6 text-center align-middle'>
+                                            <div className='input-style-border-switch page-statuses'>
+                                                <Switch id="toMenuSwitch" disabled={params.id && true} checked={actionPageInMenu} onChange={(e) => setActionPageInMenu(e.target.checked)} />
+                                                <label htmlFor="toMenuSwitch" className='pb-2 font_form_title'>In Menu</label>
+                                            </div>
+                                        </div>
+                                        <div className='col-6 text-center align-middle page-statuses'>
                                             <div className='input-style-border-switch'>
                                                 <Switch id="toAction" checked={pageStatus} onChange={(e) => setPageStatus(e.target.checked)} />
                                                 <label htmlFor="toAction" className='pb-2 font_form_title'>Status</label>

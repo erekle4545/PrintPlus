@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
-import styles from '../../../styles/modules/FileUploader.module.css';
+import styles from './FileUploader.module.css';
 
 // ---------- Types ----------
 export type UploadStatus =

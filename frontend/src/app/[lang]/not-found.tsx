@@ -16,10 +16,10 @@ export default function NotFound() {
                     404
                 </h1>
                 <h2 className="title_font mb-3">
-                    {t('page_not_found', 'გვერდი ვერ მოიძებნა')}
+                    {t('page_not_found', 'page_not_found')}
                 </h2>
                 <p className="text_font text-muted mb-4">
-                    {t('page_not_found_desc', 'ბოდიშით, თქვენ მიერ მოთხოვნილი გვერდი არ არსებობს ან წაიშალა.')}
+                    {t('page_not_found_desc', 'page_not_found_desc')}
                 </p>
 
                 <img
@@ -29,15 +29,7 @@ export default function NotFound() {
                     style={{maxWidth: '400px'}}
                 />
 
-                <div className="mt-4">
-                    <LocalizedLink
-                        href="/frontend/public"
-                        className="btn btn-primary btn-lg text_font"
-                    >
-                        <i className="bi bi-house-door me-2"></i>
-                        {t('back_to_home', 'მთავარ გვერდზე დაბრუნება')}
-                    </LocalizedLink>
-                </div>
+
             </div>
         </div>
     );
