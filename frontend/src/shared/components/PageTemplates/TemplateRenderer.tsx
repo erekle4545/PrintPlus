@@ -32,7 +32,8 @@ interface TemplateRendererProps {
 
 export default function TemplateRenderer({ page }: TemplateRendererProps) {
     const templateId = Number(page.template_id || page.page?.template_id);
-    const categoryId = page.categories?.[0]?.id || page.id;
+    const categoryId = page.id;
+
 
     // პროდუქტების ჩატვირთვა მხოლოდ SERVICES template-სთვის
     const { products, loading, error } = useProducts(

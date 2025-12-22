@@ -62,7 +62,7 @@ const OurServices: React.FC<OurServicesProps> = ({ services }) => {
                             <div className='hover-zoom'>
                                 <Image
                                     src={firstImage}
-                                    alt={service?.info?.title}
+                                    alt={service?.info?.title || ''}
                                     width={570}
                                     height={300}
                                     className="img-fluid p-3 "

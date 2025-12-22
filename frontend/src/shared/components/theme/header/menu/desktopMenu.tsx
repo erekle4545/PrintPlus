@@ -22,7 +22,7 @@ export default function DesktopMenu({ items }: DesktopMenuProps) {
         const hasChildren = item.children && item.children.length > 0;
         const identifyId = item.category_id?item.category_id:item.page_id;
 
-        const url = generateSlug(item.info.slug,identifyId,item.category_id? 'c':'p')
+        const url = generateSlug(item.info?.slug,identifyId,item.category_id? 'c':'p')
 
         const menuLink = item.info?.link || url || '#';
 

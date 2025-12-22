@@ -37,7 +37,7 @@ const About: React.FC<AboutProps> = ({ AboutProps }) => {
                     <div className="position-relative" style={{ width: '100%', height: 'auto' }}>
                         <Image
                             src={firstImage}
-                            alt={AboutProps.info?.title}
+                            alt={AboutProps.info?.title || ''}
                             width={700}
                             height={500}
                             className="img-fluid rounded"

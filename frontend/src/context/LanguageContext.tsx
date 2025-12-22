@@ -67,7 +67,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
                 url: `/translations/${langCode}`,
                 method: 'GET'
             });
-            console.log(result)
             if (result?.success) {
                 setTranslations(result.data);
             }

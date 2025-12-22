@@ -1,4 +1,3 @@
-// app/[lang]/[slug]/DynamicPageClient.tsx
 'use client';
 
 import { usePage } from '@/shared/hooks/usePage';
@@ -9,8 +8,10 @@ interface DynamicPageClientProps {
     slug: string;
 }
 
-export default function DynamicInsidePageClient({ slug }: DynamicPageClientProps) {
+export default function DynamicPageClient({ slug }: DynamicPageClientProps) {
+
     const { page, loading, error } = usePage(slug);
+
     const { t } = useLanguage();
 
     if (loading) {
@@ -29,8 +30,8 @@ export default function DynamicInsidePageClient({ slug }: DynamicPageClientProps
         return (<>
             <div className="container py-5">
                 <div className="alert alert-danger" role="alert">
-                    <h4 className="alert-heading">{t('page_not_found', 'გვერდი ვერ მოიძებნა')}</h4>
-                    <p>{error || t('page_not_exist', 'მოთხოვნილი გვერდი არ არსებობს')}</p>
+                    <h4 className="alert-heading">{t('page_not_found', 'page_not_found')}</h4>
+                    <p>{error || t('page_not_exist', 'page_not_exist')}</p>
                 </div>
             </div></>
         );

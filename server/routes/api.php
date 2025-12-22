@@ -163,6 +163,8 @@ Route::prefix('web')->group(function () {
     Route::get('/pages/{slug}', [\App\Http\Controllers\API\Web\PageController::class, 'show']);
    // products
     Route::get('/products', [\App\Http\Controllers\API\Web\ProductController::class, 'index']);
+    // product
+    Route::get('/product', [\App\Http\Controllers\API\Web\ProductController::class, 'show']);
 
 
     // Languages

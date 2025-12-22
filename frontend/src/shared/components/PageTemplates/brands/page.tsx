@@ -32,7 +32,7 @@ export default function BrandsPage({page, products}: BrandPageProps) {
                         const url = generateSlug(
                             page.info?.slug + '/' + product.info?.slug,
                             product.id,
-                            'c'
+                            'pr'
                         );
 
                         return (

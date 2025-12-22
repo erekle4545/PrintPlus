@@ -1,12 +1,11 @@
-
-// app/[lang]/[slug]/page.tsx
 import DynamicPageClient from './DynamicPageClient';
+
 import { notFound } from 'next/navigation';
 
 interface DynamicPageProps {
     params: Promise<{
         lang: string;
-        slug: string;
+        category: string;
     }>;
 }
 
@@ -21,12 +20,12 @@ const RESERVED_ROUTES = [
 ];
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
-    const { slug } = await params;
+    const { category } = await params;
 
     // If it's a reserved route, let Next.js handle it with its own folder
-    if (RESERVED_ROUTES.includes(slug)) {
+    if (RESERVED_ROUTES.includes(category)) {
         notFound();
     }
 
-    return <DynamicPageClient slug={slug} />;
+    return <DynamicPageClient slug={category} />;
 }

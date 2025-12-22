@@ -21,6 +21,7 @@ class ExtrasController extends Controller
         ]);
 
         $extra = Extra::create($validated);
+
         return response()->json($extra, 201);
     }
 
