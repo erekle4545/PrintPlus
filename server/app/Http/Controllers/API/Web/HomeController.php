@@ -4,12 +4,14 @@ namespace App\Http\Controllers\API\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Core\Page;
+use App\Models\Core\Products;
 use App\Models\Core\Slider;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $locale = $request->input('locale', 'ka');
 
@@ -70,26 +72,50 @@ class HomeController extends Controller
             ->select(['id','template_id'])
             ->first();
 
+        // featured products
+       $featuredProducts = Products::query()
+           ->where('status',1)
+           ->with(['info'=>function($q) use ($languageId) {
+               $q->where('language_id', $languageId);
+               $q->with('covers');
+               $q->select(['id','name','slug','products_id','language_id']);
+           },'category' => function ($qu) use ($languageId) {
+               $qu->with(['info'=>function($q) use ($languageId) {
+                   $q->where('language_id', $languageId);
+                   $q->select(['id','category_id','slug','language_id']);
+               }]);
+               $qu->with(['page:id,template_id']);
+           }])
+           ->select(['id','status','date','category_id'])
+           ->orderByDesc('date')
+           ->limit(10)
+           ->get();
+
+        //returns objects
         return response()->json([
             'text_pages' => $homeTextPages,
             'services' =>$homeServices,
-            'featured_products' => [],
-            'about' => $aboutPage,
+            'featuredProducts' => $featuredProducts,
+            'about' => $aboutPage
         ]);
     }
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function slider(Request $request)
     {
         $languageId = $request->language_id ?? 1;
 
-        $slider = Slider::query()->with('info',function ($query)use($languageId){
-            $query->where('language_id','=',$languageId);
-        })->get();
+        $slider = Slider::query()
+            ->where('status',1)
+            ->with('info',function($q) use ($languageId) {
+                $q->where('language_id', $languageId);
+                $q->with('covers');
+                $q->select(['id','title','description','language_id','slider_id']);
+            })->get();
 
-        return response()->json($slider);
+        return response()->json(['sliders'=>$slider]);
     }
 }

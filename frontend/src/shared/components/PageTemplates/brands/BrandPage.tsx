@@ -13,7 +13,7 @@ export default function BrandsPage({page, products}: BrandPageProps) {
         <>
             <Cover/>
             <div className="container py-4">
-                <HeaderTitle title={'ბრენდების სია'} slug={[]}/>
+                <HeaderTitle title={'ბრენდების სია'} slug={''}/>
                 <BrandsList products={products} pageSlug={page.info?.slug} />
             </div>
         </>

@@ -1,37 +1,1 @@
-<?php
-
-namespace App\Models\Core;
-
-use App\Helpers\Core\Multitenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Slider extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'status',
-        'date',
-        'slug',
-        'template_id'
-    ];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function info(){
-        return $this->hasOne(SliderLanguage::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function infos(){
-        return $this->hasMany(SliderLanguage::class);
-    }
-
-    public function covers(){
-        return $this->morphToMany(Multitenant::getModel('Files'),'coverable')->withPivot('cover_type');
-    }
-}
+<?phpnamespace App\Models\Core;use App\Helpers\Core\Multitenant;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;class Slider extends Model{    use HasFactory;    protected $fillable = [        'status',        'date',        'slug',        'template_id'    ];    /**     * @return \Illuminate\Database\Eloquent\Relations\HasOne     */    public function info(){        return $this->hasOne(SliderLanguage::class);    }    /**     * @return \Illuminate\Database\Eloquent\Relations\HasMany     */    public function infos(){        return $this->hasMany(SliderLanguage::class);    }    public function covers(){        return $this->morphToMany(Multitenant::getModel('Files'),'coverable')->withPivot('cover_type');    }}

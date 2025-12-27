@@ -9,6 +9,7 @@ import HomeTextPages from "@/app/[lang]/home/components/homeTextPages";
 import {number} from "prop-types";
  import {PageData, PageInfo, TextPages} from "@/types/page/page";
 import {GlobalInfo} from "@/types/globalTypes";
+import {Product} from "@/types/product/productTypes";
 
 interface HomePageProps {
     lang: string;
@@ -17,10 +18,7 @@ interface HomePageProps {
 interface HomeData {
     text_pages: Array<TextPages>;
     services: PageData  | null;
-    featured_products: Array<{
-        id: number;
-        info:GlobalInfo
-    }>;
+    featuredProducts: Product[] | [];
     about: TextPages | null;
 }
 
@@ -47,7 +45,7 @@ async function getHomeData(locale: string): Promise<HomeData> {
         return {
             text_pages: [],
             services: null,
-            featured_products: [],
+            featuredProducts: [],
             about:null,
         };
     }
@@ -68,10 +66,10 @@ const HomePage = async ({ lang }: HomePageProps) => {
                 services={homeData.services}
             />
 
-            {/*<OurProductsCarousel*/}
-            {/*    products={homeData.featured_products}*/}
-            {/*    locale={lang}*/}
-            {/*/>*/}
+            <OurProductsCarousel
+                products={homeData.featuredProducts}
+                locale={lang}
+            />
 
             <About
                 AboutProps={homeData?.about}

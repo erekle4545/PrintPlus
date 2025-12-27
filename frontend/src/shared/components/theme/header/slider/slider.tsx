@@ -6,8 +6,32 @@ import { Pagination,Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import Image from 'next/image';
+import {useSlider} from "@/shared/hooks/useSlider";
+import {getFirstImage} from "@/shared/utils/imageHelper";
 
+// slider component for home page
 const Slider = () => {
+
+    // use slider  hook
+    const {sliders} = useSlider();
+
+    // slider list
+    const sliderList = ()=>{
+
+        return  sliders?.map((slider,index)=>{
+
+            return (
+                <SwiperSlide key={index}>
+                    <div  className='slider-img-size'>
+                        <Image  src={getFirstImage(slider?.info?.covers,1,'original')} alt="slider" fill />
+                    </div>
+                </SwiperSlide>
+
+            );
+        });
+    }
+
+
     return (
         <div className="container pb-1" data-aos='fade-left'>
             <Swiper
@@ -20,24 +44,25 @@ const Slider = () => {
                     },
                 }}
                 autoplay={{
-                    delay: 4000, // 4 წამში ერთხელ გადართვა
-                    disableOnInteraction: false, // მომხმარებლის კლიკზე არ გაჩერდეს
+                    delay: 4000,
+                    disableOnInteraction: false,
                 }}
                 spaceBetween={10}
                 slidesPerView={1}
                 className="position-relative"
             >
-                <SwiperSlide>
-                    <div  className='slider-img-size'>
-                        {/*<Image src="/assets/img/example/slider1.svg" alt="slider" fill style={{ objectFit: 'cover' }} />*/}
-                        <Image  src="/assets/img/example/slider1.svg" alt="slider" fill />
-                    </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                    <div  className='slider-img-size'>
-                        <Image  src="/assets/img/example/slider1.svg" alt="slider" fill   />
-                    </div>
-                </SwiperSlide>
+                {sliderList()}
+                {/*<SwiperSlide>*/}
+                {/*    <div  className='slider-img-size'>*/}
+                {/*        /!*<Image src="/assets/img/example/slider1.svg" alt="slider" fill style={{ objectFit: 'cover' }} />*!/*/}
+                {/*        <Image  src="/assets/img/example/slider1.svg" alt="slider" fill />*/}
+                {/*    </div>*/}
+                {/*</SwiperSlide>*/}
+                {/*<SwiperSlide>*/}
+                {/*    <div  className='slider-img-size'>*/}
+                {/*        <Image  src="/assets/img/example/slider1.svg" alt="slider" fill   />*/}
+                {/*    </div>*/}
+                {/*</SwiperSlide>*/}
 
             </Swiper>
 

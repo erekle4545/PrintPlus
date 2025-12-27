@@ -47,10 +47,7 @@ class Products extends Model
         return $this->hasMany(ProductsLanguage::class);
     }
 
-    // additionals
-
-    // additionals
-
+    // additional
     public function materials()
     {
         return $this->belongsToMany(Material::class, 'product_materials', 'product_id', 'material_id')
@@ -58,6 +55,9 @@ class Products extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function sizes()
     {
         return $this->belongsToMany(Size::class, 'product_sizes', 'product_id', 'size_id')
@@ -65,6 +65,9 @@ class Products extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function colors()
     {
         return $this->belongsToMany(Color::class, 'product_colors', 'product_id', 'color_id')
@@ -72,6 +75,9 @@ class Products extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function extras()
     {
         return $this->belongsToMany(Extra::class, 'product_extras', 'product_id', 'extra_id')

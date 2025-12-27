@@ -6,54 +6,22 @@ import { Navigation } from 'swiper/modules';
 import Image from 'next/image';
 import 'swiper/css';
 import {useLanguage} from "@/context/LanguageContext";
+import {Product} from "@/types/product/productTypes";
+import {getFirstImage} from "@/shared/utils/imageHelper";
+import Link from "next/link";
+import {generateSlug} from "@/shared/utils/mix";
 
-// const products = [
-//     { title: 'ჩარჩოები', image: '/assets/img/example/image.png' },
-//     { title: 'საკანცელარიო ნივთები', image: '/assets/img/example/image.png' },
-//     { title: 'სტიკერები', image: '/assets/img/example/image.png' },
-//     { title: 'საოჯახო ალბომები', image: '/assets/img/example/image.png' },
-//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-//     { title: 'სასაჩუქრე ბარათები', image: '/assets/img/example/image.png' },
-// ];
-
-
-interface Product {
-    id: number;
-    price: number;
-    sizes:object,
-    info: productInfo
-}
-
-interface productInfo{
-    title:string,
-    description:string,
-    slug:string,
-    covers:covers
-}
-
-interface covers{
-    name:string,
-    path:string,
-    type:string
-    extension:string,
-    data:string,
-    output_path:string
-}
 
 interface OurProductsCarouselProps {
-    products: Product[];
+    products: Product[] ;
     locale: string;
 }
 
-const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({
-     products,
-     locale
- }) => {
+const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, products}) => {
     const { t } = useLanguage();
 
-    if (products.length === 0) return null;
+    if (!products || products.length === 0) return null;
+
 
     const arrowStyle = {
         zIndex: 5555,
@@ -86,25 +54,37 @@ const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({
                         992: { slidesPerView: 5 },
                     }}
                 >
-                    {products.map((product, index) => (
-                        <SwiperSlide key={index}>
-                            <div className="text-center hover-zoom">
-                                <div
-                                    className="rounded-circle overflow-hidden mx-auto"
-                                    style={{ width: 200, height: 200 }}
-                                >
-                                    <Image
-                                        src={product.image}
-                                        alt={product.title}
-                                        width={200}
-                                        height={200}
-                                        style={{ objectFit: 'contain' }}
-                                    />
+                    {products.map((product) => {
+                        console.log(product)
+                        // product category slug
+                        const categoryProductSlug = product.category?.info?.slug+'/'+product?.info?.slug;
+                        // product details url
+                        const url = generateSlug(categoryProductSlug,product.id,'pr');
+                        // return
+                        return  (
+                            <SwiperSlide key={product.id}>
+                                <div className="text-center hover-zoom">
+                                    <Link href={url}>
+                                        <div
+                                            className="rounded-circle overflow-hidden mx-auto"
+                                            style={{width: 200, height: 200}}
+                                        >
+
+                                            <Image
+                                                src={getFirstImage(product?.info?.covers, 1, 'processed')}
+                                                alt={product.info?.name || 'Product'}
+                                                width={200}
+                                                height={200}
+                                                style={{objectFit: 'contain'}}
+                                            />
+
+                                        </div>
+                                        <div className="mt-2 fw-bolder">{product.info?.name}</div>
+                                    </Link>
                                 </div>
-                                <div className="mt-2 fw-bolder">{product.title}</div>
-                            </div>
-                        </SwiperSlide>
-                    ))}
+                            </SwiperSlide>
+                        );
+                    })}
                 </Swiper>
 
                 {/* Desktop ღილაკები */}

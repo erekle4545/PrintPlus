@@ -30,7 +30,7 @@ const About: React.FC<AboutProps> = ({ AboutProps }) => {
     return (
         <div className="container my-5">
             <h3 className="text-center fw-bolder mb-4" data-aos="zoom-in">
-                {t('aboutUs','ჩვენი შესახებ')}
+                {t('aboutUs','aboutUs')}
             </h3>
             <div className="row g-4 text_font">
                 <div className="col-xl-6">
@@ -54,7 +54,7 @@ const About: React.FC<AboutProps> = ({ AboutProps }) => {
                     </p>
 
                     <Button  onClick={()=>route.push(url)}  className={'btn border-1 title_font fw-bolder'} variant='my-btn-light-outline'>
-                        {t('readMore','გაიგე მეტი')} →
+                        {t('readMore','readMore')} →
                     </Button>
                 </div>
             </div>

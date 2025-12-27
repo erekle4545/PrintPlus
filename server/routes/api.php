@@ -165,7 +165,8 @@ Route::prefix('web')->group(function () {
     Route::get('/products', [\App\Http\Controllers\API\Web\ProductController::class, 'index']);
     // product
     Route::get('/product', [\App\Http\Controllers\API\Web\ProductController::class, 'show']);
-
+    // slider
+    Route::get('/slider', [\App\Http\Controllers\API\Web\HomeController::class, 'slider']);
 
     // Languages
     Route::get('/languages', [\App\Http\Controllers\API\Web\LanguageController::class, 'index']);

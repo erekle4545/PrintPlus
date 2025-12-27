@@ -1,14 +1,19 @@
-
-interface HomePageData {
-
-    featured_products: Array<{
-        id: number;
-        name: string;
-        description: string;
-        base_price: number;
-        image: string;
-        slug: string;
-    }>;
+import {PageCover} from "@/types/page/page";
 
 
+
+export interface SliderResponse {
+    sliders: SliderData[];
+}
+
+//slider
+
+export  interface SliderData{
+    id:number,
+    slug:string,
+    info:{
+        title:string,
+        description:string,
+        covers:PageCover[],
+    }
 }
