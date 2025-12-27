@@ -1,4 +1,3 @@
-// shared/components/PageTemplates/TemplateRenderer.tsx
 'use client';
 
 import {PAGE_TEMPLATES, PageTemplate, PageInfo, PageCover, PagePost, PageCategory} from '@/types/page/page';
@@ -6,7 +5,6 @@ import {useProducts} from '@/shared/hooks/useProducts';
 
 import ProductsPage from "@/shared/components/PageTemplates/products/page";
 import TextPage from "@/shared/components/PageTemplates/text/[slug]/page";
-import BordersPage from "@/shared/components/PageTemplates/borders/page";
 import CalculatePage from "@/shared/components/PageTemplates/calculate/[slug]/page";
 import BrandPage from "@/shared/components/PageTemplates/brands/page";
 import NotFound from "@/app/[lang]/not-found";
@@ -37,8 +35,8 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
 
     // პროდუქტების ჩატვირთვა მხოლოდ SERVICES template-სთვის
     const { products, loading, error } = useProducts(
-        categoryId,
-        templateId === PAGE_TEMPLATES.SERVICES.id
+        categoryId
+        // ,templateId === PAGE_TEMPLATES.SERVICES.id
     );
 
     switch (templateId) {
@@ -51,14 +49,12 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
         case PAGE_TEMPLATES.SERVICES.id: // 8
             return <BrandPage page={page} products={products} />;
 
-        case PAGE_TEMPLATES.BORDERS.id: // 10
-            return <BordersPage />;
-
         case PAGE_TEMPLATES.CALCULATE.id: // 11
             return <CalculatePage />;
 
         case PAGE_TEMPLATES.PRODUCTS.id: // 12
-            return <ProductsPage />;
+
+            return <ProductsPage  page={page} products={products} />;
 
         default:
             return <NotFound />;

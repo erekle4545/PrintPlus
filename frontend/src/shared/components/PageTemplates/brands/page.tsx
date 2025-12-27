@@ -14,7 +14,7 @@ interface BrandPageProps {
             title: string;
         };
     };
-    products: any[]; // ან Product[] თუ type გაქვს
+    products: any[];
 }
 
 export default function BrandsPage({page, products}: BrandPageProps) {

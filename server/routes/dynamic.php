@@ -6,10 +6,6 @@
     Route::get('/ka/chveni-istoria-da-mizani',[ App\Http\Controllers\Web\AboutController::class,'index']);
     Route::get('/ka/chveni-istoria-da-mizani/servisebi',[ App\Http\Controllers\Web\TextController::class,'index']);
     Route::get('/ka/chveni-istoria-da-mizani/servisebi/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
-    Route::get('/ka/chveni-istoria-da-mizani/test-gverdi',[ App\Http\Controllers\Web\TextController::class,'index']);
-    Route::get('/ka/chveni-istoria-da-mizani/test-gverdi/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
-    Route::get('/en/test-page',[ App\Http\Controllers\Web\TextController::class,'index']);
-    Route::get('/en/test-page/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
     Route::get('/ka/chveni-istoria-da-mizani/test-2',[ App\Http\Controllers\Web\TextController::class,'index']);
     Route::get('/ka/chveni-istoria-da-mizani/test-2/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
     Route::get('/en/test-2',[ App\Http\Controllers\Web\TextController::class,'index']);

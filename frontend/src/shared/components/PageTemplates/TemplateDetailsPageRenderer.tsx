@@ -4,13 +4,12 @@
 import { PAGE_TEMPLATES } from '@/types/page/page';
 import { Product } from "@/types/product/productTypes";
 
-import ProductsPage from "@/shared/components/PageTemplates/products/page";
 import TextPage from "@/shared/components/PageTemplates/text/[slug]/page";
-import BordersPage from "@/shared/components/PageTemplates/borders/page";
 import CalculatePage from "@/shared/components/PageTemplates/calculate/[slug]/page";
 import BrandPage from "@/shared/components/PageTemplates/brands/page";
 import NotFound from "@/app/[lang]/not-found";
 import BrandPageDetails from "@/shared/components/PageTemplates/brands/[slug]/page";
+import ProductDetails from "@/shared/components/PageTemplates/products/[slug]/page";
 
 interface TemplateDetailsPageRendererProps {
     product: Product;
@@ -35,8 +34,8 @@ export default function TemplateDetailsPageRenderer({ product }: TemplateDetails
         // case PAGE_TEMPLATES.CALCULATE.id: // 11
         //     return <CalculatePage product={product} />;
         //
-        // case PAGE_TEMPLATES.PRODUCTS.id: // 12
-        //     return <ProductsPage product={product} />;
+        case PAGE_TEMPLATES.PRODUCTS.id: // 12
+            return <ProductDetails product={product} />;
 
         default:
             return <NotFound />;

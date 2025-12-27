@@ -62,6 +62,7 @@ class ProductController extends Controller
                     'colors',
                     'sizes',
                     'category.page:id,template_id',
+                    'category.info:id,category_id,slug,title',
                     'extras'
                 ])->findOrFail($id);
 

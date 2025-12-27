@@ -12,26 +12,26 @@ export default function ProductCard({ product }: Props) {
 
     return (
         <div className="card">
-            <img src={product.image} className="card-img-top" />
-            <div className="card-body">
-                <h5>{product.name}</h5>
-                <p>{product.price} ₾</p>
-                <button
-                    onClick={() =>
-                        addItem({
-                            id: product.id,
-                            name: product.name,
-                            price: product.price,
-                            image: product.image,
-                            quantity: 1,
-                            discount: product.discount,
-                        })
-                    }
-                    className="btn btn-primary"
-                >
-                    დამატება
-                </button>
-            </div>
+            {/*<img src={product.image} className="card-img-top" />*/}
+            {/*<div className="card-body">*/}
+            {/*    <h5>{product.name}</h5>*/}
+            {/*    <p>{product.price} ₾</p>*/}
+            {/*    <button*/}
+            {/*        onClick={() =>*/}
+            {/*            addItem({*/}
+            {/*                id: product.id,*/}
+            {/*                name: product.name,*/}
+            {/*                price: product.price,*/}
+            {/*                image: product.image,*/}
+            {/*                quantity: 1,*/}
+            {/*                discount: product.discount,*/}
+            {/*            })*/}
+            {/*        }*/}
+            {/*        className="btn btn-primary"*/}
+            {/*    >*/}
+            {/*        დამატება*/}
+            {/*    </button>*/}
+            {/*</div>*/}
         </div>
     );
 }

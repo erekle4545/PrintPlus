@@ -4,55 +4,68 @@ import Link from "next/link";
 import Image from "next/image";
 import Cover from "@/shared/components/theme/header/cover/cover";
 import { HeaderTitle } from "@/shared/components/theme/page/components/headerTitle";
+import {generateSlug} from "@/shared/utils/mix";
+import {getFirstImage} from "@/shared/utils/imageHelper";
 
-// TODO: replace image paths with your real files under /public/assets/products/*
-const categories = [
-    { slug: "/products/frames",        name: "ჩარჩოები",              image: "/assets/img/products/pro_2.png" },
-    { slug: "/products/stationery",    name: "საკანცელარო ნივთები",   image: "/assets/img/products/pro_2.png" },
-    { slug: "/products/stickers",      name: "სტიკერები",             image: "/assets/img/products/pro_2.png" },
-    { slug: "/products/photo-albums",  name: "საოჯახო ალბომები",       image: "/assets/img/products/pro_2.png" },
-    { slug: "/products/gift-cards",    name: "სასაჩუქრე ბარათები",     image: "/assets/img/products/pro_2.png" },
-    { slug: "/products/calendars",     name: "კალენდრები",            image: "/assets/products/calendars.jpg" },
-    { slug: "/products/tshirts",       name: "ბრენდირებული მაისურები", image: "/assets/products/tshirts.jpg" },
-    { slug: "/products/posters",       name: "პოსტერები",             image: "/assets/products/posters.jpg" },
-    { slug: "/products/notebooks",     name: "დღიურები/ბლოკნოტები",    image: "/assets/products/notebooks.jpg" },
-    { slug: "/products/prints",        name: "პოსტერი/პრინტი",         image: "/assets/products/prints.jpg" },
-];
 
-export default function ProductsPage() {
+interface ProductPageProps {
+    page: {
+        id:number,
+        info: {
+            slug: string;
+            title: string;
+        };
+    };
+    products: any[];
+}
+
+export default function ProductPage({page, products}: ProductPageProps) {
+
+    const url = generateSlug(page.info?.slug,page.id,'c');
+
+
     return (
         <>
-            <Cover />
+            <Cover/>
             <div className="container py-4">
-                <HeaderTitle title="ჩვენი პროდუქტებია" slug={[ ]} />
+                <HeaderTitle title={page.info?.title} slug={url} />
 
                 {/* Grid */}
-                <ul className="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 list-unstyled justify-content-center">
-                    {categories.map((item) => (
-                        <li key={item.slug} className="col d-flex" data-aos="zoom-in">
-                            <div className="product-card text-center p-3 w-100 h-100 d-flex flex-column justify-content-between">
-                                <Link href={item.slug} aria-label={item.name} className="text-decoration-none">
-                                    {/* Circle thumbnail */}
-                                    <div className="thumb-wrap mx-auto">
-                                        <Image
-                                            src={item.image}
-                                            alt={item.name}
-                                            fill
-                                            className="object-fit-cover"
-                                            sizes="(max-width: 576px) 60vw, (max-width: 1200px) 30vw, 200px"
-                                            priority={false}
-                                        />
-                                    </div>
+                <ul className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 g-lg-4 list-unstyled justify-content-center">
+                    {products.map((product,index) => {
+                        const img = getFirstImage(product.info?.covers);
+                        const url = generateSlug(
+                            page.info?.slug + '/' + product.info?.slug,
+                            product.id,
+                            'pr'
+                        );
 
-                                    <h1 className="mt-3 title_font product-card-title fw-bolder text-dark">{item.name}</h1>
+                       return (
+                            <li key={index} className="col d-flex" data-aos="zoom-in">
+                                <Link href={url} className="text-decoration-none d-flex w-100"
+                                      aria-label={product.info?.name}>
+                                    <div className="borders-card p-3 w-100 text-center d-flex flex-column">
+                                        {/* square thumbnail */}
+                                        <div className="borders-thumb mx-auto">
+                                            <Image
+                                                src={img}
+                                                alt={product.info?.name}
+                                                fill
+                                                style={{objectFit: "contain"}} // keep full image inside the square
+                                                sizes="(max-width: 576px) 50vw, (max-width: 1200px) 25vw, 220px"
+                                            />
+                                        </div>
+
+                                        <h3 className="mt-3 title_font borders-card-title text-dark fw-bold">
+                                            {product.info?.name}
+                                        </h3>
+                                    </div>
                                 </Link>
-                            </div>
-                        </li>
-                    ))}
+                            </li>
+                        )
+                    })}
                 </ul>
             </div>
-
-
         </>
     );
 }
