@@ -21,9 +21,7 @@ export const PAGE_TEMPLATES = {
     GALLERY: { id: 5, name: 'gallery' as const, show: true },
     TEAM: { id: 6, name: 'team' as const, show: true },
     ABOUT: { id: 7, name: 'about' as const, show: false },
-    SERVICES: { id: 8, name: 'services' as const, show: true },
-    BRANDS: { id: 9, name: 'brands' as const, show: true },
-    BORDERS: { id: 10, name: 'borders' as const, show: true },
+    SERVICES: { id: 9, name: 'services' as const, show: true },
     CALCULATE: { id: 11, name: 'calculate' as const, show: true },
     PRODUCTS: { id: 12, name: 'products' as const, show: true },
 } as const;
