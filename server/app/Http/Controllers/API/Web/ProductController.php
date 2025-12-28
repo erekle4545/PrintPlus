@@ -46,7 +46,6 @@ class ProductController extends Controller
 
         $slug = $request->get('slug');
 
-        Log::info($slug);
 
         try {
 
@@ -63,12 +62,14 @@ class ProductController extends Controller
                     'sizes',
                     'category.page:id,template_id',
                     'category.info:id,category_id,slug,title',
+                    'materials.covers',
+                    'printTypes',
                     'extras'
                 ])->findOrFail($id);
 
                 //if we can not find Category with id and language, select very first Category ignoring Language
                 if (is_null($Products->info)) {
-                    $Products = $model::with(['info', 'info.covers', 'colors', 'sizes', 'extras'])->findOrFail($id);
+                    $Products = $model::with(['info', 'info.covers', 'colors', 'sizes','materials.covers', 'printTypes', 'extras'])->findOrFail($id);
                 }
 
                 // Format attributes for frontend
@@ -92,6 +93,23 @@ class ProductController extends Controller
                             'height' => $size->height,
                             'base_price' => $size->base_price,
                             'custom_price' => $size->pivot->price
+                        ];
+                    })->toArray(),
+                    'materials' => $Products->materials->map(function ($material) {
+                        return [
+                            'id' => $material->id,
+                            'name' => $material->name,
+                            'base_price' => $material->base_price,
+                            'custom_price' => $material->pivot->price,
+                            'covers' => $material->covers
+                        ];
+                    })->toArray(),
+                    'print_types' => $Products->printTypes->map(function ($printType) {
+                        return [
+                            'id' => $printType->id,
+                            'name' => $printType->name,
+                            'base_price' => $printType->base_price,
+                            'custom_price' => $printType->pivot->price
                         ];
                     })->toArray(),
                     'extras' => $Products->extras->map(function ($extra) {

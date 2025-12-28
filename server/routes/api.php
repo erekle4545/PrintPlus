@@ -10,10 +10,12 @@ use App\Http\Controllers\API\Admin\FilesController;
 use App\Http\Controllers\API\Admin\FoldersController;
 use App\Http\Controllers\API\Admin\GalleryController;
 use App\Http\Controllers\API\Admin\LanguagesController;
+use App\Http\Controllers\API\Admin\MaterialsController;
 use App\Http\Controllers\API\Admin\MenuController;
 use App\Http\Controllers\API\Admin\OptionsController;
 use App\Http\Controllers\API\Admin\PagesController;
 use App\Http\Controllers\API\Admin\PostsController;
+use App\Http\Controllers\API\Admin\PrintTypeController;
 use App\Http\Controllers\API\Admin\ProductsController;
 use App\Http\Controllers\API\Admin\RoleController;
 use App\Http\Controllers\API\Admin\ServicesController;
@@ -145,6 +147,8 @@ Route::group(['prefix' => 'v1','middleware'=>'auth:sanctum'],function () {
         Route::apiResource('colors', ColorsController::class);
         Route::apiResource('sizes', SizesController::class);
         Route::apiResource('extras', ExtrasController::class);
+        Route::apiResource('materials', MaterialsController::class);
+        Route::apiResource('print-types', PrintTypeController::class);
 });
 
 Route::group(['prefix' => 'v1'], function () {

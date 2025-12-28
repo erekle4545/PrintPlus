@@ -57,7 +57,7 @@ export default function CalculatePage() {
         <>
             <Cover />
             <div className="container py-4 ">
-                <HeaderTitle title="კალკულატორის გვერდი" slug={[]} />
+                <HeaderTitle title="კალკულატორის გვერდი" slug={''} />
                 <div className='calculate-page-container' data-aos={'fade-up'}>
                     {/* Calculator */}
                     <h4 className='title_font_bold text-center mb-4' >ფასის კალკულატორი</h4>

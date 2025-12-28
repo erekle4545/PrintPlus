@@ -27,4 +27,6 @@ export const RouteLinks = {
     colors:'options/colors',
     sizes:'options/sizes',
     extras:'options/extras',
+    materials:'options/materials',
+    printType:'options/print-type',
 }

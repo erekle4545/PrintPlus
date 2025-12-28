@@ -34,6 +34,8 @@ import NotFound from "../components/tamplate/notFound";
 import Colors from "@/modules/options/colors.jsx";
 import Sizes from "@/modules/options/sizes.jsx";
 import Extras from "@/modules/options/extras.jsx";
+import Materials from "@/modules/options/materials.jsx";
+import PrintType from "@/modules/options/printType.jsx";
 
 function Router() {
     return (
@@ -62,7 +64,8 @@ function Router() {
                         <Route path="colors" element={<Colors />} />
                         <Route path="sizes" element={<Sizes />} />
                         <Route path="extras" element={<Extras />} />
-
+                        <Route path="materials" element={<Materials />} />
+                        <Route path="print-type" element={<PrintType />} />
                     </Route>
                     {/* Page */}
                     <Route path="page/create" element={<CreatePage />} />

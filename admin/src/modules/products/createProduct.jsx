@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Context } from "../../store/context/context";
 import Box from "@mui/material/Box";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../store/hooks/http/useHttp";
 import { useForm } from 'react-hook-form';
 //ui
@@ -10,7 +10,7 @@ import Switch from '@mui/material/Switch';
 // end ui
 //start mix
 import { checkTranslate, slugGenerate, translate } from "../../store/hooks/useMix";
-import { deleteAlert, errorAlerts } from "../../store/hooks/global/useAlert";
+import {  errorAlerts } from "../../store/hooks/global/useAlert";
 import UseFormLang from "../../store/hooks/global/useFormLang";
 import UseFileManager from "../../store/hooks/global/useFileManager";
 import TipTapEditor from "../../components/TipTapEditor/TipTapEditor.jsx";
@@ -53,6 +53,8 @@ const CreateProduct = () => {
     const [productAttributes, setProductAttributes] = useState({
         colors: [],
         sizes: [],
+        materials: [],
+        print_types: [],
         extras: []
     });
 
@@ -75,6 +77,8 @@ const CreateProduct = () => {
         setProductAttributes({
             colors: [],
             sizes: [],
+            materials: [],
+            print_types: [],
             extras: []
         });
     }
@@ -288,13 +292,7 @@ const CreateProduct = () => {
                                                 </div>
 
                                                 {/* Product Attributes Component */}
-                                                <div className="mb-3">
-                                                    <ProductAttributes
-                                                        productId={params.id}
-                                                        initialData={productAttributes}
-                                                        onChange={handleAttributesChange}
-                                                    />
-                                                </div>
+
                                             </div>
                                             {/*End first Section*/}
                                             {/* start Section tow*/}
@@ -352,6 +350,17 @@ const CreateProduct = () => {
                                                 </div>
                                             </div>
                                             {/* END start Section tow*/}
+                                        </div>
+                                        <div className={'col-12'}>
+                                            <div className="mb-3">
+                                                <ProductAttributes
+                                                    productId={params.id}
+                                                    initialData={productAttributes}
+                                                    onChange={handleAttributesChange}
+                                                    includeMaterials={true}
+                                                    includePrintTypes={true}
+                                                />
+                                            </div>
                                         </div>
                                     </div>}
                                 </div>

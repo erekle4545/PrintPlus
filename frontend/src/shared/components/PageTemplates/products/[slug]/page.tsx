@@ -31,10 +31,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         return getAllImages(product.info?.covers);
     }, [product.info?.covers]);
 
-
     const sizes = useMemo(() => product.sizes || [], [product.sizes]);
     const colors = useMemo(() => product.colors || [], [product.colors]);
     const materials = useMemo(() => product.materials || [], [product.materials]);
+    const printTypes = useMemo(() => product.print_types || [], [product.print_types]);
     const extras = useMemo(() => product.extras || [], [product.extras]);
 
     // State
@@ -47,39 +47,68 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     const [selectedMaterial, setSelectedMaterial] = useState<number | null>(
         materials.length > 0 ? materials[0].id : null
     );
+    const [selectedPrintTypes, setSelectedPrintTypes] = useState<number[]>(
+        printTypes.length > 0 ? [printTypes[0].id] : []
+    );
     const [selectedExtras, setSelectedExtras] = useState<number[]>([]);
     const [qty, setQty] = useState<number>(1);
 
-    // ფასის გამოთვლა
+    // ფასის გამოთვლა - NaN პრობლემის გამოსწორებით
     const totalPrice = useMemo(() => {
-        let price = product.sale_price > 0 ? product.sale_price : product.base_price;
+        let price = 0;
+
+        // Base price
+        const basePrice = Number(product.sale_price) > 0 ? Number(product.sale_price) : Number(product.base_price);
+        price = isNaN(basePrice) ? 0 : basePrice;
 
         // Size-ის ფასი
         if (selectedSize) {
             const size = sizes.find(s => s.id === selectedSize);
-            if (size?.base_price) price += size.base_price;
+            if (size?.base_price) {
+                const sizePrice = Number(size.base_price);
+                price += isNaN(sizePrice) ? 0 : sizePrice;
+            }
         }
 
         // Color-ის ფასი
         if (selectedColor) {
             const color = colors.find(c => c.id === selectedColor);
-            if (color?.base_price) price += color.base_price;
+            if (color?.base_price) {
+                const colorPrice = Number(color.base_price);
+                price += isNaN(colorPrice) ? 0 : colorPrice;
+            }
         }
 
         // Material-ის ფასი
         if (selectedMaterial) {
             const material = materials.find(m => m.id === selectedMaterial);
-            if (material?.base_price) price += material.base_price;
+            if (material?.base_price) {
+                const materialPrice = Number(material.base_price);
+                price += isNaN(materialPrice) ? 0 : materialPrice;
+            }
         }
+
+        // Print Types-ის ფასები
+        selectedPrintTypes.forEach(printTypeId => {
+            const printType = printTypes.find(pt => pt.id === printTypeId);
+            if (printType?.base_price) {
+                const printTypePrice = Number(printType.base_price);
+                price += isNaN(printTypePrice) ? 0 : printTypePrice;
+            }
+        });
 
         // Extras-ის ფასები
         selectedExtras.forEach(extraId => {
             const extra = extras.find(e => e.id === extraId);
-            if (extra?.base_price) price += extra.base_price;
+            if (extra?.base_price) {
+                const extraPrice = Number(extra.base_price);
+                price += isNaN(extraPrice) ? 0 : extraPrice;
+            }
         });
 
-        return price * qty;
-    }, [product, selectedSize, selectedColor, selectedMaterial, selectedExtras, qty, sizes, colors, materials, extras]);
+        const finalPrice = price * qty;
+        return isNaN(finalPrice) ? 0 : finalPrice;
+    }, [product, selectedSize, selectedColor, selectedMaterial, selectedPrintTypes, selectedExtras, qty, sizes, colors, materials, printTypes, extras]);
 
     // Extras toggle
     const toggleExtra = (extraId: number) => {
@@ -90,10 +119,19 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         );
     };
 
+    // Print Types toggle
+    const togglePrintType = (printTypeId: number) => {
+        setSelectedPrintTypes(prev =>
+            prev.includes(printTypeId)
+                ? prev.filter(id => id !== printTypeId)
+                : [...prev, printTypeId]
+        );
+    };
+
     /**
      * category slug
      */
-   const  categoryUrl = generateSlug(product?.category?.info?.slug,product?.category?.id,'c');
+    const categoryUrl = generateSlug(product?.category?.info?.slug, product?.category?.id, 'c');
 
     return (
         <>
@@ -225,11 +263,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                                                 checked={selectedColor === color.id}
                                                 onChange={() => setSelectedColor(color.id)}
                                             />
-                                            {/*{color.base_price > 0 && (*/}
-                                            {/*    <span className="small text-muted d-block text-center">*/}
-                                            {/*        +{color.base_price}₾*/}
-                                            {/*    </span>*/}
-                                            {/*)}*/}
                                         </label>
                                     ))}
                                 </div>
@@ -265,6 +298,24 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                                                 label={`${material.name} ${material.base_price > 0 ? `+${material.base_price}₾` : ''}`}
                                                 checked={selectedMaterial === material.id}
                                                 onChange={() => setSelectedMaterial(material.id)}
+                                            />
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Print Types */}
+                        {printTypes.length > 0 && (
+                            <div className="mb-3">
+                                <div className="fw-semibold mb-2">აირჩიეთ ბეჭდვის მეთოდი</div>
+                                <div className="d-grid gap-2">
+                                    {printTypes.map((printType) => (
+                                        <label key={printType.id} className={'fw-bolder'}>
+                                            <TealCheckbox
+                                                label={`${printType.name} ${printType.base_price > 0 ? `+${printType.base_price}₾` : ''}`}
+                                                checked={selectedPrintTypes.includes(printType.id)}
+                                                onChange={() => togglePrintType(printType.id)}
                                             />
                                         </label>
                                     ))}
@@ -308,7 +359,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         <div className="d-flex align-items-center justify-content-between mb-3">
                             <div>
                                 <div className="h5 m-0 fw-semibold title_font">
-                                    სრული ფასი <span style={{ color: '#52BDBD' }}>{totalPrice}₾</span>
+                                    სრული ფასი <span style={{ color: '#52BDBD' }}>{totalPrice.toFixed(2)}₾</span>
                                 </div>
                             </div>
                         </div>
@@ -325,7 +376,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </div>
 
                 {/* Related Products */}
-                <RelatedProducts categoryId={product.category_id}   />
+                <RelatedProducts categoryId={product.category_id} />
             </div>
         </>
     );

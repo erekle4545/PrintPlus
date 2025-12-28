@@ -154,7 +154,9 @@ const SidebarNav = () => {
                       <ul id="options" className="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
                           <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.colors}><span>{translate('colors')}</span></NavLink></li>
                           <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.sizes}><span>{translate('sizes')}</span></NavLink>  </li>
+                          <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.materials}><span>{translate('materials')}</span></NavLink>  </li>
                           <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.extras}><span>{translate('extras')}</span></NavLink>  </li>
+                          <li className="sidebar-item"><NavLink className="sidebar-link" to={RouteLinks.printType}><span>{translate('printType')}</span></NavLink>  </li>
 
                       </ul>
                   </li>

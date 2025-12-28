@@ -1,3 +1,4 @@
+import {PageCover} from "@/types/page/page";
 
 export interface Product {
     id: number;
@@ -10,7 +11,8 @@ export interface Product {
     extras:Extras[],
     sizes:Sizes[],
     colors:Colors[],
-    materials:Materials[]
+    materials:Materials[],
+    print_types:PrintTypes[]
 
 }
 
@@ -43,12 +45,9 @@ export interface Sizes{
 export interface Materials{
     id:number,
     name:string,
-    width:number,
-    height:number,
-    value:string,
-    base_price:number
+    base_price:number,
+    covers:PageCover[]
 }
-
 
 export interface Colors{
     id:number,
@@ -67,4 +66,9 @@ export interface Extras{
     base_price:number
 }
 
+export interface PrintTypes{
+    id:number,
+    name:string,
+    base_price:number
+}
 

@@ -24,9 +24,9 @@ import {FileEndpoint} from "@/common/envExtetions.js";
 
 
 const PageList = () => {
-    let {state} = useContext(Context);
-    let http = useHttp();
-    let navigate = useNavigate();
+    const {state} = useContext(Context);
+    const http = useHttp();
+    const navigate = useNavigate();
     const [data,setData] = useState([])
     const [selectedConfigOptionTemplate, setSelectedConfigOptionTemplate] = useState(null);
     const [selectedConfigOptionStatus, setSelectedConfigOptionStatus] = useState(null);

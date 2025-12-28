@@ -125,7 +125,7 @@ const CreatePage = () => {
                         setPageStatus(false)
                     }
 
-                    if (response.data.data.show_home_page == 1) {
+                    if (parseInt(response.data.data?.show_home_page) === 1) {
                         setShowHomePage(true)
                     } else {
                         setShowHomePage(false)

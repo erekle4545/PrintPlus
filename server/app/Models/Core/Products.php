@@ -87,6 +87,15 @@ class Products extends Model
 
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function printTypes()
+    {
+        return $this->belongsToMany(PrintType::class, 'product_print_type', 'product_id', 'print_type_id')
+            ->withPivot('price', 'is_default')
+            ->withTimestamps();
+    }
+    /**
      * Page may have multiple covers
      */
     public function covers()

@@ -111,6 +111,26 @@ class ProductsController extends Controller
                 }
             }
 
+            // Attach Materials
+            if ($attributes && !empty($attributes['materials'])) {
+                foreach ($attributes['materials'] as $material) {
+                    $category->materials()->attach($material['id'], [
+                        'price' => $material['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ]);
+                }
+            }
+
+            // Attach Print Types
+            if ($attributes && !empty($attributes['print_types'])) {
+                foreach ($attributes['print_types'] as $printType) {
+                    $category->printTypes()->attach($printType['id'], [
+                        'price' => $printType['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ]);
+                }
+            }
+
             // Attach Extras
             if ($attributes && !empty($attributes['extras'])) {
                 foreach ($attributes['extras'] as $extra) {
@@ -156,12 +176,14 @@ class ProductsController extends Controller
                 'info.covers',
                 'colors',
                 'sizes',
+                'materials.covers',
+                'printTypes',
                 'extras'
             ])->findOrFail($id);
 
             //if we can not find Category with id and language, select very first Category ignoring Language
             if (is_null($Products->info)) {
-                $Products = $model::with(['info','info.covers', 'colors', 'sizes', 'extras'])->findOrFail($id);
+                $Products = $model::with(['info','info.covers', 'colors', 'sizes', 'printTypes', 'materials.covers', 'extras'])->findOrFail($id);
             }
 
             // Format attributes for frontend
@@ -185,6 +207,23 @@ class ProductsController extends Controller
                         'height' => $size->height,
                         'base_price' => $size->base_price,
                         'custom_price' => $size->pivot->price
+                    ];
+                })->toArray(),
+                'materials' => $Products->materials->map(function($material) {
+                    return [
+                        'id' => $material->id,
+                        'name' => $material->name,
+                        'base_price' => $material->base_price,
+                        'custom_price' => $material->pivot->price,
+                        'covers' => $material->covers
+                    ];
+                })->toArray(),
+                'print_types' => $Products->printTypes->map(function($printType) {
+                    return [
+                        'id' => $printType->id,
+                        'name' => $printType->name,
+                        'base_price' => $printType->base_price,
+                        'custom_price' => $printType->pivot->price
                     ];
                 })->toArray(),
                 'extras' => $Products->extras->map(function($extra) {
@@ -299,6 +338,30 @@ class ProductsController extends Controller
             }
             $category->sizes()->sync($sizeSync);
 
+            // Sync Materials
+            $materialSync = [];
+            if ($attributes && !empty($attributes['materials'])) {
+                foreach ($attributes['materials'] as $material) {
+                    $materialSync[$material['id']] = [
+                        'price' => $material['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ];
+                }
+            }
+            $category->materials()->sync($materialSync);
+
+            // Sync Print Types
+            $printTypeSync = [];
+            if ($attributes && !empty($attributes['print_types'])) {
+                foreach ($attributes['print_types'] as $printType) {
+                    $printTypeSync[$printType['id']] = [
+                        'price' => $printType['custom_price'] ?? 0,
+                        'is_default' => 0
+                    ];
+                }
+            }
+            $category->printTypes()->sync($printTypeSync);
+
             // Sync Extras
             $extraSync = [];
             if ($attributes && !empty($attributes['extras'])) {
@@ -337,7 +400,7 @@ class ProductsController extends Controller
             //  Menu::where(['category_id' => $id])->delete();
             ProductsLanguage::where(['products_id' => $id])->delete();
             Products::where('id', $id)->delete();
-            // Pivot tables წაიშლება cascade-ით
+            // Pivot tables წაიშლება cascade-ით (including materials and print_types)
         }
         return response(['result' => $category], 200)->header('Content-Type', 'application/json');
 
