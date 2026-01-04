@@ -1,4 +1,3 @@
-// shared/components/PageTemplates/brands/page.tsx
 import Image from "next/image";
 import Cover from "@/shared/components/theme/header/cover/cover";
 import {HeaderTitle} from "@/shared/components/theme/page/components/headerTitle";
@@ -20,7 +19,7 @@ interface BrandPageProps {
 export default function BrandsPage({page, products}: BrandPageProps) {
     // url
     const url = generateSlug(page.info?.slug,page.id,'c');
-
+    console.log(products)
     return (
         <>
             <Cover/>

@@ -39,14 +39,16 @@ export interface Sizes{
     width:number,
     height:number,
     value:string,
-    base_price:number
+    base_price:number,
+    pivot:any
 }
 
 export interface Materials{
     id:number,
     name:string,
     base_price:number,
-    covers:PageCover[]
+    covers:PageCover[],
+    pivot:any
 }
 
 export interface Colors{
@@ -54,7 +56,8 @@ export interface Colors{
     name:string,
     value:string,
     colors:object,
-    base_price:number
+    base_price:number,
+    pivot:any
 }
 
 
@@ -63,12 +66,14 @@ export interface Extras{
     name:string,
     value:string,
     colors:object,
-    base_price:number
+    base_price:number,
+    pivot:any
 }
 
 export interface PrintTypes{
     id:number,
     name:string,
-    base_price:number
+    base_price:number,
+    pivot:any
 }
 

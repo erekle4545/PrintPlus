@@ -2,8 +2,7 @@
 'use client';
 
 import { MenuItem } from '@/types/menu/menu';
-import Link from 'next/link';
-import { useState } from 'react';
+ import { useState } from 'react';
 import MenuArrow from '@/shared/assets/icons/menu/menuArrow.svg';
 import LocalizedLink from '@/shared/components/LocalizedLink/LocalizedLink';
 import {generateSlug} from "@/shared/utils/mix";

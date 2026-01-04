@@ -4,9 +4,9 @@
 import { PAGE_TEMPLATES } from '@/types/page/page';
 import { Product } from "@/types/product/productTypes";
 
-import TextPage from "@/shared/components/PageTemplates/text/[slug]/page";
-import CalculatePage from "@/shared/components/PageTemplates/calculate/[slug]/page";
-import BrandPage from "@/shared/components/PageTemplates/brands/page";
+// import TextPage from "@/shared/components/PageTemplates/text/[slug]/page";
+// import CalculatePage from "@/shared/components/PageTemplates/calculate/[slug]/page";
+// import BrandPage from "@/shared/components/PageTemplates/brands/page";
 import NotFound from "@/app/[lang]/not-found";
 import BrandPageDetails from "@/shared/components/PageTemplates/brands/[slug]/page";
 import ProductDetails from "@/shared/components/PageTemplates/products/[slug]/page";

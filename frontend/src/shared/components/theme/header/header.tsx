@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname, useParams } from "next/navigation";
 import CartIcon from '@/shared/assets/icons/menu/cartMenuIcon.svg';
 import UserIcon from '@/shared/assets/icons/menu/userIcon.svg';
@@ -20,6 +19,7 @@ import AuthDropdownWrapper from "@/shared/components/theme/header/auth/AuthDropd
 import LocalizedLink from '@/shared/components/LocalizedLink/LocalizedLink';
 import { useLanguage } from "@/context/LanguageContext";
 import { useMenu } from "../../../hooks/useMenu";
+import DesktopMenuSkeleton from "@/shared/components/theme/header/menu/loader/DesktopMenuSkeleton";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -67,9 +67,10 @@ export default function Header() {
                         {/*Desktop Menu*/}
                         {loading ? (
                             <div className="d-none d-xl-flex align-items-center">
-                                <span className="spinner-border spinner-border-sm text-white" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </span>
+                                {/*<span className="spinner-border spinner-border-sm text-white" role="status">*/}
+                                {/*    <span className="visually-hidden">Loading...</span>*/}
+                                {/*</span>*/}
+                                <DesktopMenuSkeleton/>
                             </div>
                         ) : error ? (
                             <div className="d-none d-xl-block text-white-50 small">{error}</div>

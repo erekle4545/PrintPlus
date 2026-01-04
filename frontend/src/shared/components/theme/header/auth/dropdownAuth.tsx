@@ -60,6 +60,7 @@ const DropdownAuth: React.FC = () => {
         const result = await register(
             registerName,
             registerEmail,
+            registerPhone,
             registerPassword,
             registerPasswordConfirmation
         );

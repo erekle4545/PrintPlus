@@ -23,7 +23,7 @@ export interface AuthContextType {
     user: User | null;
     loading: boolean;
     login: (email: string, password: string) => Promise<{ success: boolean; errors?: any }>;
-    register: (name: string, email: string, password: string, password_confirmation: string) => Promise<{ success: boolean; errors?: any }>;
+    register: (name: string, email: string,phone: string, password: string, password_confirmation: string) => Promise<{ success: boolean; errors?: any }>;
     socialLogin: (provider: 'facebook' | 'google') => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;

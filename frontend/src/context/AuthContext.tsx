@@ -97,6 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const register = async (
         name: string,
         email: string,
+        phone: string,
         password: string,
         password_confirmation: string
     ): Promise<{ success: boolean; errors?: any }> => {
@@ -104,7 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             const response = await registerHttp.sendRequest({
                 url: '/register',
                 method: 'POST',
-                data: { name, email, password, password_confirmation },
+                data: { name, email, phone, password, password_confirmation },
             });
 
             if (response && response.token) {

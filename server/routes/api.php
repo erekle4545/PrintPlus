@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'v1','middleware'=>'auth:sanctum'],function () {
+Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']],function () {
     // User
         Route::get('/user', function (Request $request) {
             return $request->user();

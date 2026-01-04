@@ -50,7 +50,7 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
             return <BrandPage page={page} products={products} />;
 
         case PAGE_TEMPLATES.CALCULATE.id: // 11
-            return <CalculatePage  />;
+            return <CalculatePage page={page} products={products} />;
 
         case PAGE_TEMPLATES.PRODUCTS.id: // 12
 

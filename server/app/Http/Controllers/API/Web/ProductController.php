@@ -21,17 +21,98 @@ class ProductController extends Controller
             'category_id' => 'required|integer|exists:categories,id',
             'language_id' => 'required|integer|exists:languages,id',
         ],[
-            'category_id'=>'კატეგორიის არჩევა აუცილებელია'
+            'category_id' => 'კატეგორიის არჩევა აუცილებელია'
         ]);
 
-        $product = Products::query()
-            ->where('category_id',$data['category_id'])
-            ->with('info',function($query) use ($request){
-            $query->where('language_id',$request->language_id);
-            $query->with('covers');
-        })->get();
+        $products = Products::query()
+            ->where('category_id', $data['category_id'])
+            ->with([
+                'info' => function($q) use ($data) {
+                    $q->where('language_id', $data['language_id'])
+                        ->with('covers');
+                },
+                'colors',
+                'sizes',
+                'extras',
+                'materials.covers',
+                'printTypes',
+                'category.page:id,template_id',
+                'category.info' => function($q) use ($data) {
+                    $q->where('language_id', $data['language_id'])
+                        ->select('id', 'category_id', 'slug', 'title');
+                }
+            ])
+            ->get()
+            ->map(function ($product) {
 
-        return response()->json($product);
+                $info = $product->info;
+
+                // თუ გინდა "ბრტყლად" გადატანა:
+                $product->title = $info?->title;
+                $product->description = $info?->description;
+                $product->slug = $info?->slug;
+                $product->covers = $info?->covers ?? collect([]);
+
+                // თუ გინდა info-ც დარჩეს:
+                // არ შლი info-ს
+
+                // Colors
+                $product->colors = $product->colors->map(fn ($color) => [
+                    'id' => $color->id,
+                    'name' => $color->name,
+                    'value' => $color->value,
+                    'type' => $color->type,
+                    'base_price' => $color->base_price,
+                    'price' => $color->pivot->price ?? $color->base_price
+                ]);
+
+                // Sizes
+                $product->sizes = $product->sizes->map(fn ($size) => [
+                    'id' => $size->id,
+                    'info' => [
+                        'title' => $size->name ?? '',
+                        'description' => $size->description ?? '',
+                    ],
+                    'value' => $size->value,
+                    'width' => $size->width,
+                    'height' => $size->height,
+                    'base_price' => $size->base_price,
+                    'price' => $size->pivot->price ?? $size->base_price
+                ]);
+
+                // Materials
+                $product->materials = $product->materials->map(fn ($material) => [
+                    'id' => $material->id,
+                    'name' => $material->name,
+                    'base_price' => $material->base_price,
+                    'price' => $material->pivot->price ?? $material->base_price,
+                    'covers' => $material->covers
+                ]);
+
+                // Print Types
+                $product->print_types = $product->printTypes->map(fn ($printType) => [
+                    'id' => $printType->id,
+                    'name' => $printType->name,
+                    'base_price' => $printType->base_price,
+                    'price' => $printType->pivot->price ?? $printType->base_price
+                ]);
+                unset($product->printTypes);
+
+                // Extras
+                $product->extras = $product->extras->map(fn ($extra) => [
+                    'id' => $extra->id,
+                    'name' => $extra->name,
+                    'base_price' => $extra->base_price,
+                    'price' => $extra->pivot->price ?? $extra->base_price
+                ]);
+
+                return $product;
+            });
+
+        return response()->json($products);
+
+
+        return response()->json($products);
     }
 
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useLanguage, Language } from "@/context/LanguageContext";
+import LangSwitcherSkeleton from "@/shared/components/theme/header/language/loader/LangSwitcherSkeleton";
 
 const LangSwitcher: React.FC = () => {
     const [open, setOpen] = useState(false);
@@ -41,9 +42,10 @@ const LangSwitcher: React.FC = () => {
     if (loading) {
         return (
             <div className="me-xl-4 me-md-3 d-none d-md-block">
-                <div className="spinner-border spinner-border-sm" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
+                {/*<div className="spinner-border spinner-border-sm" role="status">*/}
+                {/*    <span className="visually-hidden">Loading...</span>*/}
+                {/*</div>*/}
+                <LangSwitcherSkeleton/>
             </div>
         );
     }
