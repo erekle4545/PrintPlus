@@ -39,6 +39,8 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
         // ,templateId === PAGE_TEMPLATES.SERVICES.id
     );
 
+
+
     switch (templateId) {
         case PAGE_TEMPLATES.TEXT.id: // 1
             return <TextPage page={page} />;

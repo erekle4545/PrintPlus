@@ -40,3 +40,5 @@ export function LanguageArr(lang: string): number {
 
     return 1; // default ka
 }
+
+

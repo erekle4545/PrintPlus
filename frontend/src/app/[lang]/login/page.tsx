@@ -1,19 +1,23 @@
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {AUTH_SUCCESS_ROUTES} from "@/shared/utils/mix";
+import { AUTH_SUCCESS_ROUTES } from "@/shared/utils/mix";
 import Button from "@/shared/components/ui/button/Button";
 import UserIcon from "@/shared/assets/icons/menu/user.svg";
+import GoogleIcon from "@/shared/assets/icons/auth/google_page.svg";
+import LocalizedLink from "@/shared/components/LocalizedLink/LocalizedLink";
+import {useLanguage} from "@/context/LanguageContext";
+import CustomLoader from "@/shared/components/ui/loader/customLoader";
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
     const [generalError, setGeneralError] = useState<string>('');
-
+    const {t} = useLanguage();
     const { login, socialLogin, user, loading } = useAuth();
 
     const router = useRouter();
@@ -51,13 +55,7 @@ export default function Login() {
 
     // Show loading while checking auth
     if (loading) {
-        return (
-            <div className="container text-center mt-5 mb-5">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">იტვირთება...</span>
-                </div>
-            </div>
-        );
+        return (<CustomLoader/>);
     }
 
     // Don't show login form if user is already logged in
@@ -67,104 +65,102 @@ export default function Login() {
 
     return (
         <div className="container">
-            <div className="row justify-content-center mt-5 mb-5">
-                <div className="col-md-6">
-                    <div className="card shadow">
-                        <div className="card-body p-4">
-                            <h2 className="card-title text-center title_font mb-4">
-                                შესვლა
-                            </h2>
+            <div className="row justify-content-center ">
+                <div className="col-md-4 col-sm-12 m-5 desktop-only-border rounded-4">
+                    <div className="auth-card position-relative text_font  ">
+                        {/* Top pointer (same as DropdownAuth design) */}
+                        <div className="auth-title text-center title_font_bold mt-4">{t('login','login')}</div>
+                        {generalError && (
+                            <div className="alert alert-danger text_font" role="alert">
+                                {generalError}
+                            </div>
+                        )}
 
-                            {generalError && (
-                                <div className="alert alert-danger text_font" role="alert">
-                                    {generalError}
+                        {error && (
+                            <div className="alert alert-danger text_font" role="alert">
+                               {t('auth_filed','auth_filed')}
+                            </div>
+                        )}
+
+                        <form className="auth-form p-xl-4" autoComplete="on" onSubmit={handleSubmit}>
+                            {/* Email error (top small alert like DropdownAuth) */}
+                            {errors.email && (
+                                <div className="alert alert-danger alert-sm py-1 px-2 mb-2 small">
+                                    {errors.email[0]}
                                 </div>
                             )}
 
-                            {error && (
-                                <div className="alert alert-danger text_font" role="alert">
-                                    ავტორიზაცია ვერ მოხერხდა
-                                </div>
+                            <div className="form-group has-right-icon mb-2">
+                                <input
+                                    type="email"
+                                    className={`form-control form-control-md ${errors.email ? 'is-invalid' : ''}`}
+                                    placeholder={t('email','email')}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    inputMode="email"
+                                />
+                                <span className="right-icon bi bi-envelope"></span>
+                            </div>
+
+                            {/* Password error (kept the same behavior; just styled) */}
+                            <div className="form-group has-right-icon mb-2">
+                                <input
+                                    type="password"
+                                    className={`form-control form-control-md ${errors.password ? 'is-invalid' : ''}`}
+                                    placeholder={t('password','password')}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                                <span className="right-icon bi bi-lock"></span>
+                            </div>
+
+                            {errors.password && (
+                                <div className="text-danger small mb-2">{errors.password[0]}</div>
                             )}
 
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label htmlFor="email" className="form-label text_font">
-                                        ელ. ფოსტა
-                                    </label>
-                                    <input
-                                        type="email"
-                                        className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                                        id="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                    />
-                                    {errors.email && (
-                                        <div className="invalid-feedback text_font">
-                                            {errors.email[0]}
-                                        </div>
-                                    )}
-                                </div>
+                            <Button
+                                type="submit"
+                                className={'text-center title_font fw-bolder d-flex justify-content-center'}
+                                variant={'my-btn-blue'}
+                                startIcon={<UserIcon />}
+                                style={{ width: '100%' }}
+                            >
+                                {t('login','login')}
+                            </Button>
 
-                                <div className="mb-3">
-                                    <label htmlFor="password" className="form-label text_font">
-                                        პაროლი
-                                    </label>
-                                    <input
-                                        type="password"
-                                        className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                                        id="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                    />
-                                    {errors.password && (
-                                        <div className="invalid-feedback text_font">
-                                            {errors.password[0]}
-                                        </div>
-                                    )}
-                                </div>
-                                <Button
-                                    type="submit"
-                                    className={'text-center  title_font fw-bolder d-flex justify-content-center'}
-                                    variant={'my-btn-blue'}
-                                    startIcon={<UserIcon />}
+                            <div className="auth-or my-2">{t('or','or')}</div>
+
+                            <div className="d-flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => handleSocialLogin('google')}
+                                    className="btn btn-outline-primary flex-fill google-button rounded-pill d-flex align-items-center justify-content-center gap-2"
                                 >
-                                    შესვლა
-                                </Button>
-                            </form>
+                                    <GoogleIcon /> Google
+                                </button>
 
-                            <div className="text-center mb-3">
-                                <p className="text_font mb-3">
-                                    ან შედით სოციალური ქსელით
-                                </p>
-                                <div className="d-flex gap-2 justify-content-center">
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSocialLogin('google')}
-                                        className="btn btn-danger text_font"
-                                    >
-                                        <i className="bi bi-google me-2"></i>
-                                        Google
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSocialLogin('facebook')}
-                                        className="btn btn-primary text_font"
-                                    >
-                                        <i className="bi bi-facebook me-2"></i>
-                                        Facebook
-                                    </button>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleSocialLogin('facebook')}
+                                    className="btn btn-primary flex-fill rounded-pill d-flex align-items-center justify-content-center gap-2"
+                                >
+                                    <span className="bi bi-facebook"></span> Facebook
+                                </button>
                             </div>
 
-                            <div className="text-center">
-                                <Link href="/frontend/src/app/register" className="text_font text-decoration-none">
-                                    არ გაქვთ ანგარიში? რეგისტრაცია
-                                </Link>
+                            <div className="text-center mt-3">
+                                <LocalizedLink
+                                    className="text_font text-decoration-none"
+                                    href={'/register'}>
+
+                                    {t('dont.have.account.register','dont.have.account.register')}
+                                </LocalizedLink>
+
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                 </div>
             </div>

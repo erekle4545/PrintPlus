@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useEffect} from "react";
 import styles from "./Profile.module.css";
 import UserIcon from "@/shared/assets/icons/user/userProfileIcon.svg";
 import MyDetailsIcon from "@/shared/assets/icons/user/my_details.svg";
@@ -7,16 +7,55 @@ import OrderHistoryIcon from "@/shared/assets/icons/user/order-history.svg";
 import KeyIcon from "@/shared/assets/icons/user/key.svg";
 import LogOutIcon from "@/shared/assets/icons/user/logout.svg";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import Cover from "@/shared/components/theme/header/cover/cover";
 import {HeaderTitle} from "@/shared/components/theme/page/components/headerTitle";
 import {useLanguage} from "@/context/LanguageContext";
 import {useAuth} from "@/context/AuthContext";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
+
     const pathname = usePathname();
     const {t} = useLanguage();
-    const {user, logout} = useAuth();
+    const {user,loading, logout, checkAuth} = useAuth();
+
+    // check auth
+    useEffect(() => {
+        // Re-check auth once when the page mounts
+        checkAuth();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
+
+    useEffect(() => {
+        // Redirect if user is not authenticated
+        if (!loading && !user) {
+            router.push("/login");
+        }
+    }, [loading, user, router]);
+
+    if (loading) {
+        return (
+            <>
+                <Cover />
+                <div className="container text-center mt-5 mb-5">
+                    <div className="spinner-border text-dark" role="status">
+                        <span className="visually-hidden">{t('loading','loading')}</span>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    if (!user) {
+        router.push("/login");
+        // While redirecting
+        return null;
+    }
+
+    // if user
 
     const menu = [
         {

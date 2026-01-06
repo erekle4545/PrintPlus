@@ -1,29 +1,123 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Profile.module.css";
-import { HeaderTitle } from "@/shared/components/theme/page/components/headerTitle";
 import TextField from "@/shared/components/ui/textfield/Textfield";
 import { Alert } from "@/shared/components/ui/alert/alert";
-import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
 import Button from "@/shared/components/ui/button/Button";
+import { useProfile } from "@/shared/hooks/profile/useProfile";
+
+// Skeleton Loader Component
+const SkeletonLoader = () => {
+    return (
+        <div className={styles.profileSkeletonContainer}>
+            {/* Skeleton Field 1 */}
+            <div className={styles.profileSkeletonField}>
+                <div className={styles.profileSkeletonLabel} />
+                <div className={styles.profileSkeletonInput} />
+            </div>
+
+            {/* Skeleton Field 2 */}
+            <div className={styles.profileSkeletonField}>
+                <div className={styles.profileSkeletonLabel} />
+                <div className={styles.profileSkeletonInput} />
+            </div>
+
+            {/* Skeleton Field 3 */}
+            <div className={styles.profileSkeletonField}>
+                <div className={styles.profileSkeletonLabel} />
+                <div className={styles.profileSkeletonInput} />
+            </div>
+
+            {/* Skeleton Button */}
+            <div className={styles.profileSkeletonButtonWrapper}>
+                <div className={styles.profileSkeletonButton} />
+            </div>
+        </div>
+    );
+};
 
 export default function ProfileForm() {
-    const [cityOpen, setCityOpen] = useState(false);
-    const [city, setCity] = useState("თბილისი");
+    const { profile, loading, error, updateProfile } = useProfile();
 
-    const cityOptions = ["თბილისი", "ბათუმი", "ქუთაისი", "ზუგდიდი"];
+    const [formData, setFormData] = useState({
+        name: "",
+        phone: "",
+        email: ""
+    });
+    const [showAlert, setShowAlert] = useState(false);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+
+    // პროფილის მონაცემების ჩატვირთვა
+    useEffect(() => {
+        if (profile) {
+            setFormData({
+                name: profile.name || "",
+                phone: profile.phone || "",
+                email: profile.email || ""
+            });
+        }
+    }, [profile]);
+
+    // ფორმის ცვლილებების დამუშავება
+    const handleChange = (field: string, value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+        setShowAlert(false);
+        setUpdateSuccess(false);
+    };
+
+    // ფორმის გაგზავნა
+    const handleSubmit = async () => {
+        // ვალიდაცია
+        if (!formData.name.trim() || !formData.phone.trim() || !formData.email.trim()) {
+            setShowAlert(true);
+            return;
+        }
+
+        try {
+            await updateProfile(formData);
+            setUpdateSuccess(true);
+            setShowAlert(false);
+        } catch (err) {
+            setShowAlert(true);
+        }
+    };
+
+    // თუ იტვირთება და პროფილი არ არის, აჩვენე Skeleton
+    if (loading && !profile) {
+        return (
+            <div data-aos="fade-up">
+                <SkeletonLoader />
+            </div>
+        );
+    }
 
     return (
         <div data-aos="fade-up">
+            {/* Error Alert */}
+            {(showAlert || error) && (
+                <div className={styles.errorBox}>
+                    <Alert
+                        className={"w-100"}
+                        message={error || "გთხოვთ შეავსოთ ყველა ველი"}
+                        type="error"
+                    />
+                </div>
+            )}
 
-            {/* Alert */}
-            <div className={styles.errorBox}>
-                <Alert
-                    className={"w-100"}
-                    message="ჩვენი სერვისით სარგებლობისთვის, გთხოვთ შეავსოთ ყველა ველი"
-                />
-            </div>
+            {/* Success Alert */}
+            {updateSuccess && (
+                <div className={styles.successBox}>
+                    <Alert
+                        className={"w-100"}
+                        message="მონაცემები წარმატებით განახლდა"
+                        type="success"
+                    />
+                </div>
+            )}
 
             {/* Form */}
             <div className={styles.formWrapper}>
@@ -31,72 +125,26 @@ export default function ProfileForm() {
                     label="სახელი და გვარი"
                     placeholder="თქვენი სახელი და გვარი"
                     className="text_font"
+                    value={formData.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                    disabled={loading}
                 />
                 <TextField
                     label="მობილური"
                     placeholder="მიუთითეთ მობილური ტელეფონი"
                     className="text_font"
+                    value={formData.phone}
+                    onChange={(e) => handleChange("phone", e.target.value)}
+                    disabled={loading}
                 />
                 <TextField
                     label="ელ-ფოსტა"
                     placeholder="მიუთითეთ ელ-ფოსტა"
                     className="text_font"
+                    value={formData.email}
+                    onChange={(e) => handleChange("email", e.target.value)}
+                    disabled={loading}
                 />
-                <TextField
-                    label="პაროლი"
-                    placeholder="********"
-                    type="password"
-                    className="text_font"
-                />
-                <TextField
-                    label="გაიმეორეთ პაროლი"
-                    placeholder="********"
-                    type="password"
-                    className="text_font"
-                />
-
-                {/* Dropdown */}
-                <div className={styles.dropdown}>
-                    <button
-                        className={styles.dropdownToggle}
-                        onClick={() => setCityOpen(!cityOpen)}
-                        type="button"
-                    >
-                        {city} <span className={styles.dropdownArrow}>▾</span>
-                    </button>
-                    {cityOpen && (
-                        <ul className={styles.dropdownMenu}>
-                            {cityOptions.map((option) => (
-                                <li
-                                    key={option}
-                                    className={styles.dropdownItem}
-                                    onClick={() => {
-                                        setCity(option);
-                                        setCityOpen(false);
-                                    }}
-                                >
-                                    {option}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-
-                {/* Checkbox */}
-                <div className={styles.checkboxWrapper}>
-                    <label
-                        htmlFor="terms"
-                        className="d-flex gap-1 align-items-center"
-                    >
-                        <TealCheckbox
-                            className="text_font"
-                            label={"ვეთანხმები პირობებს და პოლიტიკას"}
-                        />
-                        <a href="#" className="text_font">
-                            (წესები და პირობები)
-                        </a>
-                    </label>
-                </div>
 
                 {/* Button */}
                 <div className="text-center">
@@ -107,8 +155,10 @@ export default function ProfileForm() {
                         className={
                             "justify-content-center title_font fw-bolder w-100"
                         }
+                        onClick={handleSubmit}
+                        disabled={loading}
                     >
-                        შენახვა
+                        {loading ? "იტვირთება..." : "შენახვა"}
                     </Button>
                 </div>
             </div>

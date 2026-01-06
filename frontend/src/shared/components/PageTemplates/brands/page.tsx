@@ -19,8 +19,8 @@ interface BrandPageProps {
 export default function BrandsPage({page, products}: BrandPageProps) {
     // url
     const url = generateSlug(page.info?.slug,page.id,'c');
-    console.log(products)
-    return (
+
+     return (
         <>
             <Cover/>
             <div className="container py-4">

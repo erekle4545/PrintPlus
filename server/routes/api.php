@@ -194,5 +194,8 @@ Route::prefix('web')->group(function () {
 Route::prefix('web')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [\App\Http\Controllers\API\Web\AuthController::class, 'logout']);
     Route::get('/user', [\App\Http\Controllers\API\Web\AuthController::class, 'user']);
+    // update profile
+    Route::put('/profile', [\App\Http\Controllers\API\Web\AuthController::class, 'updateProfile']);
+    Route::put('/change-password', [\App\Http\Controllers\API\Web\AuthController::class, 'changePassword']);
     Route::post('/refresh', [\App\Http\Controllers\API\Web\AuthController::class, 'refresh']);
 });

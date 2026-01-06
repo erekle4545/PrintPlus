@@ -1,7 +1,7 @@
 'use client';
 
 import { Product } from '@/types/product/productTypes';
-import {useCart} from "@/features/cart/hooks/useCart";
+import {useCart} from "@/shared/hooks/useCart";
 
 interface Props {
     product: Product;
