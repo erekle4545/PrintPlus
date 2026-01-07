@@ -1,14 +1,12 @@
-"use client";
+import { useContext } from 'react';
+import { CartContext, CartContextType } from '@/context/CartContext';
 
-import { useContext } from "react";
-import {CartContext} from "@/context/CartContext";
-
-export function useCart() {
+export const useCart = (): CartContextType => {
     const context = useContext(CartContext);
 
-    if (!context) {
-        throw new Error("useCart must be used within a CartProvider");
+    if (context === undefined) {
+        throw new Error('useCart უნდა გამოიყენოთ CartProvider-ის შიგნით');
     }
 
     return context;
-}
+};

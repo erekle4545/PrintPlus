@@ -11,6 +11,7 @@ import GoogleIcon from "@/shared/assets/icons/auth/google_page.svg";
 import LocalizedLink from "@/shared/components/LocalizedLink/LocalizedLink";
 import {useLanguage} from "@/context/LanguageContext";
 import CustomLoader from "@/shared/components/ui/loader/customLoader";
+import {Alert} from "@/shared/components/ui/alert/alert";
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
@@ -69,25 +70,34 @@ export default function Login() {
                 <div className="col-md-4 col-sm-12 m-5 desktop-only-border rounded-4">
                     <div className="auth-card position-relative text_font  ">
                         {/* Top pointer (same as DropdownAuth design) */}
-                        <div className="auth-title text-center title_font_bold mt-4">{t('login','login')}</div>
+
                         {generalError && (
-                            <div className="alert alert-danger text_font" role="alert">
-                                {generalError}
-                            </div>
+                            <Alert
+                                className={"w-auto m-xl-4 m-auto "}
+                                message={generalError}
+                                type="error"
+                            />
                         )}
 
                         {error && (
-                            <div className="alert alert-danger text_font" role="alert">
-                               {t('auth_filed','auth_filed')}
-                            </div>
+                                <Alert
+                                    className={"w-auto  m-xl-4  m-auto"}
+                                    message={t('auth_filed','auth_filed')}
+                                    type="error"
+                                />
+
                         )}
+                        <div className="auth-title  text-center title_font_bold mt-4">{t('login','login')}</div>
 
                         <form className="auth-form p-xl-4" autoComplete="on" onSubmit={handleSubmit}>
                             {/* Email error (top small alert like DropdownAuth) */}
                             {errors.email && (
-                                <div className="alert alert-danger alert-sm py-1 px-2 mb-2 small">
-                                    {errors.email[0]}
-                                </div>
+                                <Alert
+                                    className={"w-100"}
+                                    message={errors.email[0]}
+                                    type="error"
+                                />
+
                             )}
 
                             <div className="form-group has-right-icon mb-2">
@@ -117,12 +127,16 @@ export default function Login() {
                             </div>
 
                             {errors.password && (
-                                <div className="text-danger small mb-2">{errors.password[0]}</div>
+                                <Alert
+                                    className={"w-100"}
+                                    message={errors.password[0]}
+                                    type="error"
+                                />
                             )}
 
                             <Button
                                 type="submit"
-                                className={'text-center title_font fw-bolder d-flex justify-content-center'}
+                                className={'mt-4 text-center title_font fw-bolder d-flex justify-content-center'}
                                 variant={'my-btn-blue'}
                                 startIcon={<UserIcon />}
                                 style={{ width: '100%' }}
@@ -132,7 +146,7 @@ export default function Login() {
 
                             <div className="auth-or my-2">{t('or','or')}</div>
 
-                            <div className="d-flex gap-2">
+                            <div className="d-flex  gap-2">
                                 <button
                                     type="button"
                                     onClick={() => handleSocialLogin('google')}

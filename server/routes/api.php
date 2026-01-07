@@ -23,6 +23,8 @@ use App\Http\Controllers\API\Admin\SettingsController;
 use App\Http\Controllers\API\Admin\SizesController;
 use App\Http\Controllers\API\Admin\SliderController;
 use App\Http\Controllers\API\Admin\TeamController;
+use App\Http\Controllers\API\Web\Cart\CartController;
+use App\Http\Controllers\API\Web\Order\OrderController;
 use App\Http\Controllers\API\Web\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -188,6 +190,10 @@ Route::prefix('web')->group(function () {
     // Social Authentication
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+
+    // for
+    Route::post('/{id}/status', [OrderController::class, 'updateStatus'])
+        ->middleware('admin');
 });
 
 // Protected routes
@@ -198,4 +204,22 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [\App\Http\Controllers\API\Web\AuthController::class, 'updateProfile']);
     Route::put('/change-password', [\App\Http\Controllers\API\Web\AuthController::class, 'changePassword']);
     Route::post('/refresh', [\App\Http\Controllers\API\Web\AuthController::class, 'refresh']);
+
+    // orders
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index']); //  all orders
+        Route::get('/{id}', [OrderController::class, 'show']); // one order
+        Route::post('/', [OrderController::class, 'store']); // new order
+        Route::post('/{id}/cancel', [OrderController::class, 'cancel']); // cancel
+
+    });
+    // carts
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index']); // cart body
+        Route::get('/stats', [CartController::class, 'stats']); // statistics
+        Route::post('/', [CartController::class, 'store']); // add
+        Route::put('/{id}', [CartController::class, 'update']); // update
+        Route::delete('/{id}', [CartController::class, 'destroy']); // delete
+        Route::post('/clear', [CartController::class, 'clear']); // clear
+    });
 });
