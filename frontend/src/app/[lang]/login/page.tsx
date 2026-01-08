@@ -12,6 +12,7 @@ import LocalizedLink from "@/shared/components/LocalizedLink/LocalizedLink";
 import {useLanguage} from "@/context/LanguageContext";
 import CustomLoader from "@/shared/components/ui/loader/customLoader";
 import {Alert} from "@/shared/components/ui/alert/alert";
+import {useCart} from "@/shared/hooks/useCart";
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
@@ -20,6 +21,7 @@ export default function Login() {
     const [generalError, setGeneralError] = useState<string>('');
     const {t} = useLanguage();
     const { login, socialLogin, user, loading } = useAuth();
+    const { mergeGuestCart, refreshCart } = useCart();
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -40,6 +42,8 @@ export default function Login() {
         const result = await login(email, password);
 
         if (result.success) {
+            await mergeGuestCart();
+
             router.push(AUTH_SUCCESS_ROUTES.user);
         } else {
             if (result.errors?.errors) {

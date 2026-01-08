@@ -151,6 +151,9 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::apiResource('extras', ExtrasController::class);
         Route::apiResource('materials', MaterialsController::class);
         Route::apiResource('print-types', PrintTypeController::class);
+
+    // for
+    Route::post('order/{id}/status', [OrderController::class, 'updateStatus']);
 });
 
 Route::group(['prefix' => 'v1'], function () {
@@ -191,9 +194,25 @@ Route::prefix('web')->group(function () {
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
-    // for
-    Route::post('/{id}/status', [OrderController::class, 'updateStatus'])
-        ->middleware('admin');
+
+
+
+});
+
+
+
+Route::prefix('web')->group(function () {
+
+    // ✅ Cart routes - Available for BOTH Guest and Auth users
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index']);           // Get cart items
+        Route::get('/stats', [CartController::class, 'stats']);      // Cart statistics
+        Route::post('/', [CartController::class, 'store']);          // Add to cart
+        Route::put('/{id}', [CartController::class, 'update']);      // Update quantity
+        Route::delete('/{id}', [CartController::class, 'destroy']);  // Remove item
+        Route::post('/clear', [CartController::class, 'clear']);     // Clear cart
+    });
+
 });
 
 // Protected routes
@@ -213,13 +232,9 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancel']); // cancel
 
     });
-    // carts
+
+    // ✅ Cart merge route (Auth only)
     Route::prefix('cart')->group(function () {
-        Route::get('/', [CartController::class, 'index']); // cart body
-        Route::get('/stats', [CartController::class, 'stats']); // statistics
-        Route::post('/', [CartController::class, 'store']); // add
-        Route::put('/{id}', [CartController::class, 'update']); // update
-        Route::delete('/{id}', [CartController::class, 'destroy']); // delete
-        Route::post('/clear', [CartController::class, 'clear']); // clear
+        Route::post('/merge', [CartController::class, 'mergeGuestCart']); // Merge guest cart
     });
 });

@@ -11,7 +11,7 @@ const TextField: React.FC<TextFieldProps> = ({ label, error, className, ...rest 
     return (
         <div className={`${styles.wrapper} ${className || ""}`}>
             {label && <label className={styles.label}>{label}</label>}
-            <input className={styles.input} {...rest} />
+            <input className={styles.input+' text_font'} {...rest} />
             {error && <span className={styles.error}>{error}</span>}
         </div>
     );
