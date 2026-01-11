@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API\Web;
+    namespace App\Http\Controllers\API\Web;
 
-use App\Helpers\Core\Multitenant;
-use App\Http\Controllers\Controller;
-use App\Models\Core\Products;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+    use App\Helpers\Core\Multitenant;
+    use App\Http\Controllers\Controller;
+    use App\Models\Core\Products;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -17,12 +17,22 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+
         $data = $request->validate([
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_id' => 'required|integer',
             'language_id' => 'required|integer|exists:languages,id',
         ],[
             'category_id' => 'კატეგორიის არჩევა აუცილებელია'
         ]);
+
+        //if not isset category in categories table
+        $categoryExists = DB::table('categories')
+            ->where('id', $data['category_id'])
+            ->exists();
+
+        if (!$categoryExists) {
+            return response()->json([], 200);
+        }
 
         $products = Products::query()
             ->where('category_id', $data['category_id'])
@@ -112,8 +122,7 @@ class ProductController extends Controller
         return response()->json($products);
 
 
-        return response()->json($products);
-    }
+     }
 
 
     /**

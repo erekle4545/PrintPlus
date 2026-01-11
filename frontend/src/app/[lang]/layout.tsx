@@ -12,6 +12,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { notFound } from 'next/navigation';
 import { languages, isValidLanguage } from '@/shared/config/i18n';
+import {ContactProvider} from "@/context/ContactContext";
 
 // Static params generation
 export async function generateStaticParams() {
@@ -63,19 +64,23 @@ export default async function LangLayout({
         <body>
         <AuthProvider>
             <LanguageProvider initialLang={lang}>
-                <CartProvider>
-                    <AOSProvider />
-                    <Header />
+                <ContactProvider>
+                    <CartProvider>
+                        <AOSProvider />
+                        <Header />
 
-                    {children}
+                        {children}
 
-                    <ToastContainer
-                        position="top-right"
-                        autoClose={3000}
-                        theme="colored"
-                    />
-                    <Footer />
-                </CartProvider>
+                        <ToastContainer
+                            position="top-right"
+                            autoClose={3000}
+                            className={'text_font'}
+                            toastClassName={'text_font'}
+                            theme="light"
+                        />
+                        <Footer />
+                    </CartProvider>
+                </ContactProvider>
             </LanguageProvider>
         </AuthProvider>
         </body>

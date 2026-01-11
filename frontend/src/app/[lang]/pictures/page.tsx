@@ -41,7 +41,7 @@ export default function PicturePage() {
         <>
             <Cover />
             <div className="container py-4">
-                <HeaderTitle title="ფოტოები" slug={[]} />
+                <HeaderTitle title="ფოტოები" slug={''} />
                 <div className="row">
                     <div className="col-12 col-md-8 col-lg-9">
                         <div className='section-brands p-4'>

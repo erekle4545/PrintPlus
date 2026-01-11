@@ -1,4 +1,3 @@
-// types/cart/cartTypes.ts
 
 export interface CartItem {
     id: number;
@@ -15,6 +14,10 @@ export interface CartItem {
     extras?: string[] | null;
     custom_dimensions?: string[] | null;
     uploaded_file?: string | null;
+
+    cover_id?: number[];
+    cover_type?: string[];
+
     created_at?: string;
     updated_at?: string;
 }

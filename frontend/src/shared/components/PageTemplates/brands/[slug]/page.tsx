@@ -2,7 +2,7 @@
 
 import Cover from "@/shared/components/theme/header/cover/cover";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form } from "react-bootstrap";
 import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
 import { HeaderTitle } from "@/shared/components/theme/page/components/headerTitle";
@@ -15,19 +15,24 @@ import { getImageUrl } from "@/shared/utils/imageHelper";
 import { useCart } from "@/shared/hooks/useCart";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useFileUpload } from "@/shared/hooks/file/useFileUpload";
 
 interface BrandPageDetailsProps {
     product: Product;
 }
 
-interface UploadedFile {
-    url: string;
-    name: string;
-}
-
 export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
     const router = useRouter();
     const { addItem, loading: cartLoading } = useCart();
+
+    //  File upload hook
+    const {
+        uploadedFiles,
+        addFiles,
+        deleteFile,
+        getCoverData,
+        isDeleting
+    } = useFileUpload();
 
     const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
     const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -35,10 +40,11 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
     const [selectedPrintTypes, setSelectedPrintTypes] = useState<number[]>([]);
     const [quantity, setQuantity] = useState<number>(1);
     const [comment, setComment] = useState<string>("");
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
 
-    // Set first material, size, first extra, and first print type as default on mount
+    // useRef infinite loop
+    const hasProcessedFiles = useRef(false);
+
     useEffect(() => {
         if (product.materials && product.materials.length > 0 && selectedMaterial === null) {
             setSelectedMaterial(product.materials[0].id);
@@ -54,7 +60,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
         }
     }, [product, selectedMaterial, selectedSize, selectedExtras.length, selectedPrintTypes.length]);
 
-    // Calculate price based on selections
     const calculatePrice = () => {
         let total = Number(product.sale_price || product.base_price || 0);
 
@@ -91,7 +96,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
     const price = calculatePrice();
 
-    // Get selected items names for cart extras
     const getExtrasArray = () => {
         const extras: string[] = [];
 
@@ -118,22 +122,32 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
         return extras;
     };
 
-    // Get size dimensions for custom_dimensions
-    const getCustomDimensions = () => {
-        if (!selectedSize) return undefined;
+    // ✅ FileUploader-ის onComplete callback
+    const handleFileUploadComplete = (items: any[]) => {
+        if (hasProcessedFiles.current) {
+            return;
+        }
 
-        const size = product.sizes?.find(s => s.id === selectedSize);
-        if (!size) return undefined;
+        console.log("✅ Upload complete:", items);
 
-        return {
-            width: size.width || 0,
-            height: size.height || 0,
-        };
+        const files = items
+            .filter(item => item.status === 'done' && item.uploadedFileId)
+            .map(item => ({
+                file_id: item.uploadedFileId,
+                url: item.response?.url || item.response?.data?.url || '',
+                name: item.name || 'file',
+                quantity: item.quantity || 1,
+                cover_type: 'image'
+            }));
+
+        if (files.length > 0) {
+            hasProcessedFiles.current = true;
+            addFiles(files); // ✅ hook-ის გამოყენება
+            toast.success(`${files.length} ფაილი წარმატებით აიტვირთა`);
+        }
     };
 
-    // კალათაში დამატების ფუნქცია
     const handleAddToCart = async () => {
-        // ვალიდაცია
         if (!selectedMaterial && product.materials && product.materials.length > 0) {
             toast.warning('გთხოვთ აირჩიოთ მასალა');
             return;
@@ -151,6 +165,8 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
         const material = product.materials?.find(m => m.id === selectedMaterial);
 
+        // ✅ ფაილების მონაცემები hook-დან
+        const coverData = getCoverData();
 
         setIsAddingToCart(true);
 
@@ -167,28 +183,37 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                 discount: product.sale_price || undefined,
                 materials: material?.name,
                 extras: extras,
-                size:size?.name,
+                size: size?.name,
                 custom_dimensions: getExtrasArray(),
-                uploaded_file: uploadedFiles.length > 0
-                    ? JSON.stringify(uploadedFiles)
-                    : undefined,
+
+                // ✅ ფაილების მონაცემები
+                uploaded_file: coverData.uploaded_file,
+                cover_id: coverData.cover_ids,
+                cover_type: coverData.cover_types,
             });
 
             toast.success('პროდუქტი დაემატა კალათაში!');
+
+            if (uploadedFiles.length > 0) {
+                console.log(' Order created with files:', {
+                    product_id: product.id,
+                    cover_ids: coverData.cover_ids,
+                    cover_types: coverData.cover_types,
+                    files_count: uploadedFiles.length
+                });
+            }
+
         } catch (error) {
-            console.error('Error adding to cart:', error);
+            console.error('❌ Error adding to cart:', error);
             toast.error('შეცდომა პროდუქტის დამატებისას');
         } finally {
             setIsAddingToCart(false);
         }
     };
 
-    // შეკვეთის გაფორმების ფუნქცია
     const handleOrderClick = async () => {
-        // ჯერ დავამატოთ კალათაში
         await handleAddToCart();
 
-        // თუ წარმატებით დაემატა, გადავიდეთ checkout-ზე
         if (!isAddingToCart) {
             setTimeout(() => {
                 router.push('/checkout');
@@ -212,24 +237,19 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
         );
     };
 
-    const handleFileUploadComplete = (items: any[]) => {
-        console.log("DONE", items);
-        const files = items.map(item => ({
-            url: item.url || item.path || '',
-            name: item.name || 'file',
-        }));
-        setUploadedFiles(prev => [...prev, ...files]);
-        toast.success('ფაილი წარმატებით აიტვირთა');
-    };
-
     const handleFileUploadError = (items: any[]) => {
-        console.log("ERR", items);
+        console.error("❌ Upload error:", items);
         toast.error('ფაილის ატვირთვის შეცდომა');
     };
 
-    const removeUploadedFile = (index: number) => {
-        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-        toast.info('ფაილი წაიშალა');
+    // ✅ ფაილის წაშლა hook-ით
+    const handleRemoveFile = async (fileId: number, index: number) => {
+        const success = await deleteFile(fileId, index);
+
+        if (success && uploadedFiles.length === 1) {
+            // თუ ეს იყო ბოლო ფაილი, reset flag
+            hasProcessedFiles.current = false;
+        }
     };
 
     return (
@@ -240,7 +260,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                 <div className="row">
                     <div className="col-12 col-md-8 col-lg-9">
                         <div className='section-brands p-4'>
-                            {/* Materials - აირჩიე მასალა */}
+                            {/* Materials - same as before */}
                             {product.materials && product.materials.length > 0 && (
                                 <>
                                     <h5 className="mb-3 fw-bolder">აირჩიე მასალა</h5>
@@ -303,7 +323,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 </>
                             )}
 
-                            {/* Sizes - აირჩიე ზომა */}
+                            {/* Sizes */}
                             {product.sizes && product.sizes.length > 0 && (
                                 <>
                                     <h5 className="mt-4 fw-bolder">აირჩიე ზომა</h5>
@@ -319,7 +339,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 </>
                             )}
 
-                            {/* Print Types - აირჩიე ბეჭდვის მეთოდი */}
+                            {/* Print Types */}
                             {product.print_types && product.print_types.length > 0 && (
                                 <>
                                     <h5 className="mt-4 fw-bolder">აირჩიე ბეჭდვის მეთოდი</h5>
@@ -335,7 +355,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 </>
                             )}
 
-                            {/* Extras - აირჩიე დამატებითი */}
+                            {/* Extras */}
                             {product.extras && product.extras.length > 0 && (
                                 <>
                                     <h5 className="mt-4 fw-bolder">აირჩიე დამატებითი</h5>
@@ -351,7 +371,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 </>
                             )}
 
-                            {/* qty */}
+                            {/* Quantity */}
                             <h5 className="mt-4 fw-bolder">მოითხოვე რაოდენობა</h5>
                             <div className="d-flex align-items-center">
                                 <button
@@ -371,17 +391,12 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 </button>
                             </div>
 
-                            {/*info*/}
                             <div className='mt-3 gap-2 text_font text-muted d-flex align-items-center align-content-center'>
-                                <div>
-                                    <InfoIcon />
-                                </div>
-                                <div>
-                                    1000-ზე მეტის შეკვეთის შემთხვევაში გთხოვთ დაგვიკავშირდეთ.
-                                </div>
+                                <div><InfoIcon /></div>
+                                <div>1000-ზე მეტის შეკვეთის შემთხვევაში გთხოვთ დაგვიკავშირდეთ.</div>
                             </div>
 
-                            {/* comment */}
+                            {/* Comment */}
                             <h5 className="mt-4 fw-bolder">დამატებითი დეტალები</h5>
                             <Form.Control
                                 as="textarea"
@@ -393,33 +408,45 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 disabled={isAddingToCart || cartLoading}
                             />
 
+                            {/* File Uploader */}
                             <h5 className="mt-4 fw-bolder">ატვირთე ფაილი / ლოგო</h5>
                             <FileUploader
-                                uploadUrl={`${process.env.NEXT_PUBLIC_API}/upload`}
-                                headers={{ Authorization: `Bearer ` }}
+                                uploadUrl={`${process.env.NEXT_PUBLIC_FILE_URL}api/web/image/resize`}
+                                headers={{
+                                    Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('token') || '' : ''}`
+                                }}
+                                fieldName="file[]"
                                 accept="application/pdf,image/*"
                                 multiple
                                 maxSizeMB={50}
                                 className={'text_font'}
-                                autoUpload
+                                autoUpload={false}
+                                showQuantity={false}
                                 onComplete={handleFileUploadComplete}
                                 onError={handleFileUploadError}
                             />
 
-                            {/* ატვირთული ფაილების სია */}
+                            {/*   Uploaded Files List - განახლებული წაშლის ფუნქციონალით */}
                             {uploadedFiles.length > 0 && (
                                 <div className="mt-3">
-                                    <h6 className="fw-bolder">ატვირთული ფაილები:</h6>
+                                    <h6 className="fw-bolder">ატვირთული ფაილები ({uploadedFiles.length}):</h6>
                                     <ul className="list-group">
                                         {uploadedFiles.map((file, index) => (
                                             <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                                <span className="text-truncate" title={file.name}>{file.name}</span>
+                                                <div className="d-flex flex-column">
+                                                    <span className="text-truncate" title={file.name}>
+                                                        {file.name}
+                                                    </span>
+                                                    <small className="text-muted">
+                                                        File ID: {file.file_id}
+                                                    </small>
+                                                </div>
                                                 <button
                                                     className="btn btn-sm btn-outline-danger"
-                                                    onClick={() => removeUploadedFile(index)}
-                                                    disabled={isAddingToCart || cartLoading}
+                                                    onClick={() => handleRemoveFile(file.file_id, index)}
+                                                    disabled={isAddingToCart || cartLoading || isDeleting}
                                                 >
-                                                    წაშლა
+                                                    {isDeleting ? 'იშლება...' : 'წაშლა'}
                                                 </button>
                                             </li>
                                         ))}

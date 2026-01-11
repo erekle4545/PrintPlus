@@ -1,41 +1,1 @@
-<?php
-
-namespace App\Models\Core;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Settings extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'keys',
-        'meta',
-        'phone',
-        'email',
-    ];
-
-    protected $casts  = [
-        'keys'=>'array',
-        'meta'=>'array'
-    ];
-
-    /**
-     * [info description]
-     * @return [type] [description]
-     */
-    public function info()
-    {
-        return $this->hasOne(SettingsLanguage::class);
-    }
-
-    /**
-     * [info description]
-     * @return [type] [description]
-     */
-    public function infos()
-    {
-        return $this->hasMany(SettingsLanguage::class);
-    }
-}
+<?phpnamespace App\Models\Core;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;class Settings extends Model{    use HasFactory;    protected $fillable = [        'keys',        'meta',        'phone',        'email',    ];    protected $casts  = [        'keys'=>'array',        'meta'=>'array'    ];    /**     * [info description]     * @return [type] [description]     */    public function info()    {        return $this->hasOne(SettingsLanguage::class);    }    /**     * [info description]     * @return [type] [description]     */    public function infos()    {        return $this->hasMany(SettingsLanguage::class);    }}

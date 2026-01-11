@@ -3,6 +3,7 @@
 import { usePage } from '@/shared/hooks/usePage';
 import { useLanguage } from '@/context/LanguageContext';
 import TemplateRenderer from '@/shared/components/PageTemplates/TemplateRenderer';
+import NotFound from "@/app/[lang]/not-found";
 
 interface DynamicPageClientProps {
     slug: string;
@@ -27,14 +28,7 @@ export default function DynamicPageClient({ slug }: DynamicPageClientProps) {
     }
 
     if (error || !page) {
-        return (<>
-            <div className="container py-5">
-                <div className="alert alert-danger" role="alert">
-                    <h4 className="alert-heading">{t('page_not_found', 'page_not_found')}</h4>
-                    <p>{error || t('page_not_exist', 'page_not_exist')}</p>
-                </div>
-            </div></>
-        );
+        return (<NotFound/>);
     }
 
     return <TemplateRenderer page={page} />;

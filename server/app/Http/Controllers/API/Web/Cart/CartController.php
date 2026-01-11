@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API\Web\Cart;
 
 use App\Http\Controllers\Controller;
 use App\Models\Core\Cart;
+use App\Models\Core\Cover;
 use App\Models\Core\GuestCart;
 use App\Models\Core\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
@@ -82,6 +84,11 @@ class CartController extends Controller
             'custom_dimensions.width' => 'nullable|numeric|min:0',
             'custom_dimensions.height' => 'nullable|numeric|min:0',
             'uploaded_file' => 'nullable|string',
+            // files
+            'cover_id' => 'nullable|array',
+            'cover_id.*' => 'nullable|integer|exists:files,id',
+            'cover_type' => 'nullable|array',
+            'cover_type.*' => 'string|in:image,video,pdf,file',
         ]);
 
         if ($validator->fails()) {
@@ -107,7 +114,7 @@ class CartController extends Controller
         }
 
         if ($this->isAuthenticated($request)) {
-            // ✅ Authenticated user - Cart table
+            //  Authenticated user - Cart table
             $existingCart = Cart::where('user_id', $request->user()->id)
                 ->where('product_id', $request->product_id)
                 ->where('color', $request->color)
@@ -144,6 +151,11 @@ class CartController extends Controller
                 'custom_dimensions' => $request->custom_dimensions ? json_encode($request->custom_dimensions) : null,
                 'uploaded_file' => $request->uploaded_file,
             ]);
+
+            if ($request->has('cover_id') && is_array($request->cover_id)) {
+                $this->createCovers($cartItem, $request->cover_id, $request->cover_type);
+            }
+
         } else {
             // ✅ Guest user - GuestCart table
             $sessionId = $this->getSessionId($request);
@@ -184,6 +196,11 @@ class CartController extends Controller
                 'custom_dimensions' => $request->custom_dimensions ? json_encode($request->custom_dimensions) : null,
                 'uploaded_file' => $request->uploaded_file,
             ]);
+
+            // შექმენი Cover records (guest user)
+            if ($request->has('cover_id') && is_array($request->cover_id)) {
+                $this->createCovers($cartItem, $request->cover_id, $request->cover_type);
+            }
         }
 
         return response()->json([
@@ -191,6 +208,23 @@ class CartController extends Controller
             'message' => 'პროდუქტი დაემატა კალათაში',
             'data' => $cartItem,
         ], 201);
+    }
+
+    // Helper method Cover records
+    private function createCovers($cartItem, array $coverIds, ?array $coverTypes = null)
+    {
+
+        foreach ($coverIds as $index => $fileId) {
+
+            Cover::create([
+                'coverable_id' => $cartItem->id,
+                'coverable_type' =>Cart::class,
+                'files_id' => $fileId,
+                'cover_type' => 1,
+            ]);
+        }
+
+
     }
 
     /**

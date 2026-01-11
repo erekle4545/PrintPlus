@@ -1,10 +1,1 @@
-<?php
-
-    return [
-        'covers'=>[
-            'header_logo',
-            'footer_logo',
-            'favicon'
-        ]
-
-    ];
+<?php    return [        'covers'=>[            'header_logo',            'footer_logo',            'gallery',            'favicon'        ]    ];

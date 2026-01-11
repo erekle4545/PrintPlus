@@ -55,7 +55,7 @@ const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, produc
                     }}
                 >
                     {products.map((product) => {
-                        console.log(product)
+                        // console.log(product)
                         // product category slug
                         const categoryProductSlug = product.category?.info?.slug+'/'+product?.info?.slug;
                         // product details url

@@ -24,6 +24,7 @@ use App\Http\Controllers\API\Admin\SizesController;
 use App\Http\Controllers\API\Admin\SliderController;
 use App\Http\Controllers\API\Admin\TeamController;
 use App\Http\Controllers\API\Web\Cart\CartController;
+use App\Http\Controllers\API\Web\ContactController;
 use App\Http\Controllers\API\Web\Order\OrderController;
 use App\Http\Controllers\API\Web\SocialAuthController;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']],function () {
-    // User
+        // User
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
@@ -49,17 +50,17 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/users', [AuthController::class, 'getUsers']);
 
-    // End User
-    // Dashboard
+        // End User
+        // Dashboard
         Route::resource('/dashboard', DashboardController::class);
-    // End Dashboard
-    // Permissions and Roles
+        // End Dashboard
+        // Permissions and Roles
         Route::resource('/permissions',RoleController::class);
         Route::resource('/role',RoleController::class);
         Route::delete('/delete_role/{id}',[RoleController::class,'destroy']);
         Route::put('/role/update/{id}',[RoleController::class,'update']);
-    // END Permissions and Roles
-    //Language
+        // END Permissions and Roles
+        //Language
         Route::resource('languages', LanguagesController::class);
         Route::put('lang/update_status/{id}',[LanguagesController::class,'LangStatusUpdate']);
         Route::put('lang/update_default/{id}',[LanguagesController::class,'defaultLangUpdate']);
@@ -67,14 +68,14 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::resource('dictionary', DictionaryController::class);
         Route::delete('dictionary/delete/{id}',[DictionaryController::class,'destroy']);
         Route::put('dictionary/update/{id}',[DictionaryController::class,'update']);
-     // Page
+        // Page
         Route::post('page/update/{id}', [PagesController::class,'update']);
         Route::delete('page/delete/{id}', [PagesController::class,'destroy']);
         Route::get('page/side', [PagesController::class,'pageSideBar']);
         Route::resource('page', PagesController::class)->only([
             'index', 'store', 'show', 'destroy'
         ]);
-    // post
+        // post
         Route::post('post/update/{id}', [PostsController::class,'update']);
         Route::delete('post/delete/{id}', [PostsController::class,'destroy']);
         Route::get('post/side', [PostsController::class,'postSideBar']);
@@ -89,7 +90,7 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::resource('service', ServicesController::class)->only([
             'index', 'store', 'show', 'destroy'
         ]);
-    // Options
+        // Options
         Route::get('options/page',[OptionsController::class,'getPageConfig']);
         Route::get('options/post',[OptionsController::class,'getPostConfig']);
         Route::get('options/service',[OptionsController::class,'getPostConfig']);
@@ -101,39 +102,38 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::get('options/team',[OptionsController::class,'getTeamConfig']);
         Route::get('options/menu',[OptionsController::class,'getMenuConfig']);
         Route::get('options/settings',[OptionsController::class,'getSettingsConfig']);
-    // Menu
+        // Menu
         Route::get('menu/sort', [  MenuController::class,'updateSortPosition']);
         Route::post('menu/update/{id}', [MenuController::class,'update']);
         Route::delete('menu/delete/{id}', [MenuController::class,'destroy']);
         Route::resource('menu', MenuController::class);
         Route::post('menu/sort', [MenuController::class,'updateSortPosition']);
-    //Category
+        //Category
         Route::get('category/side', [CategoryController::class,'categorySide']);
         Route::resource('category', CategoryController::class);
         Route::post('category/update/{id}', [CategoryController::class,'update']);
         Route::delete('category/delete/{id}', [CategoryController::class,'destroy']);
-
-     //product
+        //product
         Route::get('product/side', [ProductsController::class,'productSide']);
         Route::resource('product', ProductsController::class);
         Route::post('product/update/{id}', [ProductsController::class,'update']);
         Route::delete('product/delete/{id}', [ProductsController::class,'destroy']);
-    // Slider
+        // Slider
         Route::get('slider/side', [SliderController::class,'sliderSide']);
         Route::resource('slider', SliderController::class);
         Route::post('slider/update/{id}', [SliderController::class,'update']);
         Route::delete('slider/delete/{id}', [SliderController::class,'destroy']);
-    // gallery
+        // gallery
         Route::get('gallery/side', [GalleryController::class,'gallerySide']);
         Route::resource('gallery', GalleryController::class);
         Route::post('gallery/update/{id}', [GalleryController::class,'update']);
         Route::delete('gallery/delete/{id}', [GalleryController::class,'destroy']);
-    // Team
+        // Team
         Route::get('team/side', [TeamController::class,'teamSide']);
         Route::resource('team', TeamController::class);
         Route::post('team/update/{id}', [TeamController::class,'update']);
         Route::delete('team/delete/{id}', [TeamController::class,'destroy']);
-    //File Manager
+        //File Manager
         Route::apiResource('folders', FoldersController::class);
         Route::get('files',[FilesController::class,'index']);
         Route::post('covers',[FilesController::class,'getCovers']);
@@ -141,7 +141,7 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::get('image/{image}',[FilesController::class,'show']);
         Route::get('image/by-folder/{folder}',[FilesController::class,'getByFolder']);
         Route::delete('image/{image}',[FilesController::class,'destroy']);
-    //Settings
+        //Settings
         Route::resource('settings', SettingsController::class);
         Route::post('settings/update/{id}', [SettingsController::class,'update']);
         Route::delete('settings/delete/{id}', [SettingsController::class,'destroy']);
@@ -151,9 +151,8 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::apiResource('extras', ExtrasController::class);
         Route::apiResource('materials', MaterialsController::class);
         Route::apiResource('print-types', PrintTypeController::class);
-
-    // for
-    Route::post('order/{id}/status', [OrderController::class, 'updateStatus']);
+        // for
+        Route::post('order/{id}/status', [OrderController::class, 'updateStatus']);
 });
 
 Route::group(['prefix' => 'v1'], function () {
@@ -176,27 +175,18 @@ Route::prefix('web')->group(function () {
     Route::get('/product', [\App\Http\Controllers\API\Web\ProductController::class, 'show']);
     // slider
     Route::get('/slider', [\App\Http\Controllers\API\Web\HomeController::class, 'slider']);
-
     // Languages
     Route::get('/languages', [\App\Http\Controllers\API\Web\LanguageController::class, 'index']);
     Route::get('/languages/active', [\App\Http\Controllers\API\Web\LanguageController::class, 'getActive']);
-
     // Dictionary
     Route::get('/dictionary/{lang}', [\App\Http\Controllers\API\Web\DictionaryController::class, 'getByLanguage']);
-
     Route::get('/translations/{lang}', [\App\Http\Controllers\API\Web\DictionaryController::class, 'getTranslations']);
-
     // Laravel Authentication
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-
     // Social Authentication
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
-
-
-
-
 });
 
 
@@ -213,10 +203,22 @@ Route::prefix('web')->group(function () {
         Route::post('/clear', [CartController::class, 'clear']);     // Clear cart
     });
 
+    // contact info
+    Route::get('/contact', [ContactController::class, 'index']);
+
+
 });
 
 // Protected routes
 Route::prefix('web')->middleware('auth:sanctum')->group(function () {
+
+    //File Manager
+    Route::get('files',[FilesController::class,'index']);
+    Route::delete('image/{id}', [FilesController::class, 'deleteWeb']);
+    Route::post('/image/resize',[FilesController::class,'resize']);
+    Route::get('/image/{image}',[FilesController::class,'show']);
+
+
     Route::post('/logout', [\App\Http\Controllers\API\Web\AuthController::class, 'logout']);
     Route::get('/user', [\App\Http\Controllers\API\Web\AuthController::class, 'user']);
     // update profile

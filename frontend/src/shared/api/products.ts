@@ -1,4 +1,3 @@
-// shared/api/products.ts
 import {Product} from "@/types/product/productTypes";
 
 export async function getProductsByCategory(categoryId: number, languageId?: number): Promise<any[]> {
@@ -28,6 +27,7 @@ export async function getProductsByCategory(categoryId: number, languageId?: num
         }
 
         const data = await response.json();
+
         return data;
 
     } catch (error) {
@@ -61,7 +61,6 @@ export async function getProductBySlug(slug: string, languageId?: number): Promi
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 cache: 'no-store', // Fresh data every time, or use next: { revalidate: 60 }
-
             },
         });
 
