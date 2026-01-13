@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Core;
 
+use App\Models\Core\OrderItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,9 @@ class Order extends Model
         'phone',
         'address',
         'city',
+        'city_id',
+        'latitude',
+        'longitude',
         'notes',
         'payment_method',
         'subtotal',
@@ -26,6 +30,8 @@ class Order extends Model
     ];
 
     protected $casts = [
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
         'subtotal' => 'decimal:2',
         'delivery_cost' => 'decimal:2',
         'total' => 'decimal:2',
@@ -49,6 +55,7 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+
     /**
      * სტატუსის label-ები
      */
@@ -63,6 +70,22 @@ class Order extends Model
         ];
 
         return $labels[$this->status] ?? $this->status;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCityNameAttribute()
+    {
+        $cities = config('cities.cities');
+
+        foreach ($cities as $city) {
+            if ($city['id'] == $this->city_id) {
+                return $city['name'];
+            }
+        }
+
+        return $this->city; // fallback
     }
 
     /**

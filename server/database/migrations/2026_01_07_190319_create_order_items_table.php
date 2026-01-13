@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('size')->nullable();
             $table->json('extras')->nullable();
             $table->json('materials')->nullable();
+            $table->string('print_type')->nullable();
             $table->json('custom_dimensions')->nullable();
             $table->string('uploaded_file')->nullable();
             $table->timestamps();

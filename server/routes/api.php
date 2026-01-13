@@ -24,6 +24,7 @@ use App\Http\Controllers\API\Admin\SizesController;
 use App\Http\Controllers\API\Admin\SliderController;
 use App\Http\Controllers\API\Admin\TeamController;
 use App\Http\Controllers\API\Web\Cart\CartController;
+use App\Http\Controllers\API\Web\ConfigController;
 use App\Http\Controllers\API\Web\ContactController;
 use App\Http\Controllers\API\Web\Order\OrderController;
 use App\Http\Controllers\API\Web\SocialAuthController;
@@ -225,6 +226,13 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [\App\Http\Controllers\API\Web\AuthController::class, 'updateProfile']);
     Route::put('/change-password', [\App\Http\Controllers\API\Web\AuthController::class, 'changePassword']);
     Route::post('/refresh', [\App\Http\Controllers\API\Web\AuthController::class, 'refresh']);
+
+    /**
+     * config data
+     */
+    Route::prefix('config')->group(function () {
+        Route::get('checkout', [ConfigController::class, 'getCheckoutConfig']);
+    });
 
     // orders
     Route::prefix('orders')->group(function () {

@@ -55,4 +55,20 @@ class OrderItem extends Model
     {
         return $this->price * $this->quantity;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+
+    public function covers()
+    {
+        return $this->morphMany(Cover::class, 'coverable');
+    }
+
+    // Get all cover files
+    public function getCoverFiles()
+    {
+        return $this->covers()->with('file')->get();
+    }
+
 }

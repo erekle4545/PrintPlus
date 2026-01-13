@@ -83,7 +83,7 @@ class CartController extends Controller
             'custom_dimensions' => 'nullable|array',
             'custom_dimensions.width' => 'nullable|numeric|min:0',
             'custom_dimensions.height' => 'nullable|numeric|min:0',
-            'uploaded_file' => 'nullable|string',
+//            'uploaded_file' => 'nullable|string',
             // files
             'cover_id' => 'nullable|array',
             'cover_id.*' => 'nullable|integer|exists:files,id',
@@ -149,7 +149,7 @@ class CartController extends Controller
                 'print_type' => $request->print_type,
                 'extras' => $request->extras ? json_encode($request->extras) : null,
                 'custom_dimensions' => $request->custom_dimensions ? json_encode($request->custom_dimensions) : null,
-                'uploaded_file' => $request->uploaded_file,
+//                'uploaded_file' => $request->uploaded_file,
             ]);
 
             if ($request->has('cover_id') && is_array($request->cover_id)) {
@@ -194,7 +194,7 @@ class CartController extends Controller
                 'print_type' => $request->print_type,
                 'extras' => $request->extras ? json_encode($request->extras) : null,
                 'custom_dimensions' => $request->custom_dimensions ? json_encode($request->custom_dimensions) : null,
-                'uploaded_file' => $request->uploaded_file,
+//                'uploaded_file' => $request->uploaded_file,
             ]);
 
             // შექმენი Cover records (guest user)
@@ -376,7 +376,7 @@ class CartController extends Controller
                     'print_type' => $guestItem->print_type,
                     'extras' => $guestItem->extras,
                     'custom_dimensions' => $guestItem->custom_dimensions,
-                    'uploaded_file' => $guestItem->uploaded_file,
+//                    'uploaded_file' => $guestItem->uploaded_file,
                 ]);
             }
         }

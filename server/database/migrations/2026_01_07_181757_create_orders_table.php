@@ -18,12 +18,16 @@ class CreateOrdersTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('order_number')->unique();
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('phone');
             $table->string('address');
             $table->string('city');
             $table->text('notes')->nullable();
             $table->enum('payment_method', ['cash', 'card', 'bank_transfer']);
+            $table->integer('city_id')->nullable();
+            // GPS locations
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->decimal('subtotal', 10, 2);
             $table->decimal('delivery_cost', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
