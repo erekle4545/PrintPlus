@@ -26,7 +26,8 @@ export default function ProductPage({page, products}: ProductPageProps) {
 
     return (
         <>
-            <Cover/>
+            <Cover key={1}/>
+
             <div className="container py-4">
                 <HeaderTitle title={page.info?.title} slug={url} />
 

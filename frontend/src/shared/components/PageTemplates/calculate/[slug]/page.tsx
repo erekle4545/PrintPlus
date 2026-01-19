@@ -7,6 +7,7 @@ import { HeaderTitle } from '@/shared/components/theme/page/components/headerTit
 import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
 import {Product} from "@/types/product/productTypes";
 import CalculatePageSkeleton from "@/shared/components/PageTemplates/calculate/loader/CalculatePageSkeleton";
+import {useLanguage} from "@/context/LanguageContext";
 
 interface CalculatePageProps {
     page: {
@@ -41,7 +42,7 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
     const [activeMaterial, setActiveMaterial] = useState<number | null>(null);
     const [activeSize, setActiveSize] = useState<number | null>(null);
     const [selectedExtras, setSelectedExtras] = useState<number[]>([]);
-
+    const {t} = useLanguage();
     // ავტომატურად დავაყენოთ პირველი პროდუქტი, მატერიალი და ზომა
     useEffect(() => {
         if (products.length > 0 && activeProduct === null) {
@@ -100,9 +101,9 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
             }, 0);
     }, [selectedProduct, selectedExtras]);
 
-    // ჯამური ფასი: კვ.მ×სისქე + მატერიალი + დამატებითი
+    // ჯამური ფასი: კვ.მ×სისქე + მატერიალი + დამატებითი 50
     const total = useMemo(() =>
-            Math.max(Math.round(sizePrice + materialPrice + extrasTotal), 50),
+            Math.max(Math.round(sizePrice + materialPrice + extrasTotal), 0),
         [sizePrice, materialPrice, extrasTotal]
     );
 
@@ -133,10 +134,10 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
         <>
             <Cover />
             <div className="container py-4">
-                <HeaderTitle title={page.info.title} slug={page.info.slug} />
+                <HeaderTitle title={page?.info?.title} slug={page?.info?.slug} />
                 <div className='calculate-page-container' >
                     {/* Calculator */}
-                    <h4 className='title_font_bold text-center mb-4'>ფასის კალკულატორი</h4>
+                    <h4 className='title_font_bold text-center mb-4'>{t('price.calculate')}</h4>
                     <div className="calculate-card rounded-4 mb-4">
                         <div className="card-body p-4">
                             {/* მატერიალები */}
@@ -195,8 +196,8 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
                                         <span className="slider-badge" style={{ left: `${toPercent(width)}%` }}>{width}სმ</span>
                                     </div>
                                     <label className="form-label mt-2">
-                                        <span className='fw-semibold'>სიგანე </span>
-                                        <span className="text-muted small text_font">მინიმალური სიგანე 50სმ</span>
+                                        <span className='fw-semibold'> {t('price.calculate.width')}</span>
+                                        <span className="text-muted small text_font"> {t('price.calculate.width.description')}</span>
                                     </label>
                                 </div>
 
@@ -219,8 +220,8 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
                                         <span className="slider-badge" style={{ left: `${toPercent(height)}%` }}>{height}სმ</span>
                                     </div>
                                     <label className="form-label mt-2">
-                                        <span className='fw-semibold'>სიმაღლე </span>
-                                        <span className="text-muted small text_font">მინიმალური სიმაღლე 50სმ</span>
+                                        <span className='fw-semibold'> {t('price.calculate.height')} </span>
+                                        <span className="text-muted small text_font"> {t('price.calculate.height.description')}</span>
                                     </label>
                                 </div>
                             </div>
@@ -261,54 +262,57 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
 
                             {/* Total */}
                             <div className="d-flex align-items-center justify-content-center gap-3 mt-4">
-                                <div className="fw-semibold">ჯამური ფასი:</div>
+                                <div className="fw-semibold">{t('sum.price')}:</div>
                                 <div className="price-chip">{GEL(total)}</div>
                             </div>
                             <div className="small text-center text-muted mt-4">
-                                საბოლოო ფასი დამოკიდებულია არჩევანზე: მ² × ტარიფი + მომსახურება. მინიმალური შეკვეთა 50₾.
+                                {t('calculate.page.price.bottom.text')}
                             </div>
                         </div>
                     </div>
 
                     {/* Price table */}
-                    <h4 className="text-center fw-bold mb-3">ფასების ცხრილი</h4>
-                    <div className="table-responsive">
-                        <table className="table table-bordered align-middle shadow-sm">
-                            <thead>
-                            <tr>
-                                <th className="bg-info text-white text-center" style={{ width: 220 }}>მოდელი</th>
-                                <th colSpan={5} className="bg-info text-white text-center">ცალობით</th>
-                                <th colSpan={4} className="bg-info text-white text-center">ოფსეტური</th>
-                            </tr>
-                            <tr className="table-dark text-center">
-                                <th>სახეობა</th>
-                                {PIECE_COLS.map((k) => <th key={k}>{k}</th>)}
-                                {OFFSET_COLS.map((k) => <th key={k}>{k}</th>)}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {TABLE_ROWS.map((r) => (
-                                <tr key={r.name}>
-                                    <td className="fw-semibold">{r.name}</td>
-                                    {PIECE_COLS.map((k) => <td key={k} className="text-center">{GEL(r.piece[k])}</td>)}
-                                    {OFFSET_COLS.map((k) => <td key={k} className="text-center">{GEL(r.offset[k])}</td>)}
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                    <h4 className="text-center fw-bold mb-3">{t('calculate.page.price.table')}</h4>
+                    <div className="table-responsive"  dangerouslySetInnerHTML={{
+                        __html: selectedProduct?.info?.text || ''
+                    }}>
+
+                        {/*<table className="table table-bordered align-middle shadow-sm">*/}
+                        {/*    <thead>*/}
+                        {/*    <tr>*/}
+                        {/*        <th className="bg-info text-white text-center" style={{ width: 220 }}>მოდელი</th>*/}
+                        {/*        <th colSpan={5} className="bg-info text-white text-center">ცალობით</th>*/}
+                        {/*        <th colSpan={4} className="bg-info text-white text-center">ოფსეტური</th>*/}
+                        {/*    </tr>*/}
+                        {/*    <tr className="table-dark text-center">*/}
+                        {/*        <th>სახეობა</th>*/}
+                        {/*        {PIECE_COLS.map((k) => <th key={k}>{k}</th>)}*/}
+                        {/*        {OFFSET_COLS.map((k) => <th key={k}>{k}</th>)}*/}
+                        {/*    </tr>*/}
+                        {/*    </thead>*/}
+                        {/*    <tbody>*/}
+                        {/*    {TABLE_ROWS.map((r) => (*/}
+                        {/*        <tr key={r.name}>*/}
+                        {/*            <td className="fw-semibold">{r.name}</td>*/}
+                        {/*            {PIECE_COLS.map((k) => <td key={k} className="text-center">{GEL(r.piece[k])}</td>)}*/}
+                        {/*            {OFFSET_COLS.map((k) => <td key={k} className="text-center">{GEL(r.offset[k])}</td>)}*/}
+                        {/*        </tr>*/}
+                        {/*    ))}*/}
+                        {/*    </tbody>*/}
+                        {/*</table>*/}
                     </div>
 
                     {/* Bottom text */}
-                    <div className="mt-4">
-                        <h6 className="fw-bold mb-2">ტექნიკური მოთხოვნის მითითება</h6>
-                        <p className="text-muted">ორდერის დეტალად მიუთითეთ ფორმატი, ფერიანობა, დაჭერის ტიპები და რაოდენობა. ფაილები ჯობს იყოს ვექტორში ან მაღალი ხარისხის PDF/JPEG.</p>
+                    {/*<div className="mt-4">*/}
+                    {/*    <h6 className="fw-bold mb-2">ტექნიკური მოთხოვნის მითითება</h6>*/}
+                    {/*    <p className="text-muted">ორდერის დეტალად მიუთითეთ ფორმატი, ფერიანობა, დაჭერის ტიპები და რაოდენობა. ფაილები ჯობს იყოს ვექტორში ან მაღალი ხარისხის PDF/JPEG.</p>*/}
 
-                        <h6 className="fw-bold mb-2">ფაილების მიღება/დამზადება და კონტროლი</h6>
-                        <p className="text-muted">მიღების შემდეგ ვამოწმებთ ზომებს, ფერებსა და პროფილებს და ვადაპტირებთ რეალურ ზომებზე. საჭიროების შემთხვევაში იგზავნება შენიშვნები.</p>
+                    {/*    <h6 className="fw-bold mb-2">ფაილების მიღება/დამზადება და კონტროლი</h6>*/}
+                    {/*    <p className="text-muted">მიღების შემდეგ ვამოწმებთ ზომებს, ფერებსა და პროფილებს და ვადაპტირებთ რეალურ ზომებზე. საჭიროების შემთხვევაში იგზავნება შენიშვნები.</p>*/}
 
-                        <h6 className="fw-bold mb-2">პროდუქციის გატანის პირობები</h6>
-                        <p className="text-muted">OQ-ის მიღებისთანავე გატანა შესაძლებელია ოფისიდან ან კურიერით. წინასწარ ჩაწერეთ დამატებითი მითითებები სწრაფი წარმოებისთვის.</p>
-                    </div>
+                    {/*    <h6 className="fw-bold mb-2">პროდუქციის გატანის პირობები</h6>*/}
+                    {/*    <p className="text-muted">OQ-ის მიღებისთანავე გატანა შესაძლებელია ოფისიდან ან კურიერით. წინასწარ ჩაწერეთ დამატებითი მითითებები სწრაფი წარმოებისთვის.</p>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </>

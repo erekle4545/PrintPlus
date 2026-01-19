@@ -21,6 +21,7 @@ import { generateSlug } from "@/shared/utils/mix";
 import { useCart } from "@/shared/hooks/useCart";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import {useLanguage} from "@/context/LanguageContext";
 
 interface ProductDetailsProps {
     product: Product;
@@ -31,6 +32,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     const { addItem, loading: cartLoading } = useCart();
     const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
     const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     // Product-დან მონაცემების ამოღება
     const images = useMemo(() => {
@@ -122,27 +124,27 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
         if (selectedMaterial) {
             const material = materials.find(m => m.id === selectedMaterial);
-            if (material) extrasArr.push(`მასალა: ${material.name}`);
+            if (material) extrasArr.push(`${t('material')}: ${material.name}`);
         }
 
         if (selectedColor) {
             const color = colors.find(c => c.id === selectedColor);
-            if (color) extrasArr.push(`ფერი: ${color.name}`);
+            if (color) extrasArr.push(`${t('color')}: ${color.name}`);
         }
 
         if (selectedSize) {
             const size = sizes.find(s => s.id === selectedSize);
-            if (size) extrasArr.push(`ზომა: ${size.name}`);
+            if (size) extrasArr.push(`${t('size')}: ${size.name}`);
         }
 
         selectedExtras.forEach(extraId => {
             const extra = extras.find(e => e.id === extraId);
-            if (extra) extrasArr.push(`დამატებითი:${extra.name}`);
+            if (extra) extrasArr.push(`${t('extra')}:${extra.name}`);
         });
 
         selectedPrintTypes.forEach(printTypeId => {
             const printType = printTypes.find(pt => pt.id === printTypeId);
-            if (printType) extrasArr.push(`ბეჭდვის მეთოდი:${printType.name}`);
+            if (printType) extrasArr.push(`${t('print_method')}:${printType.name}`);
         });
 
         return extrasArr;
@@ -165,17 +167,17 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     const handleAddToCart = async () => {
         // ვალიდაცია
         if (colors.length > 0 && !selectedColor) {
-            toast.warning('გთხოვთ აირჩიოთ ფერი');
+            toast.warning(t('please_select_color'));
             return;
         }
 
         if (sizes.length > 0 && !selectedSize) {
-            toast.warning('გთხოვთ აირჩიოთ ზომა');
+            toast.warning(t('please_select_size'));
             return;
         }
 
         if (materials.length > 0 && !selectedMaterial) {
-            toast.warning('გთხოვთ აირჩიოთ მასალა');
+            toast.warning(t('please_select_material'));
             return;
         }
 
@@ -211,10 +213,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 custom_dimensions: getExtrasArray(),
             });
 
-            toast.success('პროდუქტი დაემატა კალათაში!');
+            toast.success(t('product_added_to_cart'));
         } catch (error) {
             console.error('Error adding to cart:', error);
-            toast.error('შეცდომა პროდუქტის დამატებისას');
+            toast.error(t('error_adding_product'));
         } finally {
             setIsAddingToCart(false);
         }
@@ -226,7 +228,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
         if (!isAddingToCart) {
             setTimeout(() => {
-                router.push('/checkout');
+                router.push('/cart');
             }, 500);
         }
     };
@@ -305,7 +307,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                                         <SwiperSlide key={`thumb-${i}`}>
                                             <button
                                                 className="thumb-btn"
-                                                aria-label={`სურათი ${i + 1}`}
+                                                aria-label={`${t('image')} ${i + 1}`}
                                             >
                                                 <img src={src} alt="" />
                                             </button>
@@ -318,7 +320,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Description */}
                         {product.info?.description && (
                             <div className="mb-4">
-                                <div className="fw-semibold mb-2">დამატებითი ინფორმაცია</div>
+                                <div className="fw-semibold mb-2">{t('additional_info')}</div>
                                 <div
                                     className="text-secondary small text_font"
                                     dangerouslySetInnerHTML={{ __html: product.info.description }}
@@ -329,7 +331,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Full Text */}
                         {product.info?.text && (
                             <div className="mb-4">
-                                <div className="fw-semibold mb-2">დეტალური აღწერა</div>
+                                <div className="fw-semibold mb-2">{t('detailed_description')}</div>
                                 <div
                                     className="text-secondary small text_font"
                                     dangerouslySetInnerHTML={{ __html: product.info.text }}
@@ -357,7 +359,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Colors */}
                         {colors.length > 0 && (
                             <div className="mb-3 mt-4">
-                                <div className="fw-semibold mb-2">აირჩიეთ ფერი</div>
+                                <div className="fw-semibold mb-2">{t('select_color')}</div>
                                 <div className="d-flex gap-2 flex-wrap">
                                     {colors.map((color) => (
                                         <label
@@ -392,12 +394,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Sizes */}
                         {sizes.length > 0 && (
                             <div className="mb-3">
-                                <div className="fw-semibold mb-2">აირჩიეთ ზომა</div>
+                                <div className="fw-semibold mb-2">{t('select_size')}</div>
                                 <div className="d-grid gap-2">
                                     {sizes.map((size) => (
                                         <label key={size.id} className={'fw-bolder'}>
                                             <TealCheckbox
-                                                label={`${size.name} ${size.width ? `(${size.width}x${size.height} სმ)` : ''} ${size.base_price > 0 ? `+${size.base_price}₾` : ''}`}
+                                                label={`${size.name} ${size.width ? `(${size.width}x${size.height} ${t('cm')})` : ''} ${size.base_price > 0 ? `+${size.base_price}₾` : ''}`}
                                                 checked={selectedSize === size.id}
                                                 onChange={() => setSelectedSize(size.id)}
                                                 disabled={isAddingToCart || cartLoading}
@@ -411,7 +413,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Materials */}
                         {materials.length > 0 && (
                             <div className="mb-3">
-                                <div className="fw-semibold mb-2">აირჩიეთ მასალა</div>
+                                <div className="fw-semibold mb-2">{t('select_material')}</div>
                                 <div className="d-grid gap-2">
                                     {materials.map((material) => (
                                         <label key={material.id} className={'fw-bolder'}>
@@ -430,7 +432,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Print Types */}
                         {printTypes.length > 0 && (
                             <div className="mb-3">
-                                <div className="fw-semibold mb-2">აირჩიეთ ბეჭდვის მეთოდი</div>
+                                <div className="fw-semibold mb-2">{t('select_print_method')}</div>
                                 <div className="d-grid gap-2">
                                     {printTypes.map((printType) => (
                                         <label key={printType.id} className={'fw-bolder'}>
@@ -449,7 +451,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         {/* Extras */}
                         {extras.length > 0 && (
                             <div className="mb-3">
-                                <div className="fw-semibold mb-2">დამატებითი ოპციები</div>
+                                <div className="fw-semibold mb-2">{t('additional_options')}</div>
                                 <div className="d-grid gap-2">
                                     {extras.map((extra) => (
                                         <label key={extra.id} className={'fw-bolder'}>
@@ -469,7 +471,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         <div className="mb-3">
                             <div className="input-group" style={{ maxWidth: 180 }}>
                                 <QuantityStepper
-                                    label="რაოდენობა"
+                                    label={t('quantity')}
                                     value={qty}
                                     onChange={setQty}
                                     min={1}
@@ -484,7 +486,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         <div className="d-flex align-items-center justify-content-between mb-3">
                             <div>
                                 <div className="h5 m-0 fw-semibold title_font">
-                                    სრული ფასი <span style={{ color: '#52BDBD' }}>{totalPrice.toFixed(2)}₾</span>
+                                    {t('total_price')} <span style={{ color: '#52BDBD' }}>{totalPrice.toFixed(2)}₾</span>
                                 </div>
                             </div>
                         </div>
@@ -499,7 +501,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                                 onClick={handleAddToCart}
                                 disabled={isAddingToCart || cartLoading}
                             >
-                                {isAddingToCart ? 'დამატება...' : 'კალათაში დამატება'}
+                                {isAddingToCart ? t('adding') : t('add_to_cart')}
                             </Button>
 
                             <Button
@@ -510,7 +512,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                                 onClick={handleOrderClick}
                                 disabled={isAddingToCart || cartLoading}
                             >
-                                {isAddingToCart ? 'დამუშავება...' : 'შეკვეთა'}
+                                {isAddingToCart ? t('processing') : t('order')}
                             </Button>
                         </div>
                     </div>
@@ -522,7 +524,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         </>
     );
 }
-
 // 'use client';
 //
 // import React, { useMemo, useState } from 'react';
@@ -538,18 +539,26 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 // import QuantityStepper from "@/shared/components/ui/quantity/QuantityStepper";
 // import Button from "@/shared/components/ui/button/Button";
 // import Cart from '@/shared/assets/icons/cart/shopping_cart_outline.svg';
+// import ShoppingBag from '@/shared/assets/icons/cart/shopping-bag-inside.svg';
 // import { Product } from "@/types/product/productTypes";
 // import RelatedProducts from '../../products/RelatedProducts';
-// import {getAllImages} from "@/shared/utils/imageHelper";
-// import {generateSlug} from "@/shared/utils/mix";
+// import { getAllImages, getImageUrl } from "@/shared/utils/imageHelper";
+// import { generateSlug } from "@/shared/utils/mix";
+// import { useCart } from "@/shared/hooks/useCart";
+// import { useRouter } from "next/navigation";
+// import { toast } from "react-toastify";
+// import {useLanguage} from "@/context/LanguageContext";
 //
 // interface ProductDetailsProps {
 //     product: Product;
 // }
 //
 // export default function ProductDetails({ product }: ProductDetailsProps) {
+//     const router = useRouter();
+//     const { addItem, loading: cartLoading } = useCart();
 //     const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
-//
+//     const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+//     const {t} = useLanguage();
 //     // Product-დან მონაცემების ამოღება
 //     const images = useMemo(() => {
 //         return getAllImages(product.info?.covers);
@@ -634,6 +643,121 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //         return isNaN(finalPrice) ? 0 : finalPrice;
 //     }, [product, selectedSize, selectedColor, selectedMaterial, selectedPrintTypes, selectedExtras, qty, sizes, colors, materials, printTypes, extras]);
 //
+//     // Get extras array for cart
+//     const getExtrasArray = () => {
+//         const extrasArr: string[] = [];
+//
+//         if (selectedMaterial) {
+//             const material = materials.find(m => m.id === selectedMaterial);
+//             if (material) extrasArr.push(`მასალა: ${material.name}`);
+//         }
+//
+//         if (selectedColor) {
+//             const color = colors.find(c => c.id === selectedColor);
+//             if (color) extrasArr.push(`ფერი: ${color.name}`);
+//         }
+//
+//         if (selectedSize) {
+//             const size = sizes.find(s => s.id === selectedSize);
+//             if (size) extrasArr.push(`ზომა: ${size.name}`);
+//         }
+//
+//         selectedExtras.forEach(extraId => {
+//             const extra = extras.find(e => e.id === extraId);
+//             if (extra) extrasArr.push(`დამატებითი:${extra.name}`);
+//         });
+//
+//         selectedPrintTypes.forEach(printTypeId => {
+//             const printType = printTypes.find(pt => pt.id === printTypeId);
+//             if (printType) extrasArr.push(`ბეჭდვის მეთოდი:${printType.name}`);
+//         });
+//
+//         return extrasArr;
+//     };
+//
+//     // Get custom dimensions
+//     const getCustomDimensions = () => {
+//         if (!selectedSize) return undefined;
+//
+//         const size = sizes.find(s => s.id === selectedSize);
+//         if (!size) return undefined;
+//
+//         return {
+//             width: size.width || 0,
+//             height: size.height || 0,
+//         };
+//     };
+//
+//     // კალათაში დამატების ფუნქცია
+//     const handleAddToCart = async () => {
+//         // ვალიდაცია
+//         if (colors.length > 0 && !selectedColor) {
+//             toast.warning('გთხოვთ აირჩიოთ ფერი');
+//             return;
+//         }
+//
+//         if (sizes.length > 0 && !selectedSize) {
+//             toast.warning('გთხოვთ აირჩიოთ ზომა');
+//             return;
+//         }
+//
+//         if (materials.length > 0 && !selectedMaterial) {
+//             toast.warning('გთხოვთ აირჩიოთ მასალა');
+//             return;
+//         }
+//
+//         setIsAddingToCart(true);
+//
+//         try {
+//             const size = sizes.find(s => s.id === selectedSize);
+//             const color = colors.find(c => c.id === selectedColor);
+//             const material = materials.find(m => m.id === selectedMaterial);
+//             const extras = product.extras
+//                 ?.filter(e => selectedExtras.includes(e.id))
+//                 .map(e => e.name);
+//
+//             const printType = printTypes?.filter(e => selectedPrintTypes.includes(e.id))
+//                 .map(e => e.name).toString();
+//
+//
+//             await addItem({
+//                 id: Date.now(),
+//                 product_id: product.id,
+//                 name: product.info.name,
+//                 price: totalPrice / qty,
+//                 quantity: qty,
+//                 image: product.info.covers && product.info.covers.length > 0
+//                     ? getImageUrl(product.info.covers[0].output_path)
+//                     : undefined,
+//                 discount: product.sale_price || undefined,
+//                 color: color?.name,
+//                 size: size?.name,
+//                 materials: material?.name,
+//                 extras: extras,
+//                 print_type:printType,
+//                 custom_dimensions: getExtrasArray(),
+//             });
+//
+//             toast.success('პროდუქტი დაემატა კალათაში!');
+//         } catch (error) {
+//             console.error('Error adding to cart:', error);
+//             toast.error('შეცდომა პროდუქტის დამატებისას');
+//         } finally {
+//             setIsAddingToCart(false);
+//         }
+//     };
+//
+//     // შეკვეთის გაფორმების ფუნქცია
+//     const handleOrderClick = async () => {
+//         await handleAddToCart();
+//
+//         if (!isAddingToCart) {
+//             setTimeout(() => {
+//                 router.push('/cart');
+//             }, 500);
+//         }
+//     };
+//
 //     // Extras toggle
 //     const toggleExtra = (extraId: number) => {
 //         setSelectedExtras(prev =>
@@ -652,9 +776,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //         );
 //     };
 //
-//     /**
-//      * category slug
-//      */
+//     // category slug
 //     const categoryUrl = generateSlug(product?.category?.info?.slug, product?.category?.id, 'c');
 //
 //     return (
@@ -786,6 +908,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                                                 className="d-none"
 //                                                 checked={selectedColor === color.id}
 //                                                 onChange={() => setSelectedColor(color.id)}
+//                                                 disabled={isAddingToCart || cartLoading}
 //                                             />
 //                                         </label>
 //                                     ))}
@@ -804,6 +927,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                                                 label={`${size.name} ${size.width ? `(${size.width}x${size.height} სმ)` : ''} ${size.base_price > 0 ? `+${size.base_price}₾` : ''}`}
 //                                                 checked={selectedSize === size.id}
 //                                                 onChange={() => setSelectedSize(size.id)}
+//                                                 disabled={isAddingToCart || cartLoading}
 //                                             />
 //                                         </label>
 //                                     ))}
@@ -822,6 +946,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                                                 label={`${material.name} ${material.base_price > 0 ? `+${material.base_price}₾` : ''}`}
 //                                                 checked={selectedMaterial === material.id}
 //                                                 onChange={() => setSelectedMaterial(material.id)}
+//                                                 disabled={isAddingToCart || cartLoading}
 //                                             />
 //                                         </label>
 //                                     ))}
@@ -840,6 +965,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                                                 label={`${printType.name} ${printType.base_price > 0 ? `+${printType.base_price}₾` : ''}`}
 //                                                 checked={selectedPrintTypes.includes(printType.id)}
 //                                                 onChange={() => togglePrintType(printType.id)}
+//                                                 disabled={isAddingToCart || cartLoading}
 //                                             />
 //                                         </label>
 //                                     ))}
@@ -858,6 +984,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                                                 label={`${extra.name} ${extra.base_price > 0 ? `+${extra.base_price}₾` : ''}`}
 //                                                 checked={selectedExtras.includes(extra.id)}
 //                                                 onChange={() => toggleExtra(extra.id)}
+//                                                 disabled={isAddingToCart || cartLoading}
 //                                             />
 //                                         </label>
 //                                     ))}
@@ -875,6 +1002,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                                     min={1}
 //                                     max={99}
 //                                     size="sm"
+//                                     disabled={isAddingToCart || cartLoading}
 //                                 />
 //                             </div>
 //                         </div>
@@ -888,14 +1016,30 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //                             </div>
 //                         </div>
 //
-//                         <Button
-//                             startIcon={<Cart />}
-//                             className={'text-center fw-bolder d-flex justify-content-center'}
-//                             variant={'my-btn-blue'}
-//                             style={{ width: '200px' }}
-//                         >
-//                             შეკვეთა
-//                         </Button>
+//                         {/* Action Buttons */}
+//                         <div className="d-flex gap-2 flex-wrap">
+//                             <Button
+//                                 startIcon={<Cart />}
+//                                 className={'text-center fw-bolder d-flex justify-content-center'}
+//                                 variant={'my-btn-blue'}
+//                                 style={{ flex: '1', minWidth: '180px' }}
+//                                 onClick={handleAddToCart}
+//                                 disabled={isAddingToCart || cartLoading}
+//                             >
+//                                 {isAddingToCart ? 'დამატება...' : 'კალათაში დამატება'}
+//                             </Button>
+//
+//                             <Button
+//                                 startIcon={<ShoppingBag />}
+//                                 className={'text-center fw-bolder d-flex justify-content-center'}
+//                                 variant={'my-btn-blue'}
+//                                 style={{ flex: '1', minWidth: '180px' }}
+//                                 onClick={handleOrderClick}
+//                                 disabled={isAddingToCart || cartLoading}
+//                             >
+//                                 {isAddingToCart ? 'დამუშავება...' : 'შეკვეთა'}
+//                             </Button>
+//                         </div>
 //                     </div>
 //                 </div>
 //
@@ -905,3 +1049,4 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 //         </>
 //     );
 // }
+//

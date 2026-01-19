@@ -16,6 +16,7 @@ import { useCart } from "@/shared/hooks/useCart";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useFileUpload } from "@/shared/hooks/file/useFileUpload";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface BrandPageDetailsProps {
     product: Product;
@@ -24,8 +25,8 @@ interface BrandPageDetailsProps {
 export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
     const router = useRouter();
     const { addItem, loading: cartLoading } = useCart();
+    const { t } = useLanguage();
 
-    //  File upload hook
     const {
         uploadedFiles,
         addFiles,
@@ -42,7 +43,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
     const [comment, setComment] = useState<string>("");
     const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
 
-    // useRef infinite loop
     const hasProcessedFiles = useRef(false);
 
     useEffect(() => {
@@ -101,12 +101,12 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
         if (selectedMaterial) {
             const material = product.materials?.find(m => m.id === selectedMaterial);
-            if (material) extras.push(`მასალა: ${material.name}`);
+            if (material) extras.push(`${t('product.material')}: ${material.name}`);
         }
 
         if (selectedSize) {
             const size = product.sizes?.find(s => s.id === selectedSize);
-            if (size) extras.push(`ზომა: ${size.name}`);
+            if (size) extras.push(`${t('product.size')}: ${size.name}`);
         }
 
         selectedExtras.forEach(extraId => {
@@ -122,7 +122,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
         return extras;
     };
 
-    // ✅ FileUploader-ის onComplete callback
     const handleFileUploadComplete = (items: any[]) => {
         if (hasProcessedFiles.current) {
             return;
@@ -142,19 +141,19 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
         if (files.length > 0) {
             hasProcessedFiles.current = true;
-            addFiles(files); // ✅ hook-ის გამოყენება
-            toast.success(`${files.length} ფაილი წარმატებით აიტვირთა`);
+            addFiles(files);
+            toast.success(`${t('product.files.uploaded')} ${{ count: files.length }}`);
         }
     };
 
     const handleAddToCart = async () => {
         if (!selectedMaterial && product.materials && product.materials.length > 0) {
-            toast.warning('გთხოვთ აირჩიოთ მასალა');
+            toast.warning(t('product.select.material'));
             return;
         }
 
         if (!selectedSize && product.sizes && product.sizes.length > 0) {
-            toast.warning('გთხოვთ აირჩიოთ ზომა');
+            toast.warning(t('product.select.size'));
             return;
         }
 
@@ -164,8 +163,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
             .map(e => e.name);
 
         const material = product.materials?.find(m => m.id === selectedMaterial);
-
-        // ✅ ფაილების მონაცემები hook-დან
         const coverData = getCoverData();
 
         setIsAddingToCart(true);
@@ -185,17 +182,15 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                 extras: extras,
                 size: size?.name,
                 custom_dimensions: getExtrasArray(),
-
-                // ✅ ფაილების მონაცემები
                 uploaded_file: coverData.uploaded_file,
                 cover_id: coverData.cover_ids,
                 cover_type: coverData.cover_types,
             });
 
-            toast.success('პროდუქტი დაემატა კალათაში!');
+            toast.success(t('product.added.to.cart'));
 
             if (uploadedFiles.length > 0) {
-                console.log(' Order created with files:', {
+                console.log('Order created with files:', {
                     product_id: product.id,
                     cover_ids: coverData.cover_ids,
                     cover_types: coverData.cover_types,
@@ -205,7 +200,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
         } catch (error) {
             console.error('❌ Error adding to cart:', error);
-            toast.error('შეცდომა პროდუქტის დამატებისას');
+            toast.error(t('product.error.adding'));
         } finally {
             setIsAddingToCart(false);
         }
@@ -216,7 +211,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
         if (!isAddingToCart) {
             setTimeout(() => {
-                router.push('/checkout');
+                router.push('/cart');
             }, 500);
         }
     };
@@ -239,15 +234,13 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
     const handleFileUploadError = (items: any[]) => {
         console.error("❌ Upload error:", items);
-        toast.error('ფაილის ატვირთვის შეცდომა');
+        toast.error(t('product.files.upload.error'));
     };
 
-    // ✅ ფაილის წაშლა hook-ით
     const handleRemoveFile = async (fileId: number, index: number) => {
         const success = await deleteFile(fileId, index);
 
         if (success && uploadedFiles.length === 1) {
-            // თუ ეს იყო ბოლო ფაილი, reset flag
             hasProcessedFiles.current = false;
         }
     };
@@ -260,10 +253,10 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                 <div className="row">
                     <div className="col-12 col-md-8 col-lg-9">
                         <div className='section-brands p-4'>
-                            {/* Materials - same as before */}
+                            {/* Materials */}
                             {product.materials && product.materials.length > 0 && (
                                 <>
-                                    <h5 className="mb-3 fw-bolder">აირჩიე მასალა</h5>
+                                    <h5 className="mb-3 fw-bolder">{t('product.select.material')}</h5>
                                     <div className="row">
                                         {product.materials.map((material) => {
                                             const isSelected = selectedMaterial === material.id;
@@ -294,7 +287,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                                                 />
                                                             ) : (
                                                                 <div className="thumb-placeholder d-flex align-items-center justify-content-center bg-light">
-                                                                    <span className="text-muted">ფოტო არ არის</span>
+                                                                    <span className="text-muted">{t('product.no.image')}</span>
                                                                 </div>
                                                             )}
                                                         </div>
@@ -326,7 +319,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                             {/* Sizes */}
                             {product.sizes && product.sizes.length > 0 && (
                                 <>
-                                    <h5 className="mt-4 fw-bolder">აირჩიე ზომა</h5>
+                                    <h5 className="mt-4 fw-bolder">{t('product.select.size')}</h5>
                                     {product.sizes.map((size) => (
                                         <div key={size.id}>
                                             <TealCheckbox
@@ -342,7 +335,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                             {/* Print Types */}
                             {product.print_types && product.print_types.length > 0 && (
                                 <>
-                                    <h5 className="mt-4 fw-bolder">აირჩიე ბეჭდვის მეთოდი</h5>
+                                    <h5 className="mt-4 fw-bolder">{t('product.select.print.type')}</h5>
                                     {product.print_types.map((printType) => (
                                         <div key={printType.id}>
                                             <TealCheckbox
@@ -358,7 +351,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                             {/* Extras */}
                             {product.extras && product.extras.length > 0 && (
                                 <>
-                                    <h5 className="mt-4 fw-bolder">აირჩიე დამატებითი</h5>
+                                    <h5 className="mt-4 fw-bolder">{t('product.select.extras')}</h5>
                                     {product.extras.map((extra) => (
                                         <div key={extra.id}>
                                             <TealCheckbox
@@ -372,7 +365,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                             )}
 
                             {/* Quantity */}
-                            <h5 className="mt-4 fw-bolder">მოითხოვე რაოდენობა</h5>
+                            <h5 className="mt-4 fw-bolder">{t('product.quantity')}</h5>
                             <div className="d-flex align-items-center">
                                 <button
                                     className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
@@ -393,15 +386,15 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 
                             <div className='mt-3 gap-2 text_font text-muted d-flex align-items-center align-content-center'>
                                 <div><InfoIcon /></div>
-                                <div>1000-ზე მეტის შეკვეთის შემთხვევაში გთხოვთ დაგვიკავშირდეთ.</div>
+                                <div>{t('product.bulk.order.info')}</div>
                             </div>
 
                             {/* Comment */}
-                            <h5 className="mt-4 fw-bolder">დამატებითი დეტალები</h5>
+                            <h5 className="mt-4 fw-bolder">{t('product.additional.details')}</h5>
                             <Form.Control
                                 as="textarea"
                                 rows={3}
-                                placeholder="შეკვეთასთან დაკავშირებული დამატებითი დეტალები მოგვწერეთ აქ"
+                                placeholder={t('product.additional.details.placeholder')}
                                 value={comment}
                                 className='text_font'
                                 onChange={(e) => setComment(e.target.value)}
@@ -409,7 +402,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                             />
 
                             {/* File Uploader */}
-                            <h5 className="mt-4 fw-bolder">ატვირთე ფაილი / ლოგო</h5>
+                            <h5 className="mt-4 fw-bolder">{t('product.upload.file')}</h5>
                             <FileUploader
                                 uploadUrl={`${process.env.NEXT_PUBLIC_FILE_URL}api/web/image/resize`}
                                 headers={{
@@ -426,10 +419,10 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 onError={handleFileUploadError}
                             />
 
-                            {/*   Uploaded Files List - განახლებული წაშლის ფუნქციონალით */}
+                            {/* Uploaded Files List */}
                             {uploadedFiles.length > 0 && (
                                 <div className="mt-3">
-                                    <h6 className="fw-bolder">ატვირთული ფაილები ({uploadedFiles.length}):</h6>
+                                    <h6 className="fw-bolder">{t('product.uploaded.files')} ({uploadedFiles.length}):</h6>
                                     <ul className="list-group">
                                         {uploadedFiles.map((file, index) => (
                                             <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
@@ -438,7 +431,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                                         {file.name}
                                                     </span>
                                                     <small className="text-muted">
-                                                        File ID: {file.file_id}
+                                                        {t('product.file.id')}: {file.file_id}
                                                     </small>
                                                 </div>
                                                 <button
@@ -446,7 +439,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                                     onClick={() => handleRemoveFile(file.file_id, index)}
                                                     disabled={isAddingToCart || cartLoading || isDeleting}
                                                 >
-                                                    {isDeleting ? 'იშლება...' : 'წაშლა'}
+                                                    {isDeleting ? t('product.deleting') : t('product.delete')}
                                                 </button>
                                             </li>
                                         ))}
@@ -475,7 +468,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //
 // import Cover from "@/shared/components/theme/header/cover/cover";
 // import Image from "next/image";
-// import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect, useRef } from "react";
 // import { Form } from "react-bootstrap";
 // import TealCheckbox from "@/shared/components/ui/tealCheckbox/tealCheckbox";
 // import { HeaderTitle } from "@/shared/components/theme/page/components/headerTitle";
@@ -485,20 +478,40 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 // import OrderSidebar from "@/shared/components/ui/orderSidebar/OrderSidebar";
 // import { Product } from "@/types/product/productTypes";
 // import { getImageUrl } from "@/shared/utils/imageHelper";
+// import { useCart } from "@/shared/hooks/useCart";
+// import { useRouter } from "next/navigation";
+// import { toast } from "react-toastify";
+// import { useFileUpload } from "@/shared/hooks/file/useFileUpload";
+// import {useLanguage} from "@/context/LanguageContext";
 //
 // interface BrandPageDetailsProps {
 //     product: Product;
 // }
 //
 // export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
+//     const router = useRouter();
+//     const { addItem, loading: cartLoading } = useCart();
+//     const {t} = useLanguage();
+//     //  File upload hook
+//     const {
+//         uploadedFiles,
+//         addFiles,
+//         deleteFile,
+//         getCoverData,
+//         isDeleting
+//     } = useFileUpload();
+//
 //     const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
 //     const [selectedSize, setSelectedSize] = useState<number | null>(null);
 //     const [selectedExtras, setSelectedExtras] = useState<number[]>([]);
 //     const [selectedPrintTypes, setSelectedPrintTypes] = useState<number[]>([]);
 //     const [quantity, setQuantity] = useState<number>(1);
 //     const [comment, setComment] = useState<string>("");
+//     const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
 //
-//     // Set first material, size, first extra, and first print type as default on mount
+//     // useRef infinite loop
+//     const hasProcessedFiles = useRef(false);
+//
 //     useEffect(() => {
 //         if (product.materials && product.materials.length > 0 && selectedMaterial === null) {
 //             setSelectedMaterial(product.materials[0].id);
@@ -514,7 +527,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //         }
 //     }, [product, selectedMaterial, selectedSize, selectedExtras.length, selectedPrintTypes.length]);
 //
-//     // Calculate price based on selections
 //     const calculatePrice = () => {
 //         let total = Number(product.sale_price || product.base_price || 0);
 //
@@ -551,17 +563,129 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //
 //     const price = calculatePrice();
 //
-//     const handleOrderClick = () => {
-//         console.log({
-//             product: product.id,
-//             material: selectedMaterial,
-//             size: selectedSize,
-//             extras: selectedExtras,
-//             print_types: selectedPrintTypes,
-//             quantity,
-//             comment,
-//             totalPrice: price * quantity
+//     const getExtrasArray = () => {
+//         const extras: string[] = [];
+//
+//         if (selectedMaterial) {
+//             const material = product.materials?.find(m => m.id === selectedMaterial);
+//             if (material) extras.push(`მასალა: ${material.name}`);
+//         }
+//
+//         if (selectedSize) {
+//             const size = product.sizes?.find(s => s.id === selectedSize);
+//             if (size) extras.push(`ზომა: ${size.name}`);
+//         }
+//
+//         selectedExtras.forEach(extraId => {
+//             const extra = product.extras?.find(e => e.id === extraId);
+//             if (extra) extras.push(extra.name);
 //         });
+//
+//         selectedPrintTypes.forEach(printTypeId => {
+//             const printType = product.print_types?.find(pt => pt.id === printTypeId);
+//             if (printType) extras.push(printType.name);
+//         });
+//
+//         return extras;
+//     };
+//
+//     // ✅ FileUploader-ის onComplete callback
+//     const handleFileUploadComplete = (items: any[]) => {
+//         if (hasProcessedFiles.current) {
+//             return;
+//         }
+//
+//         console.log("✅ Upload complete:", items);
+//
+//         const files = items
+//             .filter(item => item.status === 'done' && item.uploadedFileId)
+//             .map(item => ({
+//                 file_id: item.uploadedFileId,
+//                 url: item.response?.url || item.response?.data?.url || '',
+//                 name: item.name || 'file',
+//                 quantity: item.quantity || 1,
+//                 cover_type: 'image'
+//             }));
+//
+//         if (files.length > 0) {
+//             hasProcessedFiles.current = true;
+//             addFiles(files); // ✅ hook-ის გამოყენება
+//             toast.success(`${files.length} ფაილი წარმატებით აიტვირთა`);
+//         }
+//     };
+//
+//     const handleAddToCart = async () => {
+//         if (!selectedMaterial && product.materials && product.materials.length > 0) {
+//             toast.warning('გთხოვთ აირჩიოთ მასალა');
+//             return;
+//         }
+//
+//         if (!selectedSize && product.sizes && product.sizes.length > 0) {
+//             toast.warning('გთხოვთ აირჩიოთ ზომა');
+//             return;
+//         }
+//
+//         const size = product.sizes?.find(s => s.id === selectedSize);
+//         const extras = product.extras
+//             ?.filter(e => selectedExtras.includes(e.id))
+//             .map(e => e.name);
+//
+//         const material = product.materials?.find(m => m.id === selectedMaterial);
+//
+//         // ✅ ფაილების მონაცემები hook-დან
+//         const coverData = getCoverData();
+//
+//         setIsAddingToCart(true);
+//
+//         try {
+//             await addItem({
+//                 id: Date.now(),
+//                 product_id: product.id,
+//                 name: product.info.name,
+//                 price: price,
+//                 quantity: quantity,
+//                 image: product.info.covers && product.info.covers.length > 0
+//                     ? getImageUrl(product.info.covers[0].output_path)
+//                     : undefined,
+//                 discount: product.sale_price || undefined,
+//                 materials: material?.name,
+//                 extras: extras,
+//                 size: size?.name,
+//                 custom_dimensions: getExtrasArray(),
+//
+//                 // ✅ ფაილების მონაცემები
+//                 uploaded_file: coverData.uploaded_file,
+//                 cover_id: coverData.cover_ids,
+//                 cover_type: coverData.cover_types,
+//             });
+//
+//             toast.success('პროდუქტი დაემატა კალათაში!');
+//
+//             if (uploadedFiles.length > 0) {
+//                 console.log(' Order created with files:', {
+//                     product_id: product.id,
+//                     cover_ids: coverData.cover_ids,
+//                     cover_types: coverData.cover_types,
+//                     files_count: uploadedFiles.length
+//                 });
+//             }
+//
+//         } catch (error) {
+//             console.error('❌ Error adding to cart:', error);
+//             toast.error('შეცდომა პროდუქტის დამატებისას');
+//         } finally {
+//             setIsAddingToCart(false);
+//         }
+//     };
+//
+//     const handleOrderClick = async () => {
+//         await handleAddToCart();
+//
+//         if (!isAddingToCart) {
+//             setTimeout(() => {
+//                 router.push('/checkout');
+//             }, 500);
+//         }
 //     };
 //
 //     const toggleExtra = (extraId: number) => {
@@ -580,6 +704,21 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //         );
 //     };
 //
+//     const handleFileUploadError = (items: any[]) => {
+//         console.error("❌ Upload error:", items);
+//         toast.error('ფაილის ატვირთვის შეცდომა');
+//     };
+//
+//     // ✅ ფაილის წაშლა hook-ით
+//     const handleRemoveFile = async (fileId: number, index: number) => {
+//         const success = await deleteFile(fileId, index);
+//
+//         if (success && uploadedFiles.length === 1) {
+//             // თუ ეს იყო ბოლო ფაილი, reset flag
+//             hasProcessedFiles.current = false;
+//         }
+//     };
+//
 //     return (
 //         <>
 //             <Cover />
@@ -588,7 +727,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                 <div className="row">
 //                     <div className="col-12 col-md-8 col-lg-9">
 //                         <div className='section-brands p-4'>
-//                             {/* Materials - აირჩიე მასალა */}
+//                             {/* Materials - same as before */}
 //                             {product.materials && product.materials.length > 0 && (
 //                                 <>
 //                                     <h5 className="mb-3 fw-bolder">აირჩიე მასალა</h5>
@@ -611,7 +750,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                                         className={`product-card text-center p-2 ${isSelected ? "is-selected" : ""}`}
 //                                                         aria-pressed={isSelected}
 //                                                     >
-//                                                         {/* image wrapper keeps square ratio and crops nicely */}
 //                                                         <div className="thumb">
 //                                                             {materialImage ? (
 //                                                                 <Image
@@ -628,7 +766,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                                             )}
 //                                                         </div>
 //
-//                                                         {/* centered check badge */}
 //                                                         {isSelected && (
 //                                                             <span className="selected-badge" aria-hidden="true">
 //                                                                 <span className="badge-circle">
@@ -638,7 +775,6 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                                         )}
 //                                                     </div>
 //
-//                                                     {/* title */}
 //                                                     <div className="mt-2 text-center fw-bolder">
 //                                                         {material.name}
 //                                                         {material.base_price && material.base_price > 0 && (
@@ -654,7 +790,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                 </>
 //                             )}
 //
-//                             {/* Sizes - აირჩიე ზომა */}
+//                             {/* Sizes */}
 //                             {product.sizes && product.sizes.length > 0 && (
 //                                 <>
 //                                     <h5 className="mt-4 fw-bolder">აირჩიე ზომა</h5>
@@ -670,7 +806,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                 </>
 //                             )}
 //
-//                             {/* Print Types - აირჩიე ბეჭდვის მეთოდი */}
+//                             {/* Print Types */}
 //                             {product.print_types && product.print_types.length > 0 && (
 //                                 <>
 //                                     <h5 className="mt-4 fw-bolder">აირჩიე ბეჭდვის მეთოდი</h5>
@@ -686,7 +822,7 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                 </>
 //                             )}
 //
-//                             {/* Extras - აირჩიე დამატებითი */}
+//                             {/* Extras */}
 //                             {product.extras && product.extras.length > 0 && (
 //                                 <>
 //                                     <h5 className="mt-4 fw-bolder">აირჩიე დამატებითი</h5>
@@ -702,12 +838,13 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                 </>
 //                             )}
 //
-//                             {/* qty */}
+//                             {/* Quantity */}
 //                             <h5 className="mt-4 fw-bolder">მოითხოვე რაოდენობა</h5>
 //                             <div className="d-flex align-items-center">
 //                                 <button
 //                                     className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
 //                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
+//                                     disabled={isAddingToCart || cartLoading}
 //                                 >
 //                                     -
 //                                 </button>
@@ -715,22 +852,18 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                 <button
 //                                     className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
 //                                     onClick={() => setQuantity(quantity + 1)}
+//                                     disabled={isAddingToCart || cartLoading}
 //                                 >
 //                                     +
 //                                 </button>
 //                             </div>
 //
-//                             {/*info*/}
 //                             <div className='mt-3 gap-2 text_font text-muted d-flex align-items-center align-content-center'>
-//                                 <div>
-//                                     <InfoIcon />
-//                                 </div>
-//                                 <div>
-//                                     1000-ზე მეტის შეკვეთის შემთხვევაში გთხოვთ დაგვიკავშირდეთ.
-//                                 </div>
+//                                 <div><InfoIcon /></div>
+//                                 <div>1000-ზე მეტის შეკვეთის შემთხვევაში გთხოვთ დაგვიკავშირდეთ.</div>
 //                             </div>
 //
-//                             {/* comment */}
+//                             {/* Comment */}
 //                             <h5 className="mt-4 fw-bolder">დამატებითი დეტალები</h5>
 //                             <Form.Control
 //                                 as="textarea"
@@ -739,20 +872,54 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                                 value={comment}
 //                                 className='text_font'
 //                                 onChange={(e) => setComment(e.target.value)}
+//                                 disabled={isAddingToCart || cartLoading}
 //                             />
 //
+//                             {/* File Uploader */}
 //                             <h5 className="mt-4 fw-bolder">ატვირთე ფაილი / ლოგო</h5>
 //                             <FileUploader
-//                                 uploadUrl={`${process.env.NEXT_PUBLIC_API}/upload`}
-//                                 headers={{ Authorization: `Bearer ` }}
+//                                 uploadUrl={`${process.env.NEXT_PUBLIC_FILE_URL}api/web/image/resize`}
+//                                 headers={{
+//                                     Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('token') || '' : ''}`
+//                                 }}
+//                                 fieldName="file[]"
 //                                 accept="application/pdf,image/*"
 //                                 multiple
 //                                 maxSizeMB={50}
 //                                 className={'text_font'}
-//                                 autoUpload
-//                                 onComplete={(items) => console.log("DONE", items)}
-//                                 onError={(items) => console.log("ERR", items)}
+//                                 autoUpload={false}
+//                                 showQuantity={false}
+//                                 onComplete={handleFileUploadComplete}
+//                                 onError={handleFileUploadError}
 //                             />
+//
+//                             {/*   Uploaded Files List - განახლებული წაშლის ფუნქციონალით */}
+//                             {uploadedFiles.length > 0 && (
+//                                 <div className="mt-3">
+//                                     <h6 className="fw-bolder">ატვირთული ფაილები ({uploadedFiles.length}):</h6>
+//                                     <ul className="list-group">
+//                                         {uploadedFiles.map((file, index) => (
+//                                             <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+//                                                 <div className="d-flex flex-column">
+//                                                     <span className="text-truncate" title={file.name}>
+//                                                         {file.name}
+//                                                     </span>
+//                                                     <small className="text-muted">
+//                                                         File ID: {file.file_id}
+//                                                     </small>
+//                                                 </div>
+//                                                 <button
+//                                                     className="btn btn-sm btn-outline-danger"
+//                                                     onClick={() => handleRemoveFile(file.file_id, index)}
+//                                                     disabled={isAddingToCart || cartLoading || isDeleting}
+//                                                 >
+//                                                     {isDeleting ? 'იშლება...' : 'წაშლა'}
+//                                                 </button>
+//                                             </li>
+//                                         ))}
+//                                     </ul>
+//                                 </div>
+//                             )}
 //                         </div>
 //                     </div>
 //
@@ -761,6 +928,8 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
 //                             price={price}
 //                             quantity={quantity}
 //                             onOrderClick={handleOrderClick}
+//                             onAddToCart={handleAddToCart}
+//                             isLoading={isAddingToCart || cartLoading}
 //                         />
 //                     </div>
 //                 </div>

@@ -45,7 +45,7 @@ interface PaymentMethod {
 export default function CheckoutForm() {
     const router = useRouter();
     const { items, total, clearCart, loading: cartLoading } = useCart();
-    const {t} = useLanguage();
+    const {t,currentLanguage} = useLanguage();
     // Form State
     const [formData, setFormData] = useState({
         name: "",
@@ -265,10 +265,11 @@ export default function CheckoutForm() {
                 total: total,
             });
 
+
             if (response.data.success) {
                 toast.success(t('checkout.order.success'));
                 await clearCart();
-                router.push(`/order-success?order=${response.data.data.order_number}`);
+                router.push(`/${currentLanguage?.code}/order-success?order=${response.data?.data?.order_number}`);
             }
         } catch (error: any) {
             console.error("Order error:", error);

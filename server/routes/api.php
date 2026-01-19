@@ -257,7 +257,7 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
 
 
 
-    // ✅ Cart merge route (Auth only)
+    //   Cart merge route (Auth only)
     Route::prefix('cart')->group(function () {
         Route::post('/merge', [CartController::class, 'mergeGuestCart']); // Merge guest cart
     });

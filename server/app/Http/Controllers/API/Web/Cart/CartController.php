@@ -9,6 +9,7 @@ use App\Models\Core\Cover;
 use App\Models\Core\GuestCart;
 use App\Models\Core\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,9 +31,10 @@ class CartController extends Controller
     /**
      * Check if user is authenticated
      */
-    private function isAuthenticated(Request $request)
+    private function isAuthenticated( $request)
     {
-        return $request->user() !== null;
+
+        return auth()->check();
     }
 
     /**
@@ -42,7 +44,7 @@ class CartController extends Controller
     {
         if ($this->isAuthenticated($request)) {
             // Authenticated user cart
-            $cartItems = Cart::where('user_id', $request->user()->id)
+            $cartItems = Cart::where('user_id', Auth::id())
                 ->with(['product' => function ($query) {
                     $query->select('id', 'price', 'sale_price');
                 }])
@@ -114,8 +116,9 @@ class CartController extends Controller
         }
 
         if ($this->isAuthenticated($request)) {
+
             //  Authenticated user - Cart table
-            $existingCart = Cart::where('user_id', $request->user()->id)
+            $existingCart = Cart::where('user_id',Auth::id())
                 ->where('product_id', $request->product_id)
                 ->where('color', $request->color)
                 ->where('size', $request->size)
@@ -136,7 +139,7 @@ class CartController extends Controller
             }
 
             $cartItem = Cart::create([
-                'user_id' => $request->user()->id,
+                'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
                 'name' => $productName,
                 'price' => $request->price,
@@ -218,7 +221,7 @@ class CartController extends Controller
 
             Cover::create([
                 'coverable_id' => $cartItem->id,
-                'coverable_type' =>Cart::class,
+                'coverable_type' =>get_class($cartItem),
                 'files_id' => $fileId,
                 'cover_type' => 1,
             ]);
@@ -245,7 +248,7 @@ class CartController extends Controller
         }
 
         if ($this->isAuthenticated($request)) {
-            $cartItem = Cart::where('user_id', $request->user()->id)->findOrFail($id);
+            $cartItem = Cart::where('user_id', Auth::id())->findOrFail($id);
         } else {
             $sessionId = $this->getSessionId($request);
             $cartItem = GuestCart::where('session_id', $sessionId)->findOrFail($id);
@@ -266,7 +269,7 @@ class CartController extends Controller
     public function destroy(Request $request, $id)
     {
         if ($this->isAuthenticated($request)) {
-            $cartItem = Cart::where('user_id', $request->user()->id)->findOrFail($id);
+            $cartItem = Cart::where('user_id', Auth::id())->findOrFail($id);
         } else {
             $sessionId = $this->getSessionId($request);
             $cartItem = GuestCart::where('session_id', $sessionId)->findOrFail($id);
@@ -286,7 +289,7 @@ class CartController extends Controller
     public function clear(Request $request)
     {
         if ($this->isAuthenticated($request)) {
-            Cart::where('user_id', $request->user()->id)->delete();
+            Cart::where('user_id', Auth::id())->delete();
         } else {
             $sessionId = $this->getSessionId($request);
             GuestCart::where('session_id', $sessionId)->delete();
@@ -304,7 +307,7 @@ class CartController extends Controller
     public function stats(Request $request)
     {
         if ($this->isAuthenticated($request)) {
-            $cartItems = Cart::where('user_id', $request->user()->id)->get();
+            $cartItems = Cart::where('user_id', Auth::id())->get();
         } else {
             $sessionId = $this->getSessionId($request);
             $cartItems = GuestCart::where('session_id', $sessionId)->get();
@@ -347,7 +350,7 @@ class CartController extends Controller
         }
 
         foreach ($guestItems as $guestItem) {
-            $existingCart = Cart::where('user_id', $request->user()->id)
+            $existingCart = Cart::where('user_id', Auth::id())
                 ->where('product_id', $guestItem->product_id)
                 ->where('color', $guestItem->color)
                 ->where('size', $guestItem->size)
@@ -363,7 +366,7 @@ class CartController extends Controller
             } else {
                 // Create new cart item
                 Cart::create([
-                    'user_id' => $request->user()->id,
+                    'user_id' => Auth::id(),
                     'product_id' => $guestItem->product_id,
                     'name' => $guestItem->name,
                     'price' => $guestItem->price,

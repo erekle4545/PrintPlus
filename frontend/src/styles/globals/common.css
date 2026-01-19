@@ -64,3 +64,16 @@
 
 
 /* attention alert */
+/** paginate **/
+
+
+.page-item .page-link {
+    color: #232323 !important;
+    border-color: var(--teal);
+}
+
+.page-item.active .page-link {
+    color: #fff !important;
+    background-color:var(--teal) !important;
+    border-color: var(--teal);
+}

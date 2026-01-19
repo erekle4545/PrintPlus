@@ -16,11 +16,46 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        // პაგინაციის პარამეტრები
+        $perPage = $request->input('per_page', 15);
+        $status = $request->input('status');
+        $search = $request->input('search');
+
+        $query = Order::where('user_id', $request->user()->id)->with(['items.product', 'items.covers', 'user'])
+            ->orderBy('created_at', 'desc');
+
+        // სტატუსის ფილტრი
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        // ძებნა
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $orders = $query->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => $orders,
+        ]);
+    }
     /**
      * ახალი შეკვეთის შექმნა
      */
     public function store(Request $request)
     {
+
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -181,40 +216,64 @@ class OrderController extends Controller
      */
     private function generateOrderNumber()
     {
-        return 'ORD-' . strtoupper(uniqid());
+        // Get last order and increment
+        $lastOrder = Order::latest('id')->first();
+        $nextNumber = $lastOrder ? ((int)$lastOrder->order_number) + 1 : 1;
+
+        // Pad to 6 digits: 000001, 000002, etc.
+        $orderNumber = str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        // Safety check
+        while (Order::where('order_number', $orderNumber)->exists()) {
+            $nextNumber++;
+            $orderNumber = "ORD-".str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+        }
+
+        return $orderNumber;
     }
 
-    /**
-     * ყველა შეკვეთის მიღება
-     */
-    public function index(Request $request)
-    {
-        $orders = Order::where('user_id', $request->user()->id)
-            ->with(['items.product', 'items.covers'])
-            ->orderBy('created_at', 'desc')
-            ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $orders,
-        ]);
-    }
 
     /**
      * კონკრეტული შეკვეთის მიღება
      */
-    public function show(Request $request, $id)
+    public function show($orderNumber)
     {
-        $order = Order::where('user_id', $request->user()->id)
+        $order = Order::where('order_number', $orderNumber)
             ->with(['items.product', 'items.covers'])
-            ->findOrFail($id);
+            ->firstOrFail();
 
         return response()->json([
             'success' => true,
-            'data' => $order,
+            'data' => [
+                'order_number' => $order->order_number,
+                'status' => $order->status,
+                'name' => $order->name,
+                'phone' => $order->phone,
+                'email' => $order->email,
+                'address' => $order->address,
+                'city' => $order->city,
+                'notes' => $order->notes,
+                'total' => (float) $order->total,
+                'payment_method' =>$order->payment_method,
+                'delivery_cost' =>$order->delivery_cost,
+                'subtotal' =>$order->subtotal,
+//                'payment_status' => $order->payment_status,
+//                'transaction_id' => $order->transaction_id,
+                'created_at' => $order->created_at->toISOString(),
+                'items' => $order->items->map(function ($item) {
+                    return [
+                         'name' => $item->name ?? 'N/A',
+                        'quantity' => $item->quantity,
+                        'price' => (float) $item->price,
+                        'product'=>$item->product,
+                        'covers'=>$item->covers,
+                        'total' => (float) ($item->price * $item->quantity),
+                    ];
+                }),
+            ],
         ]);
     }
-
     /**
      * შეკვეთის სტატუსის განახლება
      */
