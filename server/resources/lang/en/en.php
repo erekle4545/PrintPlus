@@ -1,4 +1,4 @@
 <?php
 
-                return ['contact'=>'contact',
+                return ['contact'=>'კონტაქტი',
 	 ];

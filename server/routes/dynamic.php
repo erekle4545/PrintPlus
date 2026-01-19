@@ -1,12 +1,12 @@
 <?php
 
-    Route::get('/ka', [App\Http\Controllers\Web\HomeController::class,'index']);
-    Route::get('/en', [App\Http\Controllers\Web\HomeController::class,'index']);
-    Route::get('/ru', [App\Http\Controllers\Web\HomeController::class,'index']);
-    Route::get('/ka/chveni-istoria-da-mizani',[ App\Http\Controllers\Web\AboutController::class,'index']);
-    Route::get('/ka/chveni-istoria-da-mizani/servisebi',[ App\Http\Controllers\Web\TextController::class,'index']);
-    Route::get('/ka/chveni-istoria-da-mizani/servisebi/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
-    Route::get('/ka/chveni-istoria-da-mizani/test-2',[ App\Http\Controllers\Web\TextController::class,'index']);
-    Route::get('/ka/chveni-istoria-da-mizani/test-2/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
-    Route::get('/en/test-2',[ App\Http\Controllers\Web\TextController::class,'index']);
-    Route::get('/en/test-2/{show}',[ App\Http\Controllers\Web\TextController::class,'show']);
+    Route::get('/ka', [App\Http\Controllers\API\Web\HomeController::class,'index']);
+    Route::get('/en', [App\Http\Controllers\API\Web\HomeController::class,'index']);
+    Route::get('/ru', [App\Http\Controllers\API\Web\HomeController::class,'index']);
+    Route::get('/ka/chveni-istoria-da-mizani',[ App\Http\Controllers\API\Web\AboutController::class,'index']);
+    Route::get('/ka/chveni-istoria-da-mizani/servisebi',[ App\Http\Controllers\API\Web\TextController::class,'index']);
+    Route::get('/ka/chveni-istoria-da-mizani/servisebi/{show}',[ App\Http\Controllers\API\Web\TextController::class,'show']);
+    Route::get('/ka/chveni-istoria-da-mizani/test-2',[ App\Http\Controllers\API\Web\TextController::class,'index']);
+    Route::get('/ka/chveni-istoria-da-mizani/test-2/{show}',[ App\Http\Controllers\API\Web\TextController::class,'show']);
+    Route::get('/en/test-2',[ App\Http\Controllers\API\Web\TextController::class,'index']);
+    Route::get('/en/test-2/{show}',[ App\Http\Controllers\API\Web\TextController::class,'show']);

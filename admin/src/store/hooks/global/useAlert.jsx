@@ -52,6 +52,14 @@ export const successAlerts = (status,statusText,messsage) => {
     })
 }
 
+export const successOrder = (title,message) => {
+    Swal.fire({
+        icon: 'success',
+        title: title,
+        text:message
+    })
+}
+
 
 
 

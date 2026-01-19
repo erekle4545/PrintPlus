@@ -196,5 +196,10 @@
     "GE": "ოფშენები",
     "US": "options",
     "RU": "options"
+  },
+  "orders": {
+    "GE": "შეკვეთები",
+    "US": "orders",
+    "RU": "orders"
   }
 }

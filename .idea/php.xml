@@ -168,6 +168,7 @@
       <path value="$PROJECT_DIR$/server/vendor/paragonie/constant_time_encoding" />
       <path value="$PROJECT_DIR$/server/vendor/paragonie/random_compat" />
       <path value="$PROJECT_DIR$/server/vendor/laravel/socialite" />
+      <path value="$PROJECT_DIR$/server/vendor/predis/predis" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

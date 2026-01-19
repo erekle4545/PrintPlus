@@ -125,6 +125,12 @@ const SidebarNav = () => {
                       </ul>
                   </li>
                   <li className="sidebar-item">
+                      <NavLink className="sidebar-link" to="orders">
+                          <i className="align-middle me-2 fas fa-fw  fa-cart-plus"></i> <span
+                          className="align-middle">{translate('orders')}</span>
+                      </NavLink>
+                  </li>
+                  <li className="sidebar-item">
                       <a data-bs-target="#category" data-bs-toggle="collapse" className="sidebar-link collapsed">
                           <i className="align-middle me-2 fas fa-fw fa-th"></i> <span
                           className="align-middle">კატეგორიები</span>
@@ -137,7 +143,7 @@ const SidebarNav = () => {
 
                   <li className="sidebar-item">
                       <a data-bs-target="#product" data-bs-toggle="collapse" className="sidebar-link collapsed">
-                          <i className="align-middle me-2 fas fa-fw fa-cart-plus"></i> <span
+                          <i className="align-middle me-2 fas fa-fw fa-list-ul"></i> <span
                           className="align-middle">{translate('products')}</span>
                       </a>
                       <ul id="product" className="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">

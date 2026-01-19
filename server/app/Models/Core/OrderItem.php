@@ -2,6 +2,7 @@
 
 namespace App\Models\Core;
 
+use App\Helpers\Core\Multitenant;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -57,13 +58,15 @@ class OrderItem extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
 
     public function covers()
     {
-        return $this->morphMany(Cover::class, 'coverable');
+        return $this->morphToMany(Multitenant::getModel('Files'), 'coverable')->withPivot('cover_type');
     }
+
+
 
     // Get all cover files
     public function getCoverFiles()

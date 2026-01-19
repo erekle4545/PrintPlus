@@ -2,7 +2,8 @@
 
 namespace App\Models\Core;
 
-use App\Models\Core\OrderItem;
+
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,29 +56,54 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-
     /**
-     * სტატუსის label-ები
+     * სტატუსის label config-დან
      */
     public function getStatusLabelAttribute()
     {
-        $labels = [
-            'pending' => 'მუშავდება',
-            'processing' => 'დამუშავებაში',
-            'shipped' => 'გაიგზავნა',
-            'delivered' => 'მიტანილია',
-            'cancelled' => 'გაუქმებულია',
-        ];
+        $statuses = config('order.statuses');
 
-        return $labels[$this->status] ?? $this->status;
+        if (isset($statuses[$this->status])) {
+            return $statuses[$this->status]['name'];
+        }
+
+        return $this->status;
     }
 
     /**
-     * @return mixed
+     * სტატუსის icon config-დან
+     */
+    public function getStatusIconAttribute()
+    {
+        $statuses = config('order.statuses');
+
+        if (isset($statuses[$this->status])) {
+            return $statuses[$this->status]['icon'];
+        }
+
+        return '';
+    }
+
+    /**
+     * სტატუსის აღწერა config-დან
+     */
+    public function getStatusDescriptionAttribute()
+    {
+        $statuses = config('order.statuses');
+
+        if (isset($statuses[$this->status])) {
+            return $statuses[$this->status]['description'];
+        }
+
+        return '';
+    }
+
+    /**
+     * ქალაქის სახელი config-დან
      */
     public function getCityNameAttribute()
     {
-        $cities = config('cities.cities');
+        $cities = config('order.cities');
 
         foreach ($cities as $city) {
             if ($city['id'] == $this->city_id) {
@@ -89,18 +115,64 @@ class Order extends Model
     }
 
     /**
-     * სტატუსის ფერები
+     * სტატუსის ფერი config-დან
      */
     public function getStatusColorAttribute()
     {
-        $colors = [
-            'pending' => 'warning',
-            'processing' => 'info',
-            'shipped' => 'primary',
-            'delivered' => 'success',
-            'cancelled' => 'danger',
-        ];
+        $statuses = config('order.statuses');
 
-        return $colors[$this->status] ?? 'secondary';
+        if (isset($statuses[$this->status])) {
+            return $statuses[$this->status]['color'];
+        }
+
+        return 'secondary';
+    }
+
+    /**
+     * გადახდის მეთოდის სახელი config-დან
+     */
+    public function getPaymentMethodNameAttribute()
+    {
+        $paymentMethods = config('order.paymentMethods');
+
+        if (isset($paymentMethods[$this->payment_method])) {
+            return $paymentMethods[$this->payment_method]['name'];
+        }
+
+        return $this->payment_method;
+    }
+
+    /**
+     * გადახდის მეთოდის icon config-დან
+     */
+    public function getPaymentMethodIconAttribute()
+    {
+        $paymentMethods = config('order.paymentMethods');
+
+        if (isset($paymentMethods[$this->payment_method])) {
+            return $paymentMethods[$this->payment_method]['icon'];
+        }
+
+        return '';
+    }
+
+    /**
+     * სტატუსის სრული ინფორმაცია config-დან
+     */
+    public function getStatusInfoAttribute()
+    {
+        $statuses = config('order.statuses');
+
+        if (isset($statuses[$this->status])) {
+            return $statuses[$this->status];
+        }
+
+        return [
+            'key' => $this->status,
+            'name' => $this->status,
+            'color' => 'secondary',
+            'icon' => '',
+            'description' => ''
+        ];
     }
 }

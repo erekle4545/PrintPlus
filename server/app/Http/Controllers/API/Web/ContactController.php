@@ -6,26 +6,39 @@ use App\Helpers\Core\Multitenant;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SettingResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Cache;
 class ContactController extends Controller
 {
 
-    public function index(Request $request){
+    /**
+     * @param Request $request
+     * @return SettingResource
+     */
+    public function index(Request $request)
+    {
+        $languageId = (int) $request->language_id;
 
-        $model = Multitenant::getModel('Settings');
+        $cacheKey = "settings:first:lang:{$languageId}";
 
-         $settings= $model::
-              whereHas('info', function ($query) use ($request) {
-                 $query->where('language_id', $request->language_id);
-             })->with(
-             ['info' => function ($query) use ($request) {
-                 $query->where('language_id', $request->language_id);
-             },'info.covers'])
-             ->first();
+        $settings = Cache::tags(['settings'])
+            ->remember($cacheKey, now()->addDays(30), function () use ($languageId) {
 
+                $model = Multitenant::getModel('Settings');
 
+                return $model::query()
+                    ->whereHas('info', function ($q) use ($languageId) {
+                        $q->where('language_id', $languageId);
+                    })
+                    ->with([
+                        'info' => function ($q) use ($languageId) {
+                            $q->where('language_id', $languageId);
+                        },
+                        'info.covers'
+                    ])
+                    ->first();
+            });
 
         return new SettingResource($settings);
     }
+
 }

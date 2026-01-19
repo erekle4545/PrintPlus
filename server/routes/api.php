@@ -152,8 +152,14 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::apiResource('extras', ExtrasController::class);
         Route::apiResource('materials', MaterialsController::class);
         Route::apiResource('print-types', PrintTypeController::class);
-        // for
-        Route::post('order/{id}/status', [OrderController::class, 'updateStatus']);
+
+        // orders
+            Route::get('admin/orders', [App\Http\Controllers\API\Admin\OrderController::class, 'index']);
+            Route::get('admin/orders/config/statuses', [App\Http\Controllers\API\Admin\OrderController::class, 'getStatuses']);
+            Route::get('admin/orders/statistics', [App\Http\Controllers\API\Admin\OrderController::class, 'statistics']);
+            Route::get('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'show']);
+            Route::put('admin/orders/{id}/status', [App\Http\Controllers\API\Admin\OrderController::class, 'updateStatus']);
+            Route::delete('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'destroy']);
 });
 
 Route::group(['prefix' => 'v1'], function () {
@@ -188,13 +194,15 @@ Route::prefix('web')->group(function () {
     // Social Authentication
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+
+
 });
 
 
 
 Route::prefix('web')->group(function () {
 
-    // ✅ Cart routes - Available for BOTH Guest and Auth users
+    // Cart routes - Available for BOTH Guest and Auth users
     Route::prefix('cart')->group(function () {
         Route::get('/', [CartController::class, 'index']);           // Get cart items
         Route::get('/stats', [CartController::class, 'stats']);      // Cart statistics
@@ -207,6 +215,10 @@ Route::prefix('web')->group(function () {
     // contact info
     Route::get('/contact', [ContactController::class, 'index']);
 
+    // pages
+    Route::prefix('conditions-pages')->group(function () {
+        Route::get('/terms', [\App\Http\Controllers\API\Web\PageController::class, 'terms']);
+    });
 
 });
 
@@ -242,6 +254,8 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancel']); // cancel
 
     });
+
+
 
     // ✅ Cart merge route (Auth only)
     Route::prefix('cart')->group(function () {

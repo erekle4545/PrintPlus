@@ -36,6 +36,7 @@ import Sizes from "@/modules/options/sizes.jsx";
 import Extras from "@/modules/options/extras.jsx";
 import Materials from "@/modules/options/materials.jsx";
 import PrintType from "@/modules/options/printType.jsx";
+import OrderList from "@/modules/orders/orderlist.jsx";
 
 function Router() {
     return (
@@ -57,6 +58,7 @@ function Router() {
                     {/* Menu */}
                     <Route path="menu" element={<MenuList />} />
                     <Route path="menu/edit/:id" element={<MenuList />} />
+                    <Route path={'orders'}  element={<OrderList />} />
 
 
                      {/*Options*/}

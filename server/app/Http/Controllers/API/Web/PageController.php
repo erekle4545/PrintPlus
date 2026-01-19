@@ -82,4 +82,28 @@ class PageController extends Controller
             'data' => $page ?? $category
         ]);
     }
+
+
+    /**
+     * @param Request $request
+     * @param $slug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function terms(Request $request)
+    {
+        $type = $request->type;
+        $languageId = $request->language_id ?? 1;
+
+        $modelPage = Page::query()
+            ->where('template_id', $type ?? config('page.templates.team.id'))
+            ->with(['info' => function ($query) use ($languageId) {
+            $query->where('language_id', $languageId)
+                ->select(['id', 'language_id', 'page_id', 'title', 'slug', 'text', 'description'])
+                ->with('covers');
+        }])->first();
+
+
+        return response()->json($modelPage);
+
+    }
 }
