@@ -7,12 +7,15 @@ import Button from "@/shared/components/ui/button/Button";
 import {useContact} from "@/shared/hooks/global/useContact";
 import {useLanguage} from "@/context/LanguageContext";
 import {getAllImages} from "@/shared/utils/imageHelper";
+import {useMenu} from "@/shared/hooks/useMenu";
+import LocalizedLink from "@/shared/components/LocalizedLink/LocalizedLink";
+import {generateSlug} from "@/shared/utils/mix";
 
 const Footer = () => {
     const { data, loading } = useContact();
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const {t} = useLanguage();
-
+    const {bottomMenu,bottomMenuRules} = useMenu();
     const handleToggleMenu = (id: string): void => {
         setOpenMenu(prev => (prev === id ? null : id));
     };
@@ -47,11 +50,55 @@ const Footer = () => {
             title: t('site.navigation'),
             content: (
                 <ul className="list-unstyled mb-0">
-                    <li><Link href="#" className="text-white d-block mb-1">ჩვენ შესახებ</Link></li>
-                    <li><Link href="#" className="text-white d-block mb-1">სერვისები</Link></li>
-                    <li><Link href="#" className="text-info d-block mb-1">მომსახურება</Link></li>
-                    <li><Link href="#" className="text-white d-block mb-1">პროდუქტები</Link></li>
-                    <li><Link href="#" className="text-white d-block">ფასები</Link></li>
+                    {bottomMenu && bottomMenu.length > 0 ? (
+                        bottomMenu.map((menuItem) => {
+                            const identifyId = menuItem.category_id ? menuItem.category_id : menuItem.page_id;
+                            const url = generateSlug(
+                                menuItem.info?.slug,
+                                identifyId,
+                                menuItem.category_id ? 'c' : 'p'
+                            );
+                            const menuLink = menuItem.info?.link || url || '#';
+
+                            return (
+                                <li key={menuItem.id}>
+                                    <LocalizedLink
+                                        href={menuLink}
+                                        className="text-white d-block mb-1"
+                                    >
+                                        {menuItem.info?.title}
+                                    </LocalizedLink>
+
+                                    {menuItem.children && menuItem.children.length > 0 && (
+                                        <ul className="list-unstyled ms-3 mt-1">
+                                            {menuItem.children.map((child) => {
+                                                const childIdentifyId = child.category_id ? child.category_id : child.page_id;
+                                                const childUrl = generateSlug(
+                                                    child.info?.slug,
+                                                    childIdentifyId,
+                                                    child.category_id ? 'c' : 'p'
+                                                );
+                                                const childMenuLink = child.info?.link || childUrl || '#';
+
+                                                return (
+                                                    <li key={child.id}>
+                                                        <LocalizedLink
+                                                            href={childMenuLink}
+                                                            className="text-white-50 d-block mb-1"
+                                                        >
+                                                            {child.info?.title}
+                                                        </LocalizedLink>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+                                </li>
+                            );
+                        })
+                    ) : (
+                        <li className="text-white-50">{t('no.links.available')}</li>
+                    )}
                 </ul>
             )
         },
@@ -60,9 +107,55 @@ const Footer = () => {
             title: t('site.urls'),
             content: (
                 <ul className="list-unstyled mb-0">
-                    <li><Link href="#" className="text-white d-block mb-1">ნამუშევრები და პროექტები</Link></li>
-                    <li><Link href="#" className="text-white d-block mb-1">ბლოგი</Link></li>
-                    <li><Link href="#" className="text-white d-block">ციფრული დიზაინის კატალოგი</Link></li>
+                    {bottomMenuRules && bottomMenuRules.length > 0 ? (
+                        bottomMenuRules.map((menuItem) => {
+                            const identifyId = menuItem.category_id ? menuItem.category_id : menuItem.page_id;
+                            const url = generateSlug(
+                                menuItem.info?.slug,
+                                identifyId,
+                                menuItem.category_id ? 'c' : 'p'
+                            );
+                            const menuLink = menuItem.info?.link || url || '#';
+
+                            return (
+                                <li key={menuItem.id}>
+                                    <LocalizedLink
+                                        href={menuLink}
+                                        className="text-white d-block mb-1"
+                                    >
+                                        {menuItem.info?.title}
+                                    </LocalizedLink>
+
+                                    {menuItem.children && menuItem.children.length > 0 && (
+                                        <ul className="list-unstyled ms-3 mt-1">
+                                            {menuItem.children.map((child) => {
+                                                const childIdentifyId = child.category_id ? child.category_id : child.page_id;
+                                                const childUrl = generateSlug(
+                                                    child.info?.slug,
+                                                    childIdentifyId,
+                                                    child.category_id ? 'c' : 'p'
+                                                );
+                                                const childMenuLink = child.info?.link || childUrl || '#';
+
+                                                return (
+                                                    <li key={child.id}>
+                                                        <LocalizedLink
+                                                            href={childMenuLink}
+                                                            className="text-white-50 d-block mb-1"
+                                                        >
+                                                            {child.info?.title}
+                                                        </LocalizedLink>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+                                </li>
+                            );
+                        })
+                    ) : (
+                        <li className="text-white-50">{t('no.links.available')}</li>
+                    )}
                 </ul>
             )
         },

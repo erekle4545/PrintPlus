@@ -219,6 +219,8 @@ Route::prefix('web')->group(function () {
     Route::prefix('conditions-pages')->group(function () {
         Route::get('/terms', [\App\Http\Controllers\API\Web\PageController::class, 'terms']);
     });
+    // search
+    Route::get('/search', [\App\Http\Controllers\API\Web\SearchController::class, 'search']);
 
 });
 
@@ -239,6 +241,7 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
     Route::put('/change-password', [\App\Http\Controllers\API\Web\AuthController::class, 'changePassword']);
     Route::post('/refresh', [\App\Http\Controllers\API\Web\AuthController::class, 'refresh']);
 
+
     /**
      * config data
      */
@@ -254,6 +257,7 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancel']); // cancel
 
     });
+
 
 
 

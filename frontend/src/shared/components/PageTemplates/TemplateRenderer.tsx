@@ -44,7 +44,10 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
     switch (templateId) {
         case PAGE_TEMPLATES.TEXT.id: // 1
             return <TextPage page={page} />;
-
+        case PAGE_TEMPLATES.TEAM.id: // 6
+            return <TextPage page={page} />;
+        case PAGE_TEMPLATES.FAQ.id:
+            return <TextPage page={page} />;
         case PAGE_TEMPLATES.ABOUT.id: // 7
             return <TextPage page={page} />;
 

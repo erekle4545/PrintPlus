@@ -1,7 +1,7 @@
 
 export interface MenuItem {
     id: number;
-    type: string;
+    type: number;
     page_id: number | null;
     category_id: number | null;
     meta: Record<string, any> | null;
