@@ -3,7 +3,7 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { AUTH_SUCCESS_ROUTES } from "@/shared/utils/mix";
 import Button from "@/shared/components/ui/button/Button";
 import UserIcon from "@/shared/assets/icons/menu/user.svg";
@@ -24,8 +24,8 @@ export default function Login() {
     const { mergeGuestCart, refreshCart } = useCart();
 
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const error = searchParams.get('error');
+    // const searchParams = useSearchParams();
+    // const error = searchParams.get('error');
 
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
@@ -83,14 +83,14 @@ export default function Login() {
                             />
                         )}
 
-                        {error && (
-                                <Alert
-                                    className={"w-auto  m-xl-4  m-auto"}
-                                    message={t('auth_filed','auth_filed')}
-                                    type="error"
-                                />
+                        {/*{error && (*/}
+                        {/*        <Alert*/}
+                        {/*            className={"w-auto  m-xl-4  m-auto"}*/}
+                        {/*            message={t('auth_filed','auth_filed')}*/}
+                        {/*            type="error"*/}
+                        {/*        />*/}
 
-                        )}
+                        {/*)}*/}
                         <div className="auth-title  text-center title_font_bold mt-4">{t('login','login')}</div>
 
                         <form className="auth-form p-xl-4" autoComplete="on" onSubmit={handleSubmit}>

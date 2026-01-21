@@ -6,10 +6,8 @@ import React from 'react';
 import OurProductsCarousel from "@/app/[lang]/home/components/ourProductsCarousel";
 import About from "@/app/[lang]/home/components/about";
 import HomeTextPages from "@/app/[lang]/home/components/homeTextPages";
-import {number} from "prop-types";
- import {PageData, PageInfo, TextPages} from "@/types/page/page";
-import {GlobalInfo} from "@/types/globalTypes";
-import {Product} from "@/types/product/productTypes";
+import {PageCategory, PageData, TextPages} from "@/types/page/page";
+
 
 interface HomePageProps {
     lang: string;
@@ -18,7 +16,7 @@ interface HomePageProps {
 interface HomeData {
     text_pages: Array<TextPages>;
     services: PageData  | null;
-    featuredProducts: Product[] | [];
+    featuredProducts: PageCategory[] | [];
     about: TextPages | null;
 }
 
@@ -67,7 +65,7 @@ const HomePage = async ({ lang }: HomePageProps) => {
             />
 
             <OurProductsCarousel
-                products={homeData.featuredProducts}
+                category={homeData.featuredProducts}
                 locale={lang}
             />
 

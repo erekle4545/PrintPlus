@@ -10,17 +10,18 @@ import {Product} from "@/types/product/productTypes";
 import {getFirstImage} from "@/shared/utils/imageHelper";
 import Link from "next/link";
 import {generateSlug} from "@/shared/utils/mix";
+import {PageCategory} from "@/types/page/page";
 
 
 interface OurProductsCarouselProps {
-    products: Product[] ;
+    category: PageCategory[] ;
     locale: string;
 }
 
-const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, products}) => {
+const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, category}) => {
     const { t } = useLanguage();
-
-    if (!products || products.length === 0) return null;
+    console.log(category)
+    if (!category || category.length === 0) return null;
 
 
     const arrowStyle = {
@@ -36,7 +37,7 @@ const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, produc
 
     return (
         <div className="text-center my-5" data-aos="fade-up">
-            <h3 className="fw-bold mb-4">ჩვენი პროდუქტები</h3>
+            <h3 className="fw-bold mb-4">{ t('ourProducts','ჩვენი პროდუქტები')}</h3>
             <div className="position-relative col-auto d-flex justify-content-center">
                 <Swiper
                     className="col-xl-10"
@@ -54,15 +55,15 @@ const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, produc
                         992: { slidesPerView: 5 },
                     }}
                 >
-                    {products.map((product) => {
-                        // console.log(product)
+                    {category.map((item) => {
+
                         // product category slug
-                        const categoryProductSlug = product.category?.info?.slug+'/'+product?.info?.slug;
+                        const categoryProductSlug =  item?.info?.slug;
                         // product details url
-                        const url = generateSlug(categoryProductSlug,product.id,'pr');
+                        const url = generateSlug(categoryProductSlug,item.id,'c');
                         // return
                         return  (
-                            <SwiperSlide key={product.id}>
+                            <SwiperSlide key={item.id}>
                                 <div className="text-center hover-zoom">
                                     <Link href={url}>
                                         <div
@@ -71,15 +72,15 @@ const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, produc
                                         >
 
                                             <Image
-                                                src={getFirstImage(product?.info?.covers, 1, 'processed')}
-                                                alt={product.info?.name || 'Product'}
+                                                src={getFirstImage(item?.info?.covers, 1, 'processed')}
+                                                alt={item.info?.title || 'category'}
                                                 width={200}
                                                 height={200}
                                                 style={{objectFit: 'contain'}}
                                             />
 
                                         </div>
-                                        <div className="mt-2 fw-bolder">{product.info?.name}</div>
+                                        <div className="mt-2 fw-bolder">{item.info?.title}</div>
                                     </Link>
                                 </div>
                             </SwiperSlide>

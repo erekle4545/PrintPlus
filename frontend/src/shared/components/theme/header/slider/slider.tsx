@@ -30,9 +30,9 @@ const Slider = () => {
         });
     }
 
-    // if (loading) {
-    //     return <SliderSkeleton />;
-    // }
+    if (loading) {
+        return <SliderSkeleton />;
+    }
 
     if (!sliders || sliders.length === 0) {
         return null;

@@ -60,7 +60,8 @@ export interface PagePost {
 export interface PageCategory {
     id: number;
     page:PageData,
-    info:CategoryInfo
+    status:number,
+    info:CategoryInfo,
 }
 export interface CategoryInfo {
     id:number,
