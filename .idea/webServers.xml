@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="40f0d5eb-8499-4a17-a0bd-70117dd79c81" name="printplus" url="http://srv1105898.hstgr.cloud">
-        <fileTransfer rootFolder="/var/www/print_plus" accessType="SFTP" host="srv1105898.hstgr.cloud" port="22" sshConfigId="cb4628c1-a6d2-41d2-8005-33395f1fbff4" sshConfig="root@srv1105898.hstgr.cloud:22 password">
+        <fileTransfer accessType="SFTP" host="srv1105898.hstgr.cloud" port="2222" sshConfigId="cb4628c1-a6d2-41d2-8005-33395f1fbff4" sshConfig="root@srv1105898.hstgr.cloud:2222 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

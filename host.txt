@@ -25,3 +25,15 @@ ips ganblokva
 
 fail2ban-client status sshd
 fail2ban-client set sshd unbanip შენი.IP.აქ
+
+
+web application firewall
+
+
+
+ვპს პაროლი
+user:root , password: R7qM2#Zp@9KxA4L
+--------------
+printplus_db
+dbUser:printplus
+password:R7qM2#Zp@9KxA4L

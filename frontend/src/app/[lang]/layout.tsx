@@ -13,6 +13,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { notFound } from 'next/navigation';
 import { languages, isValidLanguage } from '@/shared/config/i18n';
 import {ContactProvider} from "@/context/ContactContext";
+import ScrollToTop from "@/shared/components/ui/scroll/ScrollToTop";
 
 // Static params generation
 export async function generateStaticParams() {
@@ -67,6 +68,7 @@ export default async function LangLayout({
                 <ContactProvider>
                     <CartProvider>
                         <AOSProvider />
+                        <ScrollToTop />
                         <Header />
 
                         {children}
