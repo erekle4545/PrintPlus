@@ -4,7 +4,7 @@ export interface Product {
     id: number;
     category_id: number;
     status: number;
-    base_price: number;
+    price: number;
     sale_price: number;
     info:ProductInfo,
     category:any,
@@ -12,7 +12,14 @@ export interface Product {
     sizes:Sizes[],
     colors:Colors[],
     materials:Materials[],
-    print_types:PrintTypes[]
+    print_types:PrintTypes[],
+    product_attributes:{
+        extras:Extras[],
+        sizes:Sizes[],
+        colors:Colors[],
+        materials:Materials[],
+        print_types:PrintTypes[],
+    }
 
 }
 

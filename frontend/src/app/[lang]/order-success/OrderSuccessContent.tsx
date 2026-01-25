@@ -88,7 +88,7 @@ export default function OrderSuccessContent() {
         if (!order) return null;
 
         const paymentKey = order?.payment_method;
-        console.log(order?.payment_method)
+        // console.log(order?.payment_method)
         switch (paymentKey) {
             case 'cash':
                 return (

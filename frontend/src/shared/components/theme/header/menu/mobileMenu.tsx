@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { MenuItem } from '@/types/menu/menu';
 import LocalizedLink from '@/shared/components/LocalizedLink/LocalizedLink';
 import MenuArrow from '@/shared/assets/icons/menu/menuArrow.svg';
+import {generateSlug} from "@/shared/utils/mix";
 
 interface MobileMenuProps {
     items: MenuItem[];
@@ -31,8 +32,8 @@ export default function MobileMenu({ items, onClose }: MobileMenuProps) {
 
         const hasChildren = item.children && item.children.length > 0;
         const isExpanded = expandedItems.has(item.id);
-        const menuLink = item.info?.link || item.info?.slug || '#';
-
+        const identifyId = item.category_id?item.category_id:item.page_id;
+        const menuLink = generateSlug(item.info?.slug,identifyId,item.category_id? 'c':'p')
         if (hasChildren) {
             return (
                 <div
@@ -91,7 +92,9 @@ export default function MobileMenu({ items, onClose }: MobileMenuProps) {
     const renderSubMenuItem = (item: MenuItem) => {
         if (!item.active) return null;
 
-        const menuLink = item.info?.link || item.info?.slug || '#';
+         const identifyId = item.category_id?item.category_id:item.page_id;
+
+        const menuLink = generateSlug(item.info?.slug,identifyId,item.category_id? 'c':'p')
 
         return (
             <LocalizedLink

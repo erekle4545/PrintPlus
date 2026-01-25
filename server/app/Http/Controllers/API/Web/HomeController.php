@@ -96,23 +96,7 @@ class HomeController extends Controller
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();
-//       $featuredProducts = Products::query()
-//           ->where('status',1)
-//           ->with(['info'=>function($q) use ($languageId) {
-//               $q->where('language_id', $languageId);
-//               $q->with('covers');
-//               $q->select(['id','name','slug','products_id','language_id']);
-//           },'category' => function ($qu) use ($languageId) {
-//               $qu->with(['info'=>function($q) use ($languageId) {
-//                   $q->where('language_id', $languageId);
-//                   $q->select(['id','category_id','slug','language_id']);
-//               }]);
-//               $qu->with(['page:id,template_id']);
-//           }])
-//           ->select(['id','status','date','category_id'])
-//           ->orderByDesc('date')
-//           ->limit(10)
-//           ->get();
+
 
         //returns objects
         return response()->json([

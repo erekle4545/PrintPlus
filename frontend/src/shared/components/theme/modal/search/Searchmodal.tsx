@@ -120,7 +120,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     // Generate URL based on result type
     const getResultUrl = (result: SearchResult): string => {
         if (result.type === 'product') {
-            console.log(result)
+            // console.log(result)
             return generateSlug(`${result.slug}`, result.id, 'pr');
 
         } else if (result.type === 'category') {

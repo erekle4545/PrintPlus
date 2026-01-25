@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: DynamicPageProps) {
     try {
         const product: Product = await getProductBySlug(slug, languageId);
 
-        if (!product) {
+         if (!product) {
             return {
                 title: 'Product Not Found',
             };
@@ -80,35 +80,3 @@ export async function generateMetadata({ params }: DynamicPageProps) {
         };
     }
 }
-
-//
-// import { notFound } from 'next/navigation';
-// import DynamicProductClient from "@/app/[lang]/[category]/[slug]/DynamicProductClient";
-//
-// interface DynamicPageProps {
-//     params: Promise<{
-//         lang: string;
-//         slug: string;
-//     }>;
-// }
-//
-// // Routes that have their own folders (not handled by dynamic pages)
-// const RESERVED_ROUTES = [
-//     'products',
-//     'cart',
-//     'login',
-//     'register',
-//     'profile',
-//     'checkout',
-// ];
-//
-// export default async function DynamicPageSlug({ params }: DynamicPageProps) {
-//     const { slug } = await params;
-//
-//     // If it's a reserved route, let Next.js handle it with its own folder
-//     if (RESERVED_ROUTES.includes(slug)) {
-//         notFound();
-//     }
-//
-//     return <DynamicProductClient slug={slug} />;
-// }

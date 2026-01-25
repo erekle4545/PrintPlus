@@ -14,7 +14,19 @@ import CustomLoader from "@/shared/components/ui/loader/customLoader";
 import {Alert} from "@/shared/components/ui/alert/alert";
 import {useCart} from "@/shared/hooks/useCart";
 
-export default function Login() {
+interface PageProps {
+    searchParams?: {
+        colSize?: string;
+        returnUrl?:string,
+        handleLoginSuccess?: () => void;
+    };
+}
+
+export default function Login({ searchParams }: PageProps) {
+    const colSize = searchParams?.colSize ?? 'col-md-4';
+    const returnUrl = searchParams?.returnUrl
+    const handleLoginSuccess = searchParams?.handleLoginSuccess;
+
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
@@ -30,7 +42,12 @@ export default function Login() {
     // Redirect to dashboard if user is already logged in
     useEffect(() => {
         if (!loading && user) {
-            router.push(AUTH_SUCCESS_ROUTES.user);
+            if(returnUrl){
+                router.push(returnUrl);
+            }else{
+                router.push(AUTH_SUCCESS_ROUTES.user);
+
+            }
         }
     }, [user, loading, router]);
 
@@ -44,7 +61,16 @@ export default function Login() {
         if (result.success) {
             await mergeGuestCart();
 
-            router.push(AUTH_SUCCESS_ROUTES.user);
+
+            if(handleLoginSuccess){
+                handleLoginSuccess();
+            }
+
+            if(returnUrl){
+                router.push(returnUrl);
+            }else{
+                router.push(AUTH_SUCCESS_ROUTES.user);
+            }
         } else {
             if (result.errors?.errors) {
                 setErrors(result.errors.errors);
@@ -71,7 +97,7 @@ export default function Login() {
     return (
         <div className="container">
             <div className="row justify-content-center ">
-                <div className="col-md-4 col-sm-12 m-5 desktop-only-border rounded-4">
+                <div className={`${colSize} col-sm-12 m-5 desktop-only-border rounded-4`}>
                     <div className="auth-card position-relative text_font  ">
                         {/* Top pointer (same as DropdownAuth design) */}
 

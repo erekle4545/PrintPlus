@@ -69,7 +69,7 @@ export default function OrderDetailPage() {
         try {
             setLoading(true);
             const response = await axiosInstance(`/orders/${id}`);
-            console.log("Order details:", response);
+            // console.log("Order details:", response);
 
             if (response.data.success) {
                 setOrder(response.data.data);

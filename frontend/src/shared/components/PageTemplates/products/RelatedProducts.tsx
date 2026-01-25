@@ -46,7 +46,7 @@ export default function RelatedProducts({ categoryId }: RelatedProductsProps) {
                 }}
             >
                 {products.map((p) => {
-                    console.log(p)
+                    // console.log(p)
                     // პროდუქტის URL
                     const productUrl = generateSlug(p?.category?.info?.slug+'/'+p?.info?.slug, p.id, 'pr');
 

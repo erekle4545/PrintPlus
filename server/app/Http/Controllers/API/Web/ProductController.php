@@ -7,8 +7,9 @@
     use App\Models\Core\Products;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\Log;
 
-class ProductController extends Controller
+    class ProductController extends Controller
 {
 
     /**
@@ -170,7 +171,7 @@ class ProductController extends Controller
                             'name' => $color->name,
                             'value' => $color->value,
                             'type' => $color->type,
-                            'base_price' => $color->base_price,
+                            'base_price' =>$color->pivot->price?? $color->base_price,
                             'custom_price' => $color->pivot->price
                         ];
                     })->toArray(),
@@ -181,7 +182,7 @@ class ProductController extends Controller
                             'value' => $size->value,
                             'width' => $size->width,
                             'height' => $size->height,
-                            'base_price' => $size->base_price,
+                            'base_price' => $size->pivot->price??$size->base_price,
                             'custom_price' => $size->pivot->price
                         ];
                     })->toArray(),
@@ -189,7 +190,7 @@ class ProductController extends Controller
                         return [
                             'id' => $material->id,
                             'name' => $material->name,
-                            'base_price' => $material->base_price,
+                            'base_price' =>$material->pivot->price?? $material->base_price,
                             'custom_price' => $material->pivot->price,
                             'covers' => $material->covers
                         ];
@@ -198,7 +199,7 @@ class ProductController extends Controller
                         return [
                             'id' => $printType->id,
                             'name' => $printType->name,
-                            'base_price' => $printType->base_price,
+                            'base_price' =>  $printType->pivot->price??$printType->base_price,
                             'custom_price' => $printType->pivot->price
                         ];
                     })->toArray(),
@@ -206,7 +207,7 @@ class ProductController extends Controller
                         return [
                             'id' => $extra->id,
                             'name' => $extra->name,
-                            'base_price' => $extra->base_price,
+                            'base_price' => $extra->pivot->price??$extra->base_price,
                             'custom_price' => $extra->pivot->price
                         ];
                     })->toArray(),

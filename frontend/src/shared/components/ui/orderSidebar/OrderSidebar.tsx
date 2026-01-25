@@ -46,7 +46,7 @@ export default function OrderSidebar({
                         onClick={onAddToCart}
                         disabled={isLoading}
                     >
-                        {isLoading ? t('sidebar.adding') : t('add.to.cart')}
+                        {isLoading ? t('sidebar.adding') : t('add_to_cart')}
                     </Button>
                 )}
 

@@ -20,7 +20,7 @@ interface OurProductsCarouselProps {
 
 const OurProductsCarousel: React.FC<OurProductsCarouselProps> = ({locale, category}) => {
     const { t } = useLanguage();
-    console.log(category)
+    // console.log(category)
     if (!category || category.length === 0) return null;
 
 

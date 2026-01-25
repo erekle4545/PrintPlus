@@ -11,8 +11,8 @@ interface TextPageProps {
 }
 export default function TextPage({ page }: TextPageProps) {
 
-    const url = generateSlug(page.info.slug,page.id,'p');
-    const coverImage = getFirstImage(page.info?.covers, 1, 'original');
+    const url = generateSlug(page?.info?.slug,page.id,'p');
+    const coverImage = getFirstImage(page?.info?.covers, 1, 'original');
 
     return (<>
             {
@@ -22,13 +22,13 @@ export default function TextPage({ page }: TextPageProps) {
             }
 
             <div className="container  col-xl-8 m-auto py-4">
-                <HeaderTitle title={page.info.title} slug={url} />
+                <HeaderTitle title={page.info?.title} slug={url} />
 
                 {page.info?.covers?.length > 0 && (
                     <div className="relative w-full aspect-video mb-4">
                         <Image
                             src={coverImage}
-                            alt={page.info.title || "Cover image"}
+                            alt={page.info?.title || "Cover image"}
                             width={1200}
                             height={600}
                             className="w-100 h-auto"
@@ -39,7 +39,7 @@ export default function TextPage({ page }: TextPageProps) {
 
                 <div
                     className="text_font"
-                    dangerouslySetInnerHTML={{ __html: page.info.text }}
+                    dangerouslySetInnerHTML={{ __html: page?.info?.text }}
                 />
             </div>
         </>

@@ -34,7 +34,7 @@ export default function PicturePage() {
 
     const handleOrderClick = () => {
         console.log("შეკვეთა:", { selectedProduct, quantity, comment });
-        // აქ დაამატე შეკვეთის ლოგიკა
+
     };
 
     return (

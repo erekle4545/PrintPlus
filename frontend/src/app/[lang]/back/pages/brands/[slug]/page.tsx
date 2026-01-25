@@ -35,7 +35,7 @@ export default function BrandPage({ params }: { params: { slug: string } }) {
         <>
             <Cover />
             <div className="container py-4">
-                <HeaderTitle title="ჩარჩოები" slug={[]} />
+                <HeaderTitle title="ჩარჩოები" slug={''} />
                 <div className="row">
                     <div className="col-12 col-md-8 col-lg-9  ">
                         <div className='section-brands p-4'>

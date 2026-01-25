@@ -16,51 +16,50 @@ class DictionaryController extends Controller
     {
         $cacheKey = "translations:lang:{$langCode}";
 
-        $fromCache = Cache::tags(['translations'])->has($cacheKey);
+        $result = Cache::tags(['translations'])->get($cacheKey);
 
-        \Log::info($fromCache ? "✅ Translations from CACHE" : "❌ Translations from DB", [
-            'key' => $cacheKey,
-            'lang' => $langCode
-        ]);
+        $fromCache = true;
 
-        $result = Cache::tags(['translations'])
-            ->remember($cacheKey, now()->addDays(30), function () use ($langCode) {
+        if (!$result) {
+            $fromCache = false;
 
-                $language = Languages::where('code', $langCode)
-                    ->where('status', 1)
-                    ->first();
+            $language = Languages::where('code', $langCode)
+                ->where('status', 1)
+                ->first();
 
-                if (!$language) {
-                    return [
-                        'success' => false,
-                        'message' => 'Language not found',
-                        'status' => 404
-                    ];
-                }
+            if (!$language) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Language not found'
+                ], 404);
+            }
 
-                $translations = DictionaryLanguage::where('language_id', $language->id)
-                    ->with('dictionary')
-                    ->get()
-                    ->mapWithKeys(function ($item) {
-                        return [$item->dictionary->word => $item->value];
-                    });
+            $translations = DictionaryLanguage::where('language_id', $language->id)
+                ->with('dictionary:id,word')
+                ->get()
+                ->mapWithKeys(fn ($item) => [
+                    $item->dictionary->word => $item->value
+                ]);
 
-                return [
-                    'success' => true,
-                    'data' => $translations,
-                    'status' => 200
-                ];
-            });
+            $result = [
+                'success' => true,
+                'data' => $translations
+            ];
+
+            Cache::tags(['translations'])->put(
+                $cacheKey,
+                $result,
+                now()->addDays(30)
+            );
+        }
 
         return response()
-            ->json([
-                'success' => $result['success'],
-                'message' => $result['message'] ?? null,
-                'data' => $result['data'] ?? null
-            ], $result['status'])
+            ->json($result)
             ->header('X-Cache-Hit', $fromCache ? 'true' : 'false')
-            ->header('X-Cache-Key', $cacheKey);
+            ->header('X-Cache-Key', $cacheKey)
+            ->header('Cache-Control', 'public, max-age=86400, immutable');
     }
+
 
     public function getByLanguage($langCode)
     {
@@ -68,10 +67,6 @@ class DictionaryController extends Controller
 
         $fromCache = Cache::tags(['dictionaries'])->has($cacheKey);
 
-        \Log::info($fromCache ? "✅ Dictionaries from CACHE" : "❌ Dictionaries from DB", [
-            'key' => $cacheKey,
-            'lang' => $langCode
-        ]);
 
         $result = Cache::tags(['dictionaries'])
             ->remember($cacheKey, now()->addDays(30), function () use ($langCode) {
@@ -104,7 +99,8 @@ class DictionaryController extends Controller
                 'data' => $result['data'] ?? null
             ], $result['status'])
             ->header('X-Cache-Hit', $fromCache ? 'true' : 'false')
-            ->header('X-Cache-Key', $cacheKey);
+            ->header('X-Cache-Key', $cacheKey)
+            ->header('Cache-Control', 'public, max-age=86400, immutable');
     }
 
     /**

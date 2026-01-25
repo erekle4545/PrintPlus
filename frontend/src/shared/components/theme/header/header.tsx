@@ -124,13 +124,13 @@ export default function Header() {
                                 </div>
                             </div>
 
-                            <div className='ms-xl-4 ms-md-3 d-none d-md-block'>
+                            <div className='ms-xl-4 ms-md-3 d-none d-md-block' data-aos={'fade-down'}>
                                 <button
                                     className="my-btn-color-bg rounded-pill px-4 d-flex align-items-center gap-3"
                                     onClick={() => window.location.href = `tel:${contactData?.phone}`}
                                 >
                                     <PhoneFill className="top-menu-icon" />
-                                    {t('contact')}
+                                    {t('contact','კონტაქტი')}
                                 </button>
                             </div>
                         </div>
