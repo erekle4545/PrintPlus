@@ -23,7 +23,7 @@ interface PageProps {
 }
 
 export default function Login({ searchParams }: PageProps) {
-    const colSize = searchParams?.colSize ?? 'col-md-4';
+    const colSize = searchParams?.colSize || 'col-md-4';
     const returnUrl = searchParams?.returnUrl
     const handleLoginSuccess = searchParams?.handleLoginSuccess;
 

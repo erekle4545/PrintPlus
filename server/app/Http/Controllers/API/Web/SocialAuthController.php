@@ -72,13 +72,15 @@ class SocialAuthController extends Controller
 
             // Generate token
             $token = $user->createToken('auth_token')->plainTextToken;
+            return response()->json(['message'=>'success token','token'=>$token]);
 
             // Redirect to frontend with token
-            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token);
+//            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token);
 
         } catch (\Exception $e) {
             // Redirect to frontend with error
-            return redirect(env('FRONTEND_URL') . '/login?error=authentication_failed');
+            return response()->json(['message'=>'error','redirect'=>'login']);
+//            return redirect(env('FRONTEND_URL') . '/login?error=authentication_failed');
         }
     }
 }

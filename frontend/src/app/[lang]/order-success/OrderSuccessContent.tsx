@@ -1,3 +1,4 @@
+
 // app/[lang]/order-success/OrderSuccessContent.tsx
 "use client";
 

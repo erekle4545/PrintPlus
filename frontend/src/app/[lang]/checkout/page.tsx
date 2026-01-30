@@ -53,9 +53,9 @@ export default function CheckOut() {
             <div className="container py-4">
                 <HeaderTitle title={t('checkout','checkout')} slug="" />
                 {/* Your content */}
-                <div className={'col-md-6 m-auto '}>
+                {/*<div className={'col-md-6 m-auto '}>*/}
                     <CheckoutForm />
-                </div>
+                {/*</div>*/}
             </div>
         </>
     );

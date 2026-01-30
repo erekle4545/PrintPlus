@@ -58,6 +58,39 @@ return [
         ],
     ],
 
+    'payment_statuses' =>  [
+        'pending' => [
+            'key' => 'pending',
+            'name' => 'მოლოდინში',
+            'color' => 'warning',
+            'icon' => '⏳',
+        ],
+        'paid' => [
+            'key' => 'paid',
+            'name' => 'გადახდილია',
+            'color' => 'success',
+            'icon' => '✓',
+        ],
+        'failed' => [
+            'key' => 'failed',
+            'name' => 'ვერ განხორციელდა',
+            'color' => 'danger',
+            'icon' => '✗',
+        ],
+        'partially_refunded' => [
+            'key' => 'partially_refunded',
+            'name' => 'ნაწილობრივ დაბრუნებული',
+            'color' => 'info',
+            'icon' => '↩',
+        ],
+        'refunded' => [
+            'key' => 'refunded',
+            'name' => 'დაბრუნებული',
+            'color' => 'secondary',
+            'icon' => '↩',
+        ],
+    ],
+
     'paymentMethods' => [
         'cash' => [
             'id' => 'cash',

@@ -27,6 +27,7 @@ use App\Http\Controllers\API\Web\Cart\CartController;
 use App\Http\Controllers\API\Web\ConfigController;
 use App\Http\Controllers\API\Web\ContactController;
 use App\Http\Controllers\API\Web\Order\OrderController;
+use App\Http\Controllers\API\Web\PaymentController;
 use App\Http\Controllers\API\Web\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -154,12 +155,17 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::apiResource('print-types', PrintTypeController::class);
 
         // orders
-            Route::get('admin/orders', [App\Http\Controllers\API\Admin\OrderController::class, 'index']);
-            Route::get('admin/orders/config/statuses', [App\Http\Controllers\API\Admin\OrderController::class, 'getStatuses']);
-            Route::get('admin/orders/statistics', [App\Http\Controllers\API\Admin\OrderController::class, 'statistics']);
-            Route::get('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'show']);
-            Route::put('admin/orders/{id}/status', [App\Http\Controllers\API\Admin\OrderController::class, 'updateStatus']);
-            Route::delete('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'destroy']);
+
+        Route::get('admin/orders', [App\Http\Controllers\API\Admin\OrderController::class, 'index']);
+        Route::get('admin/orders/config/statuses', [App\Http\Controllers\API\Admin\OrderController::class, 'getStatuses']);
+        Route::get('admin/orders/config/payment-statuses', [App\Http\Controllers\API\Admin\OrderController::class, 'getPaymentStatuses']); // NEW
+        Route::get('admin/orders/statistics', [App\Http\Controllers\API\Admin\OrderController::class, 'statistics']);
+        Route::get('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'show']);
+        Route::get('admin/orders/{id}/transactions', [App\Http\Controllers\API\Admin\OrderController::class, 'getOrderTransactions']); // NEW
+        Route::put('admin/orders/{id}/status', [App\Http\Controllers\API\Admin\OrderController::class, 'updateStatus']);
+        Route::delete('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'destroy']);
+
+
 });
 
 Route::group(['prefix' => 'v1'], function () {
@@ -196,11 +202,35 @@ Route::prefix('web')->group(function () {
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
 
-});
+    Route::prefix('payments')->group(function () {
+        // Initialize payment (can be called by guest or authenticated user)
+        Route::post('/initialize', [PaymentController::class, 'initializePayment'])
+            ->name('payments.initialize');
+        // BOG callback endpoint (no auth required)
+//        Route::post('callback', [PaymentController::class, 'callback'])->name('payments.callback');
+
+        // BOG webhook endpoint (no auth required, verified by signature)
+//        Route::post('/webhook/bog', [PaymentController::class, 'webhook'])
+//            ->name('payments.webhook.bog');
+
+        // Check transaction status
+        Route::post('/status', [PaymentController::class, 'checkStatus'])
+            ->name('payments.status');
+
+        // Get transaction details
+        Route::get('/transactions/{transactionId}', [PaymentController::class, 'getTransactionDetails'])
+            ->name('payments.transaction.details');
+
+        // Get all transactions for an order
+        Route::post('/transactions/order', [PaymentController::class, 'getOrderTransactions'])
+            ->name('payments.order.transactions');
+
+        // Admin only - refund payment
+        Route::post('/refund', [PaymentController::class, 'refund'])
+            ->name('payments.refund');
+    });
 
 
-
-Route::prefix('web')->group(function () {
 
     // Cart routes - Available for BOTH Guest and Auth users
     Route::prefix('cart')->group(function () {
@@ -221,6 +251,8 @@ Route::prefix('web')->group(function () {
     });
     // search
     Route::get('/search', [\App\Http\Controllers\API\Web\SearchController::class, 'search']);
+
+
 
 });
 
@@ -258,11 +290,27 @@ Route::prefix('web')->middleware('auth:sanctum')->group(function () {
 
     });
 
-
-
-
     //   Cart merge route (Auth only)
     Route::prefix('cart')->group(function () {
         Route::post('/merge', [CartController::class, 'mergeGuestCart']); // Merge guest cart
+    });
+
+
+    Route::prefix('payments')->group(function () {
+        // Initialize payment (can be called by guest or authenticated user)
+        Route::post('/initialize', [PaymentController::class, 'initializePayment'])
+            ->name('payments.initialize');
+
+        // Check transaction status
+        Route::post('/status', [PaymentController::class, 'checkStatus'])
+            ->name('payments.status');
+
+        // Get transaction details
+        Route::get('/transactions/{transactionId}', [PaymentController::class, 'getTransactionDetails'])
+            ->name('payments.transaction.details');
+
+        // Get all transactions for an order
+        Route::post('/transactions/order', [PaymentController::class, 'getOrderTransactions'])
+            ->name('payments.order.transactions');
     });
 });

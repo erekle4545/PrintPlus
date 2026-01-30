@@ -208,7 +208,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             const response = await axiosInstance.post("/cart/clear");
             if (response.data.success) {
                 setItems([]);
-                toast.error("კალათა გასუფთავდა");
+                // toast.error("კალათა გასუფთავდა");
             }
         } catch (error: any) {
             console.error("Error clearing cart:", error);
