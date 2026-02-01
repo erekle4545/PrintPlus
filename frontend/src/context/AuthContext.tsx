@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useHttp } from '@/shared/hooks/useHttp';
 import { User, AuthResponse, AuthContextType } from '@/types/auth/auth';
 import { toast } from 'react-toastify';
+import {clearAuthCookies} from "@/shared/utils/clearAuthCookies";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -131,6 +132,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const socialLogin = async (provider: 'facebook' | 'google'): Promise<void> => {
         try {
+            // Clear only auth-related data, keep cart cookies
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('token');
+                clearAuthCookies();
+                console.log('Cleared auth data before OAuth');
+            }
+
             const response = await socialAuthHttp.sendRequest({
                 url: `/auth/${provider}`,
                 method: 'GET',
@@ -147,16 +155,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const handleSocialCallback = async (token: string): Promise<void> => {
         try {
-            // Save token
+            console.log('Handling social callback with token:', token.substring(0, 20) + '...');
+
+            // CRITICAL: Clear old token FIRST
             if (typeof window !== 'undefined') {
-                localStorage.setItem('token', token);
+                localStorage.removeItem('token');
             }
 
-            // Fetch user data
+            // Save NEW token
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('token', token);
+                console.log('New token saved to localStorage');
+            }
+
+            // Fetch user data with NEW token
             const response = await userHttp.sendRequest({
                 url: '/user',
                 method: 'GET',
             });
+
+            console.log('User fetched:', response?.user?.email);
 
             if (response && response.user) {
                 setUser(response.user);
@@ -171,7 +189,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             throw error;
         }
     };
-
     const logout = async (): Promise<void> => {
         try {
             await logoutHttp.sendRequest({
