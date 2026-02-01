@@ -72,15 +72,15 @@ class SocialAuthController extends Controller
 
             // Generate token
             $token = $user->createToken('auth_token')->plainTextToken;
-            return response()->json(['message'=>'success token','token'=>$token]);
 
             // Redirect to frontend with token
-//            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token);
+            $frontendUrl = config('app.frontend_url', 'https://printplus.ge');
+            return redirect($frontendUrl . '/auth/callback?token=' . $token);
 
         } catch (\Exception $e) {
             // Redirect to frontend with error
-            return response()->json(['message'=>'error','redirect'=>'login']);
-//            return redirect(env('FRONTEND_URL') . '/login?error=authentication_failed');
+            $frontendUrl = config('app.frontend_url', 'https://printplus.ge');
+            return redirect($frontendUrl . '/login?error=authentication_failed');
         }
     }
 }

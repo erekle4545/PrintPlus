@@ -29,4 +29,6 @@ export interface AuthContextType {
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
     refreshToken: () => Promise<void>;
+    handleSocialCallback: (token: string) => Promise<void>;
+
 }
