@@ -373,9 +373,23 @@ const OrderDetailsModal = ({
                                 <p className="text_font mb-2">
                                     <span className={'fw-bolder'}>ქალაქი:</span> {order.city}
                                 </p>
-                                <p className="text_font mb-2">
-                                    <span className={'fw-bolder'}>კორდინატები:</span> latitude: {order.latitude} / longitude: {order.longitude}
-                                </p>
+
+                                {order.latitude && order.longitude && (<>
+                                        <p className="text_font mb-2">
+                                            <span className={'fw-bolder'}>კორდინატები:</span> latitude: {order.latitude} / longitude: {order.longitude}
+                                        </p>
+                                        <p className="text_font mb-2">
+                                            <a
+                                                href={`https://www.google.com/maps?q=${order.latitude},${order.longitude}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="fw-bolder text-primary text-decoration-none"
+                                            >
+                                                📍 რუკაზე ნახვა
+                                            </a>
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </div>
                         {order.notes && (

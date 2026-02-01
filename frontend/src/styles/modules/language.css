@@ -68,3 +68,40 @@
     border-bottom: 1px dashed #e2e2e2;
     margin: 6px 0;
 }
+
+
+
+/*mobile*/
+
+/* Mobile Language Switcher */
+.mobile-lang-switcher {
+
+    border-radius: 20px;
+    border:1px solid #BCBCC8 !important;
+}
+
+.mobile-lang-btn {
+    background: transparent;
+    border: none;
+    padding: 2px 10px;
+
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 20px;
+}
+
+.mobile-lang-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.mobile-lang-btn.active {
+    /*background-color: var(--teal);*/
+    color: var(--teal);
+}
+
+.mobile-lang-divider {
+    color: #ccc;
+    font-weight: 300;
+}

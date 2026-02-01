@@ -23,14 +23,14 @@ type PieceCols = { '20': number; '50': number; '100': number; '200': number; '30
 type OffsetCols = { '1000': number; '2000': number; '3000': number; '5000': number };
 type PriceRow = { name: string; piece: PieceCols; offset: OffsetCols };
 
-const PIECE_COLS = ['20', '50', '100', '200', '300+'] as const;
-const OFFSET_COLS = ['1000', '2000', '3000', '5000'] as const;
-
-const TABLE_ROWS: PriceRow[] = [
-    { name: 'ფლაერები (99×210)', piece: { '20': 20, '50': 35, '100': 60, '200': 120, '300+': 170 }, offset: { '1000': 250, '2000': 300, '3000': 350, '5000': 450 } },
-    { name: 'ბუკლეტი (198×210)', piece: { '20': 45, '50': 90, '100': 180, '200': 300, '300+': 420 }, offset: { '1000': 290, '2000': 320, '3000': 400, '5000': 650 } },
-    { name: 'ტრიფოლდი (297×210)', piece: { '20': 50, '50': 120, '100': 200, '200': 320, '300+': 370 }, offset: { '1000': 470, '2000': 520, '3000': 580, '5000': 800 } },
-];
+// const PIECE_COLS = ['20', '50', '100', '200', '300+'] as const;
+// const OFFSET_COLS = ['1000', '2000', '3000', '5000'] as const;
+//
+// const TABLE_ROWS: PriceRow[] = [
+//     { name: 'ფლაერები (99×210)', piece: { '20': 20, '50': 35, '100': 60, '200': 120, '300+': 170 }, offset: { '1000': 250, '2000': 300, '3000': 350, '5000': 450 } },
+//     { name: 'ბუკლეტი (198×210)', piece: { '20': 45, '50': 90, '100': 180, '200': 300, '300+': 420 }, offset: { '1000': 290, '2000': 320, '3000': 400, '5000': 650 } },
+//     { name: 'ტრიფოლდი (297×210)', piece: { '20': 50, '50': 120, '100': 200, '200': 320, '300+': 370 }, offset: { '1000': 470, '2000': 520, '3000': 580, '5000': 800 } },
+// ];
 
 const toPercent = (value: number, min = 50, max = 1000) =>
     Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
@@ -227,18 +227,18 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
                             </div>
 
                             {/* კვადრატული მეტრი და გამოთვლა */}
-                            <div className="text-center mt-3 mb-3">
-                                <span className="text-muted">ფართობი: </span>
-                                <span className="fw-bold">{m2.toFixed(2)} კვ.მ</span>
-                                {selectedSize && (
-                                    <>
-                                        <span className="text-muted mx-2">×</span>
-                                        <span className="fw-bold">{GEL(parseFloat((selectedSize.pivot?.price || selectedSize.base_price).toString()))}/კვ.მ</span>
-                                        <span className="text-muted mx-2">=</span>
-                                        <span className="fw-bold text-primary">{GEL(Math.round(sizePrice))}</span>
-                                    </>
-                                )}
-                            </div>
+                            {/*<div className="text-center mt-3 mb-3">*/}
+                            {/*    <span className="text-muted">ფართობი: </span>*/}
+                            {/*    <span className="fw-bold">{m2.toFixed(2)} კვ.მ</span>*/}
+                            {/*    {selectedSize && (*/}
+                            {/*        <>*/}
+                            {/*            <span className="text-muted mx-2">×</span>*/}
+                            {/*            <span className="fw-bold">{GEL(parseFloat((selectedSize.pivot?.price || selectedSize.base_price).toString()))}/კვ.მ</span>*/}
+                            {/*            <span className="text-muted mx-2">=</span>*/}
+                            {/*            <span className="fw-bold text-primary">{GEL(Math.round(sizePrice))}</span>*/}
+                            {/*        </>*/}
+                            {/*    )}*/}
+                            {/*</div>*/}
 
                             {/* დამატებითი ოფციები */}
                             {selectedProduct?.extras && selectedProduct.extras.length > 0 && (

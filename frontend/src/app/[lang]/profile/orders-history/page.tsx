@@ -22,7 +22,12 @@ interface Order {
     created_at: string;
     name: string;
     total: number;
+    payment_status: string;
+    payment_status_label: string;
+    payment_status_color: string;
     status: string;
+    status_label: string;
+    status_color: string;
     items: OrderItem[];
 }
 
@@ -41,6 +46,7 @@ export default function OrdersHistory() {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
 
+    console.log(orders)
     useEffect(() => {
         fetchOrders(currentPage);
     }, [currentPage]);
@@ -111,17 +117,20 @@ export default function OrdersHistory() {
                         <p className="text_font">
                             {t("orders.total_price")} - {order.total}₾
                         </p>
-                        <div className="d-flex gap-2 align-items-center mb-2">
+                        <div className="d-flex  gap-2 align-items-center text_font mb-2">
+                            <span className={'small'}>{t('payment.status','გადახდის სტატუსი')}:</span>
                             <span
-                                className={`badge ${
-                                    order.status === 'delivered'
-                                        ? 'bg-success'
-                                        : order.status === 'cancelled'
-                                            ? 'bg-danger'
-                                            : 'bg-warning'
-                                }`}
+                                className={`badge bg-${order?.payment_status_color}`}
                             >
-                                {getStatusText(order.status)}
+                               {t(order?.payment_status,order?.payment_status_label)}
+                            </span>
+                        </div>
+                        <div className="d-flex  gap-2 align-items-center text_font mb-2">
+                            <span className={'small'}>{t('order.status','შეკვეთის სტატუსი')}:</span>
+                            <span
+                                className={`badge bg-${order?.status_color}`}
+                            >
+                               {t(order?.status,order?.status_label)}
                             </span>
                         </div>
 

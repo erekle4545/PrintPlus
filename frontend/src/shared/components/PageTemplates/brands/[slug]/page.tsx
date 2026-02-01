@@ -395,17 +395,17 @@ export default function BrandPageDetails({ product }: BrandPageDetailsProps) {
                                 <div>{t('bulk_order_info')}</div>
                             </div>
 
-                            {/* Comment */}
-                            <h5 className="mt-4 fw-bolder">{t('additional_details')}</h5>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                placeholder={t('additional_details_placeholder')}
-                                value={comment}
-                                className='text_font'
-                                onChange={(e) => setComment(e.target.value)}
-                                disabled={isAddingToCart || cartLoading}
-                            />
+                            {/*/!* Comment *!/*/}
+                            {/*<h5 className="mt-4 fw-bolder">{t('additional_details')}</h5>*/}
+                            {/*<Form.Control*/}
+                            {/*    as="textarea"*/}
+                            {/*    rows={3}*/}
+                            {/*    placeholder={t('additional_details_placeholder')}*/}
+                            {/*    value={comment}*/}
+                            {/*    className='text_font'*/}
+                            {/*    onChange={(e) => setComment(e.target.value)}*/}
+                            {/*    disabled={isAddingToCart || cartLoading}*/}
+                            {/*/>*/}
 
                             {/* File Uploader */}
                             <h5 className="mt-4 fw-bolder">{t('upload_file')}</h5>

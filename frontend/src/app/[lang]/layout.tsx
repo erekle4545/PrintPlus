@@ -22,8 +22,8 @@ export async function generateStaticParams() {
 
 // Metadata per language
 export async function generateMetadata({
-                                           params
-                                       }: {
+       params
+   }: {
     params: Promise<{ lang: string }>
 }): Promise<Metadata> {
     const { lang } = await params; // await დამატებული

@@ -240,7 +240,13 @@ class OrderController extends Controller
     public function show($orderNumber)
     {
         $order = Order::where('order_number', $orderNumber)
-            ->with(['items.product', 'items.covers'])
+            ->with([
+                'items.product',
+                'items.covers',
+                'user',
+                'transactions' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                }])
             ->firstOrFail();
 
         return response()->json([
@@ -258,12 +264,16 @@ class OrderController extends Controller
                 'payment_method' =>$order->payment_method,
                 'delivery_cost' =>$order->delivery_cost,
                 'subtotal' =>$order->subtotal,
-//                'payment_status' => $order->payment_status,
+                'payment_status' => $order->payment_status,
+                'payment_status_color' => $order->payment_status_color,
+                'payment_status_label' => $order->payment_status_label,
+                'status_color' => $order->status_color,
+                'status_label' => $order->status_label,
 //                'transaction_id' => $order->transaction_id,
                 'created_at' => $order->created_at->toISOString(),
                 'items' => $order->items->map(function ($item) {
                     return [
-                         'name' => $item->name ?? 'N/A',
+                        'name' => $item->name ?? 'N/A',
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
                         'product'=>$item->product,

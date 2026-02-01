@@ -37,6 +37,12 @@ interface Cover {
 
 interface Order {
     id: number;
+    payment_status: string;
+    payment_status_label: string;
+    payment_status_color: string;
+    status: string;
+    status_label: string;
+    status_color: string;
     order_number: string;
     created_at: string;
     name: string;
@@ -49,7 +55,6 @@ interface Order {
     total: number;
     subtotal: number;
     delivery_cost: number;
-    status: string;
     items: OrderItem[];
 }
 
@@ -60,6 +65,8 @@ export default function OrderDetailPage() {
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+
 
     useEffect(() => {
         fetchOrderDetails();
@@ -87,27 +94,6 @@ export default function OrderDetailPage() {
         return date.toLocaleDateString("ka-GE");
     };
 
-    const getStatusText = (status: string) => {
-        const statusMap: Record<string, string> = {
-            pending: t("orders.status.pending"),
-            processing: t("orders.status.processing"),
-            shipped: t("orders.status.shipped"),
-            delivered: t("orders.status.delivered"),
-            cancelled: t("orders.status.cancelled"),
-        };
-        return statusMap[status] || status;
-    };
-
-    const getStatusColor = (status: string) => {
-        const colorMap: Record<string, string> = {
-            pending: "bg-warning",
-            processing: "bg-info",
-            shipped: "bg-primary",
-            delivered: "bg-success",
-            cancelled: "bg-danger",
-        };
-        return colorMap[status] || "bg-secondary";
-    };
 
     const getPaymentMethodText = (method: string) => {
         const methodMap: Record<string, string> = {
@@ -157,11 +143,22 @@ export default function OrderDetailPage() {
                 </div>
             </div>
 
-            {/* Order Status */}
+
             <div className="mb-3">
-                <span className={`badge ${getStatusColor(order.status)} fs-6`}>
-                    {getStatusText(order.status)}
+                <span className={'small '}>{t('payment.status','გადახდის სტატუსი')}:</span>
+                <span
+                    className={`badge ms-1 bg-${order?.payment_status_color}`}
+                >
+                   {t(order?.payment_status,order?.payment_status_label)}
                 </span>
+            </div>
+            <div className="mb-3">
+                <span className={'small'}>{t('order.status','შეკვეთის სტატუსი')}:</span>
+                <span
+                    className={`badge ms-1 bg-${order?.status_color}`}
+                >
+               {t(order?.status,order?.status_label)}
+            </span>
             </div>
 
             {/* Customer Info */}
