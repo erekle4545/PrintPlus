@@ -69,7 +69,7 @@ class SearchController extends Controller
                 'title' => $product->info->name ?? 'N/A',
                 'description' => $product->info->description ?? null,
                 'type' => 'product',
-                'slug' => $product->category->info->slug?? null.'/'.$product->info->slug ?? null,
+                'slug' => $product->category->info->slug.'/'.$product->info->slug,
                 'image' => $product->covers->first()?->path ?? null,
             ];
         }

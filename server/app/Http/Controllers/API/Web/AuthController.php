@@ -116,23 +116,59 @@ class AuthController extends Controller
     /**
      * Logout user
      */
+//    public function logout(Request $request)
+//    {
+//        try {
+//            // Delete current token
+//            $request->user()->currentAccessToken()->delete();
+//
+//            return response()->json([
+//                'message' => 'წარმატებით გახვედით'
+//            ]);
+//
+//        } catch (\Exception $e) {
+//            return response()->json([
+//                'error' => 'გასვლა ვერ მოხერხდა'
+//            ], 500);
+//        }
+//    }
     public function logout(Request $request)
     {
         try {
-            // Delete current token
-            $request->user()->currentAccessToken()->delete();
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json([
+                    'error' => 'არ ხართ ავტორიზებული'
+                ], 401);
+            }
+
+            // Delete Sanctum tokens
+            $user->tokens()->delete();
+
+            // IMPORTANT: Clear session authentication too
+            if ($request->hasSession()) {
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+
+            // Clear auth guard
+            Auth::guard('web')->logout();
 
             return response()->json([
                 'message' => 'წარმატებით გახვედით'
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Logout error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
             return response()->json([
-                'error' => 'გასვლა ვერ მოხერხდა'
+                'error' => 'გასვლა ვერ მოხერხდა',
+                'debug' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
-
     /**
      * Get authenticated user
      */

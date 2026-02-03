@@ -1,13 +1,10 @@
-
 // app/[lang]/home/homePage.tsx
-
 import React from 'react';
- import OurServices from "@/app/[lang]/home/components/ourServices";
+import OurServices from "@/app/[lang]/home/components/ourServices";
 import OurProductsCarousel from "@/app/[lang]/home/components/ourProductsCarousel";
 import About from "@/app/[lang]/home/components/about";
 import HomeTextPages from "@/app/[lang]/home/components/homeTextPages";
 import {PageCategory, PageData, TextPages} from "@/types/page/page";
-
 
 interface HomePageProps {
     lang: string;

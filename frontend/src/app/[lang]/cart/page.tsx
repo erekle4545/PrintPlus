@@ -106,7 +106,7 @@ export default function Cart() {
                                                 />
                                             ) : (
                                                 <Image
-                                                    src={'/assets/img/products/pro_1.png'}
+                                                    src={'/assets/img/no_img/Image-not-found.png'}
                                                     alt={item.name}
                                                     width={120}
                                                     height={120}

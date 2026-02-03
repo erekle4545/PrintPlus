@@ -68,6 +68,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password: string
     ): Promise<{ success: boolean; errors?: any }> => {
         try {
+            // Clear old session before login
+            if (typeof window !== 'undefined') {
+                clearAuthCookies();
+            }
+
             const response = await loginHttp.sendRequest({
                 url: '/login',
                 method: 'POST',
@@ -80,7 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 }
                 setUser(response.user);
                 toast.success('წარმატებით შეხვედით სისტემაში');
-                router.push('/dashboard');
+                router.push('/');
                 return { success: true };
             }
 
@@ -115,7 +120,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 }
                 setUser(response.user);
                 toast.success('წარმატებით დარეგისტრირდით');
-                router.push('/dashboard');
+                router.push('/');
                 return { success: true };
             }
 

@@ -2,12 +2,13 @@
 
 import {PAGE_TEMPLATES, PageTemplate, PageInfo, PageCover, PagePost, PageCategory} from '@/types/page/page';
 import {useProducts} from '@/shared/hooks/useProducts';
-
 import ProductsPage from "@/shared/components/PageTemplates/products/page";
 import TextPage from "@/shared/components/PageTemplates/text/[slug]/page";
 import CalculatePage from "@/shared/components/PageTemplates/calculate/[slug]/page";
 import BrandPage from "@/shared/components/PageTemplates/brands/page";
 import NotFound from "@/app/[lang]/not-found";
+import PicturesPageDetails from "@/shared/components/PageTemplates/pictures/[slug]/page";
+import Cover from "@/shared/components/theme/header/cover/cover";
 
 interface TemplateRendererProps {
     page: {
@@ -32,22 +33,23 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
     const templateId = Number(page.template_id || page.page?.template_id);
     const categoryId = page.id;
 
-
     // პროდუქტების ჩატვირთვა მხოლოდ SERVICES template-სთვის
     const { products, loading, error } = useProducts(
         categoryId
         // ,templateId === PAGE_TEMPLATES.SERVICES.id
     );
 
-
-
     switch (templateId) {
+
         case PAGE_TEMPLATES.TEXT.id: // 1
             return <TextPage page={page} />;
+
         case PAGE_TEMPLATES.TEAM.id: // 6
             return <TextPage page={page} />;
+
         case PAGE_TEMPLATES.FAQ.id:
             return <TextPage page={page} />;
+
         case PAGE_TEMPLATES.ABOUT.id: // 7
             return <TextPage page={page} />;
 
@@ -58,8 +60,20 @@ export default function TemplateRenderer({ page }: TemplateRendererProps) {
             return <CalculatePage page={page} products={products} />;
 
         case PAGE_TEMPLATES.PRODUCTS.id: // 12
-
             return <ProductsPage  page={page} products={products} />;
+
+        case PAGE_TEMPLATES.STANDARD_PICTURE.id: // 13
+            if (!products || products.length === 0) {
+
+                return (<>
+                    <Cover/>
+                    {/*<div className={'m-auto p-5 fw-bolder text-center title_font '}>*/}
+                    {/*    ეს პროდუქტი ჯერ არ არის აქტიური*/}
+                    {/*</div>*/}
+                </>);
+            }
+
+            return <PicturesPageDetails product={products?.[0]} />;
 
         default:
             return <NotFound />;
