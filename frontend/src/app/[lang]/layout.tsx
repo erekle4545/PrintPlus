@@ -53,9 +53,9 @@ export default async function LangLayout({
     children: React.ReactNode;
     params: Promise<{ lang: string }>; // Promise type
 }) {
-    const { lang } = await params; // await
+    const { lang } = await params; // await დამატებული
 
-    // check language
+    // შეამოწმეთ ენა
     if (!isValidLanguage(lang)) {
         notFound();
     }

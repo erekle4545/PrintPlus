@@ -9,9 +9,10 @@ export const slugGenerate = (slug)=>{
 }
 //end Slug generate
 // Lang translate
-export const translate = (translateName,langCode)=>{
-      return  LangData[translateName][langCode]?LangData[translateName][langCode]:LangData[translateName][localStorage.getItem('lang')]
-}
+export const translate = (translateName, langCode) => {
+    if (!LangData[translateName]) return translateName;
+    return LangData[translateName][langCode] || LangData[translateName][localStorage.getItem('lang')] || translateName;
+};
 // End translate Lang
 // if is set  object translate example: title
 export const checkTranslate = (status,params,lang)=>{

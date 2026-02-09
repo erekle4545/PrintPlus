@@ -82,7 +82,9 @@ class PaymentController extends Controller
                 $request->input('language', 'ka')
             );
 
+
             if ($result['success']) {
+
                 // Update transaction with BOG payment ID
                 $transaction->update([
                     'gateway_transaction_id' => $result['payment_id'],
@@ -253,12 +255,12 @@ class PaymentController extends Controller
 
                 $order->update(['payment_status' => 'failed']);
 
-                Log::warning('BOG Payment rejected', [
-                    'transaction_id' => $transaction->transaction_id,
-                    'order_id' => $order->id,
-                    'reason' => $rejectReason,
-                    'error_code' => $errorCode,
-                ]);
+//                Log::warning('BOG Payment rejected', [
+//                    'transaction_id' => $transaction->transaction_id,
+//                    'order_id' => $order->id,
+//                    'reason' => $rejectReason,
+//                    'error_code' => $errorCode,
+//                ]);
 
                 DB::commit();
 
@@ -273,10 +275,10 @@ class PaymentController extends Controller
                     'status' => $orderStatus,
                 ]);
 
-                Log::info('BOG Payment status updated', [
-                    'transaction_id' => $transaction->transaction_id,
-                    'status' => $orderStatus,
-                ]);
+//                Log::info('BOG Payment status updated', [
+//                    'transaction_id' => $transaction->transaction_id,
+//                    'status' => $orderStatus,
+//                ]);
 
                 DB::commit();
 

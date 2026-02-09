@@ -164,6 +164,8 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::get('admin/orders/{id}/transactions', [App\Http\Controllers\API\Admin\OrderController::class, 'getOrderTransactions']); // NEW
         Route::put('admin/orders/{id}/status', [App\Http\Controllers\API\Admin\OrderController::class, 'updateStatus']);
         Route::delete('admin/orders/{id}', [App\Http\Controllers\API\Admin\OrderController::class, 'destroy']);
+        Route::post('admin/payment/refund', [PaymentController::class, 'refund']);
+        Route::post('admin/payment/check-status', [PaymentController::class, 'checkStatus']);
 
 
 });
@@ -202,16 +204,17 @@ Route::prefix('web')->group(function () {
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
 
+
     Route::prefix('payments')->group(function () {
         // Initialize payment (can be called by guest or authenticated user)
         Route::post('/initialize', [PaymentController::class, 'initializePayment'])
             ->name('payments.initialize');
         // BOG callback endpoint (no auth required)
-//        Route::post('callback', [PaymentController::class, 'callback'])->name('payments.callback');
+        Route::post('callback', [PaymentController::class, 'callback'])->name('payments.callback');
 
         // BOG webhook endpoint (no auth required, verified by signature)
-//        Route::post('/webhook/bog', [PaymentController::class, 'webhook'])
-//            ->name('payments.webhook.bog');
+        Route::post('/webhook/bog', [PaymentController::class, 'webhook'])
+            ->name('payments.webhook.bog');
 
         // Check transaction status
         Route::post('/status', [PaymentController::class, 'checkStatus'])

@@ -44,7 +44,3 @@ export function LanguageArr(lang: string): number {
 
 
 
-
-
-
-

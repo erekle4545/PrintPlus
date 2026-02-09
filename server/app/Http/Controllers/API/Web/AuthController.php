@@ -116,22 +116,6 @@ class AuthController extends Controller
     /**
      * Logout user
      */
-//    public function logout(Request $request)
-//    {
-//        try {
-//            // Delete current token
-//            $request->user()->currentAccessToken()->delete();
-//
-//            return response()->json([
-//                'message' => 'წარმატებით გახვედით'
-//            ]);
-//
-//        } catch (\Exception $e) {
-//            return response()->json([
-//                'error' => 'გასვლა ვერ მოხერხდა'
-//            ], 500);
-//        }
-//    }
     public function logout(Request $request)
     {
         try {
@@ -169,6 +153,23 @@ class AuthController extends Controller
             ], 500);
         }
     }
+//    public function logout(Request $request)
+//    {
+//        try {
+//            // Delete current token
+//            $request->user()->currentAccessToken()->delete();
+//
+//            return response()->json([
+//                'message' => 'წარმატებით გახვედით'
+//            ]);
+//
+//        } catch (\Exception $e) {
+//            return response()->json([
+//                'error' => 'გასვლა ვერ მოხერხდა'
+//            ], 500);
+//        }
+//    }
+
     /**
      * Get authenticated user
      */

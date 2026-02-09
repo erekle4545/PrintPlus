@@ -34,6 +34,9 @@ class ProductsController extends Controller
             }));
         }
 
+        if ($request->category_id) {
+            $category->where('category_id', $request->category_id);
+        }
 
         if ($request->status) {
             $category->where('status', $request->status);
@@ -41,7 +44,7 @@ class ProductsController extends Controller
 
         $category->orderBy('created_at', 'desc');
 
-        return new ProductResource($category->paginate(10));
+        return new ProductResource($category->with('category.info:id,category_id,title')->paginate(10));
     }
 
 

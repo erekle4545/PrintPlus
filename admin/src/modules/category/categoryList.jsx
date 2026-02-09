@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import { deleteAlert, errorAlerts } from "../../store/hooks/global/useAlert";
 import UseFormLang from "../../store/hooks/global/useFormLang";
+import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
@@ -28,12 +29,14 @@ const CategoryList = () => {
 
     const [data, setData] = useState([]);
     const [selectedConfigOptionStatus, setSelectedConfigOptionStatus] = useState(null);
+    const [selectedPage, setSelectedPage] = useState(null);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [pagination, setPagination] = useState({});
     const [checkbox, setCheckbox] = useState([]);
     const [postPagination, setPostPagination] = useState(1);
     const [options, setOptions] = useState({
-        statuses: {}
+        statuses: {},
+        pages: []
     });
     const [loading, setLoading] = useState(false);
 
@@ -44,7 +47,8 @@ const CategoryList = () => {
                 params: {
                     language_id: state.form_active_lang.activeLangId,
                     keyword: searchKeyword || null,
-                    status: selectedConfigOptionStatus || null
+                    status: selectedConfigOptionStatus || null,
+                    page_id: selectedPage || null
                 }
             });
 
@@ -65,7 +69,8 @@ const CategoryList = () => {
             if (response.status === 200) {
                 setOptions({
                     templates: response.data.data.templates,
-                    statuses: response.data.data.statuses
+                    statuses: response.data.data.statuses,
+                    pages: response.data.data.pages ?? []
                 });
             }
         } catch (err) {
@@ -90,6 +95,10 @@ const CategoryList = () => {
         setSelectedConfigOptionStatus(e.target.value);
     };
 
+    const handleChangeSelectPage = (e, value) => {
+        setSelectedPage(value?.value ?? null);
+    };
+
     const handleChangeSearch = (e) => {
         setSearchKeyword(e.target.value);
     };
@@ -97,6 +106,7 @@ const CategoryList = () => {
     const clear = () => {
         setSearchKeyword('');
         setSelectedConfigOptionStatus(null);
+        setSelectedPage(null);
     };
 
     const handleChangePagination = (e, value) => {
@@ -127,7 +137,7 @@ const CategoryList = () => {
         );
     };
     const tableRow = () => {
-        return data.map((item, index) => {
+        return data.map((item) => {
             const addedTime = new Date(item.created_at);
 
             return (
@@ -142,9 +152,10 @@ const CategoryList = () => {
                             />
                         )}
                     </td>
-                    <td>
+                    <td className={'fw-bolder'}>
                         {item.info?.title || 'მონიშნულ ენაზე არ არის ნათარგმნი'}
                     </td>
+                    <td >{item.page?.info?.title}</td>
                     <td>
                         {renderFlagImage(state.form_active_lang.code)}
                         {state.form_active_lang.label}
@@ -189,7 +200,7 @@ const CategoryList = () => {
 
     useEffect(() => {
         getData();
-    }, [state.form_active_lang.activeLangId, selectedConfigOptionStatus, searchKeyword, postPagination]);
+    }, [state.form_active_lang.activeLangId, selectedConfigOptionStatus, selectedPage, searchKeyword, postPagination]);
 
     useEffect(() => {
         getOptions();
@@ -225,7 +236,31 @@ const CategoryList = () => {
                 </div>
 
                 <div className="tools-choose-config">
-                    <div className="col-xl-8 col-sm-12 p-1">
+                    <div className="col-xl-3 col-sm-12 p-1">
+                        <label htmlFor="page-combo-box" className='pb-2 font_form_title font-weight-bold'>
+                            გვერდი
+                        </label>
+                        <Autocomplete
+                            size='small'
+                            onChange={handleChangeSelectPage}
+                            id="page-combo-box"
+                            value={
+                                selectedPage
+                                    ? options.pages
+                                    .map((item) => ({ label: item.info?.title ?? item.title ?? `გვერდი #${item.id}`, value: item.id }))
+                                    .find((opt) => opt.value === selectedPage) ?? null
+                                    : null
+                            }
+                            options={options.pages.map((item) => ({
+                                label: item.info?.title ?? item.title ?? `გვერდი #${item.id}`,
+                                value: item.id
+                            }))}
+                            isOptionEqualToValue={(option, value) => option.value === value.value}
+                            sx={{ width: '100%' }}
+                            renderInput={(params) => <TextField {...params} label="გვერდი" />}
+                        />
+                    </div>
+                    <div className="col-xl-4 col-sm-12 p-1">
                         <label htmlFor="search-field" className='pb-2 font_form_title font-weight-bold'>
                             ძებნა
                         </label>
@@ -238,7 +273,7 @@ const CategoryList = () => {
                             id="search-field"
                         />
                     </div>
-                    <div className="col-xl-2 col-sm-12 p-1">
+                    <div className="col-xl-3 col-sm-12 p-1">
                         <label htmlFor="page_status" className='pb-2 font_form_title font-weight-bold'>
                             სტატუსი
                         </label>
@@ -281,6 +316,7 @@ const CategoryList = () => {
                                         <th scope="col" className='text-center'># ID</th>
                                         <th scope="col">ფოტო</th>
                                         <th scope="col">სახელი</th>
+                                        <th scope="col">გვერდი</th>
                                         <th scope="col">ენა</th>
                                         <th scope="col">დამატების დრო</th>
                                         <th scope="col" className='text-end'>

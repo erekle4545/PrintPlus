@@ -1,0 +1,52 @@
+/* /styles/product-details.css */
+
+/* --- Gallery --- */
+.gallery-wrap { position: relative; }
+.gallery-main { background: #fff; border: 1px solid #e9ecef; border-radius: .5rem; }
+.main-img-box { display:flex; align-items:center; justify-content:center; height: 480px; padding: 12px; }
+.main-img-box img { width: 100%; height: 100%; object-fit: contain; border-radius: .5rem; }
+
+.gallery-thumbs .swiper-slide { height: 76px; }
+.thumb-btn { width: 100%; height: 100%; padding: 0; border: 1px solid #e5e7eb; border-radius: .5rem; overflow: hidden; background: #fff; }
+.thumb-btn img { width: 100%; height: 100%; object-fit: cover; display:block; }
+
+/* Slider arrows over main image */
+.gallery-main .swiper-button-next,
+.gallery-main .swiper-button-prev {
+    width: 32px; height: 32px;
+    background: #ffffff; border: 1px solid #e9ecef; border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08); color:#333;
+}
+.gallery-main .swiper-button-next:after,
+.gallery-main .swiper-button-prev:after { font-size: 14px; font-weight: 700; }
+
+/* --- Buttons --- */
+.btn-teal { background: #17a2b8; color: #fff; border: 0; }
+.btn-teal:hover { opacity: .95; color: #fff; }
+
+/* --- Color pills --- */
+.color-pill { --sz: 28px; display:inline-flex; align-items:center; justify-content:center;
+    border:1px solid #e5e7eb; border-radius: 999px; padding: 2px; cursor: pointer; transition: .2s ease; }
+.color-pill.active { border-color: #17a2b8;  }
+.color-pill > span { display:block; width: var(--sz); height: var(--sz); border-radius: 999px; }
+.color-pill > span[data-color="gold"]   { background: linear-gradient(120deg,#d4af37,#f7d774); }
+.color-pill > span[data-color="black"]  { background: #111; }
+.color-pill > span[data-color="silver"] { background: linear-gradient(120deg,#ced4da,#f1f3f5); }
+.color-pill > span[data-color="brown"]  { background: #8d6e63; }
+
+/* --- Size options --- */
+.size-option { display:flex; align-items:center; gap:.5rem; padding:.625rem .75rem;
+    border:1px solid #e5e7eb; border-radius:.5rem; cursor:pointer; transition:.15s ease; }
+.size-option .box { display:flex; align-items:center; }
+.size-option .dot { width: 10px; height: 10px; border-radius:999px; margin-right:.5rem; border:2px solid #cbd5e1; }
+.size-option.active { border-color:#17a2b8; box-shadow:0 0 0 3px rgba(23,162,184,.12); }
+.size-option.active .dot { border-color:#17a2b8; background:#17a2b8; }
+
+/* --- Related slider arrows --- */
+.related-swiper .swiper-button-next,
+.related-swiper .swiper-button-prev {
+    color:#475569; width:32px; height:32px;
+    background:#fff; border:1px solid #e9ecef; border-radius:999px;
+}
+.related-swiper .swiper-button-next:after,
+.related-swiper .swiper-button-prev:after { font-size:14px; }

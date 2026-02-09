@@ -1,0 +1,358 @@
+/* SearchModal.module.css */
+
+.searchModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 80px;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.searchModalContainer {
+    width: 90%;
+    max-width: 700px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-height: calc(100vh - 160px);
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.3s ease-out;
+    position: relative;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.searchModalHeader {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+}
+
+.searchInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 16px;
+    font-size: 20px;
+    color: #666;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 14px 50px 14px 50px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+    border-color: var(--teal);
+}
+
+.searchCloseBtn {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    background: white;
+    /*border: 3px solid var(--teal);*/
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.searchCloseBtn:hover {
+    background-color: white;
+    border-color: var(--teal);
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.searchCloseBtn:active {
+    transform: scale(0.95);
+}
+
+
+
+.searchModalBody {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.searchLoading,
+.searchEmptyState,
+.searchNoResults {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.searchEmptyIcon,
+.noResultsIcon {
+    font-size: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+}
+
+.searchResultsList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.searchResultItem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s;
+}
+
+.searchResultItem:hover {
+    background-color: #f8f9fa;
+}
+
+.searchResultImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+}
+
+.searchResultImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.searchResultContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.searchResultTitle {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.searchResultDescription {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.searchResultType {
+    font-size: 12px;
+}
+
+.searchResultArrow {
+    color: #999;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .searchModalOverlay {
+        padding-top: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .searchModalContainer {
+        width: 100%;
+        max-height: calc(100vh - 20px);
+        border-radius: 8px;
+    }
+
+    .searchModalHeader {
+        padding: 12px;
+    }
+
+    .searchInput {
+        font-size: 14px;
+        padding: 12px 40px 12px 40px;
+    }
+
+    .searchIcon {
+        font-size: 18px;
+        left: 12px;
+    }
+
+    .searchCloseBtn {
+        width: 36px;
+        height: 36px;
+        top: -10px;
+        right: -10px;
+        border-width: 2.5px;
+    }
+
+    .closeIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .searchModalBody {
+        padding: 12px;
+    }
+
+    .searchLoading,
+    .searchEmptyState,
+    .searchNoResults {
+        padding: 40px 15px;
+    }
+
+    .searchEmptyIcon,
+    .noResultsIcon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .searchResultsList {
+        gap: 6px;
+    }
+
+    .searchResultItem {
+        padding: 8px;
+        gap: 12px;
+    }
+
+    .searchResultImage {
+        width: 45px;
+        height: 45px;
+    }
+
+    .searchResultTitle {
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .searchResultDescription {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+
+    .searchResultType {
+        font-size: 11px;
+    }
+
+    .searchResultArrow {
+        font-size: 16px;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+    .searchModalOverlay {
+        padding-top: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .searchModalContainer {
+        max-height: calc(100vh - 10px);
+    }
+
+    .searchModalHeader {
+        padding: 10px;
+    }
+
+    .searchInput {
+        font-size: 13px;
+        padding: 10px 38px 10px 38px;
+    }
+
+    .searchIcon {
+        font-size: 16px;
+        left: 10px;
+    }
+
+    .searchCloseBtn {
+        width: 32px;
+        height: 32px;
+        top: -8px;
+        right: -8px;
+        border-width: 2px;
+    }
+
+    .closeIcon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .searchModalBody {
+        padding: 10px;
+    }
+
+    .searchResultItem {
+        padding: 6px;
+        gap: 10px;
+    }
+
+    .searchResultImage {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+    }
+
+    .searchResultTitle {
+        font-size: 13px;
+    }
+
+    .searchResultDescription {
+        font-size: 11px;
+    }
+}

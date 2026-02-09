@@ -25,6 +25,7 @@ export const PAGE_TEMPLATES = {
     CALCULATE: { id: 11, name: 'calculate' as const, show: true },
     PRODUCTS: { id: 12, name: 'products' as const, show: true },
     STANDARD_PICTURE: { id: 13, name: 'standard picture' as const, show: true },
+
 } as const;
 
 export interface PageInfo {

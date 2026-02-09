@@ -96,8 +96,12 @@ const Users = () => {
                 </td>
                 <td> {item.email}</td>
                 <td>
-                    {item.role.name}
+                    {item.roles[0]?.name}
                 </td>
+                <td>
+                    {item.orders_count}
+                </td>
+
                 <td>
                     {addedTime.toDateString()}
                 </td>
@@ -151,7 +155,7 @@ const Users = () => {
                     <div className="card-header lite-background">
                         <div className="row justify-content-end align-items-center">
                             <div className="col-xl-6 col-sm-6 text-left text-sm-center d-flex" >
-                                <IconButton disabled={true} onClick={()=>navigate('/'+RouteLinks.createCategory)} color='primary' className='text_font ' variant="contained"><AddIcon/></IconButton>
+                                {/*<IconButton disabled={true} onClick={()=>navigate('/'+RouteLinks.createCategory)} color='primary' className='text_font ' variant="contained"><AddIcon/></IconButton>*/}
                                 <h5 className="card-title mb-0 p-2">
                                     <Box component="span" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} >
                                         <img
@@ -162,7 +166,7 @@ const Users = () => {
                                             alt=""
                                         />
                                     </Box>
-                                    {translate('allCategory',state.lang.code)}
+                                    {translate('users',state.lang.code)}
                                 </h5>
                             </div>
                             <div className="col-xl-6 col-sm-6 text-right text-sm-center" >
@@ -201,7 +205,7 @@ const Users = () => {
                             <IconButton onClick={clear} color='secondary'  variant="contained"><ClearIcon/>Clear</IconButton>
                         </div>
                     </div>
-                    {loading.pageList?<div className='text-center p-5'><CircularProgress /><p>Loading Data...</p></div> :<div>
+                    {loading.pageList?<div className='text-center p-5'><CircularProgress /><p>იტვირთება...</p></div> :<div>
                         {data.length > 0?<><table className="table table-striped ">
                                 <thead className=''>
                                 <tr className={'title_font'}>
@@ -211,6 +215,7 @@ const Users = () => {
                                     <th scope="col">ტელეფონი</th>
                                     <th scope="col">ელ-ფოსტა</th>
                                     <th scope="col">როლი</th>
+                                    <th scope="col">შეკვეთები</th>
                                     <th scope="col">დამატების დრო</th>
                                     <th scope="col " className='text-end '>
 

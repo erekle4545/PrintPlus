@@ -92,7 +92,7 @@ const DropdownCart: React.FC<DropdownCartProps> = ({ onClose }) => {
                                 >
                                     {/* Product Image */}
                                     <Image
-                                        src={item.image || "/assets/img/products/pro_1.png"}
+                                        src={item.image || "/assets/img/no_img/Image-not-found.png"}
                                         width={60}
                                         height={60}
                                         alt={item.name}

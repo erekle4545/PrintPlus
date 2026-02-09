@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 
@@ -95,5 +96,4 @@ class SocialAuthController extends Controller
             return redirect($frontendUrl . '/' . $lang . '/login?error=authentication_failed');
         }
     }
-
 }

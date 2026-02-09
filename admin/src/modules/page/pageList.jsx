@@ -102,7 +102,8 @@ const PageList = () => {
               <td >
                   {item.info !=null &&<img height='100' src={item.info.covers.slice(0,1).map(image=> FileEndpoint+'/'+image.output_path )} />}
               </td>
-              <td>{item.info !=null?item.info.title:'მონიშნულ ენაზე არ არის ნათარგმნი'}</td>
+              <td className={'fw-bolder'}>{item.info !=null?item.info.title:'მონიშნულ ენაზე არ არის ნათარგმნი'}</td>
+              <td className={'fw-bolder'}>{options.templates?.find(e=> e.id === parseInt(item.template_id))?.name}</td>
               <td>
                   <Box component="span" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} >
                       <img
@@ -260,6 +261,7 @@ const PageList = () => {
                                 <th scope="col" className={'text-center'}># ID</th>
                                 <th scope="col">ფოტო</th>
                                 <th scope="col">სახელი</th>
+                                <th scope="col">შაბლონი</th>
                                 <th scope="col">ენა</th>
                                 <th scope="col">დამატების დრო</th>
                                 <th scope="col " className='text-end '>

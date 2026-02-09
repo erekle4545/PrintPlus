@@ -11,6 +11,7 @@ interface OrderSidebarProps {
     onOrderClick?: () => void;
     onAddToCart?: () => void;
     isLoading?: boolean;
+    disabled?: boolean;
 }
 
 export default function OrderSidebar({
@@ -18,7 +19,8 @@ export default function OrderSidebar({
          quantity,
          onOrderClick,
          onAddToCart,
-         isLoading = false
+         isLoading = false,
+         disabled = false
      }: OrderSidebarProps) {
 
     const {t} = useLanguage();
@@ -44,7 +46,7 @@ export default function OrderSidebar({
                         startIcon={<ShoppingCart key="cart" />}
                         style={{ width: '90%' }}
                         onClick={onAddToCart}
-                        disabled={isLoading}
+                        disabled={isLoading || disabled}
                     >
                         {isLoading ? t('sidebar.adding') : t('add_to_cart')}
                     </Button>
@@ -57,7 +59,7 @@ export default function OrderSidebar({
                     startIcon={<ShoppingBag key="order" />}
                     style={{ width: '90%' }}
                     onClick={onOrderClick}
-                    disabled={isLoading}
+                    disabled={isLoading || disabled}
                 >
                     {isLoading ? t('processing') : t('order')}
                 </Button>

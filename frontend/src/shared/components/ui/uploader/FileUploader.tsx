@@ -3,7 +3,6 @@
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import styles from './FileUploader.module.css';
 import AuthModal from "@/shared/components/theme/modal/auth/AuthModal";
-import Image from 'next/image';
 
 export type UploadStatus = 'queued' | 'uploading' | 'done' | 'error' | 'canceled' | 'too-big';
 
@@ -20,7 +19,6 @@ export interface FileItem {
     uploadedAt: string | null;
     quantity?: number;
     uploadedFileId?: number | null;
-    previewUrl?: string | null; // ✅ დამატებული preview URL
 }
 
 export interface FileUploaderProps {
@@ -33,7 +31,6 @@ export interface FileUploaderProps {
     autoUpload?: boolean;
     className?: string;
     showQuantity?: boolean;
-    showImage?: boolean; // ✅ ახალი პარამეტრი
     defaultQuantity?: number;
     onComplete?: (items: FileItem[]) => void;
     onError?: (items: FileItem[]) => void;
@@ -59,7 +56,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                                                        autoUpload = true,
                                                        className = '',
                                                        showQuantity = false,
-                                                       showImage = false, // ✅ default false
                                                        defaultQuantity = 1,
                                                        onComplete,
                                                        onError,
@@ -70,12 +66,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
     const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
+    // ✅ შევამოწმოთ არის თუ არა მომხმარებელი ავტორიზებული
     const isAuthenticated = useCallback(() => {
         if (typeof window === 'undefined') return false;
         const token = localStorage.getItem('token');
         return !!token;
     }, []);
 
+    // ✅ ფაილის არჩევის ღილაკზე დაჭერისას ჯერ შევამოწმოთ ავტორიზაცია
     const handleFilePickClick = useCallback(() => {
         if (!isAuthenticated()) {
             setShowAuthModal(true);
@@ -88,29 +86,20 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         (fileList: FileList | null) => {
             if (!fileList) return;
 
-            const incoming: FileItem[] = Array.from(fileList).map((f) => {
-                // ✅ თუ showImage = true და ფაილი სურათია, შევქმნათ preview URL
-                let previewUrl: string | null = null;
-                if (showImage && f.type.startsWith('image/')) {
-                    previewUrl = URL.createObjectURL(f);
-                }
-
-                return {
-                    id: uid(),
-                    file: f,
-                    name: f.name,
-                    size: f.size,
-                    progress: 0,
-                    status: 'queued',
-                    xhr: null,
-                    response: null,
-                    error: null,
-                    uploadedAt: null,
-                    quantity: defaultQuantity,
-                    uploadedFileId: null,
-                    previewUrl,
-                };
-            });
+            const incoming: FileItem[] = Array.from(fileList).map((f) => ({
+                id: uid(),
+                file: f,
+                name: f.name,
+                size: f.size,
+                progress: 0,
+                status: 'queued',
+                xhr: null,
+                response: null,
+                error: null,
+                uploadedAt: null,
+                quantity: defaultQuantity,
+                uploadedFileId: null,
+            }));
 
             incoming.forEach((it) => {
                 if (maxSizeBytes && it.size > maxSizeBytes) {
@@ -129,11 +118,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 setTimeout(() => incoming.forEach((it) => it.status === 'queued' && startUpload(it.id)), 0);
             }
         },
-        [autoUpload, maxSizeBytes, defaultQuantity, showImage]
+        [autoUpload, maxSizeBytes, defaultQuantity]
     );
 
+    // ✅ ავტორიზაციის შემდეგ გახსენი ფაილის არჩევის dialogi
     const handleAuthSuccess = useCallback(() => {
         setShowAuthModal(false);
+        // ავტორიზაციის შემდეგ დაკლიკე file input-ზე
         setTimeout(() => {
             fileInputRef.current?.click();
         }, 100);
@@ -250,11 +241,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 it.xhr.abort();
             }
 
-            // ✅ გაწმინდე preview URL memory leak-ის თავიდან ასაცილებლად
-            if (it?.previewUrl) {
-                URL.revokeObjectURL(it.previewUrl);
-            }
-
             const newItems = prev.filter((x) => x.id !== id);
 
             const hasQueued = newItems.some(item => item.status === 'queued');
@@ -289,17 +275,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         else onComplete?.(items);
     }, [allFinished, items, onComplete, onError]);
 
-    // ✅ Cleanup preview URLs-ის როცა კომპონენტი unmount-დება
-    useEffect(() => {
-        return () => {
-            items.forEach(item => {
-                if (item.previewUrl) {
-                    URL.revokeObjectURL(item.previewUrl);
-                }
-            });
-        };
-    }, [items]);
-
+    // ✅ Drag & Drop - ჯერ შევამოწმოთ ავტორიზაცია
     const onDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -338,6 +314,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                         <span className={styles.dropText}>ფოტოს/ფაილის ჩატვირთვა</span>
                     </div>
 
+                    {/* ✅ ღილაკზე დაჭერისას ჯერ ავტორიზაციის შემოწმება */}
                     <button
                         type="button"
                         className={styles.pickBtn + ' title_font'}
@@ -362,24 +339,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 <div className={styles.list}>
                     {items.map((it) => (
                         <div key={it.id} className={styles.row}>
-                            {/* ✅ თუ showImage = true და previewUrl არსებობს */}
-                            {showImage && it.previewUrl ? (
-                                <div className={styles.imagePreview}>
-                                    <Image
-                                        src={it.previewUrl}
-                                        alt={it.name}
-                                        width={60}
-                                        height={60}
-                                        style={{ objectFit: 'cover', borderRadius: '4px' }}
-                                    />
-                                </div>
-                            ) : (
-                                <div className={styles.fileIcon} aria-hidden>
-                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                                        <path d="M8 2h5l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#eef2f5" stroke="#9aa3af"/>
-                                    </svg>
-                                </div>
-                            )}
+                            <div className={styles.fileIcon} aria-hidden>
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                    <path d="M8 2h5l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#eef2f5" stroke="#9aa3af"/>
+                                </svg>
+                            </div>
 
                             <div className={styles.meta}>
                                 <div className={styles.name} title={it.name}>{it.name}</div>
@@ -400,12 +364,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                                     <div className={styles.progressBar} style={{ width: `${it.progress}%` }} />
                                 </div>
 
-                                {showQuantity && it.status !== 'uploading' && (<>
-                                    <span className={'fw-bolder small small  '}>დასაბეჭდი რ-ბა:</span>
-                                    <div className="d-flex align-items-center sma mt-2">
-
+                                {showQuantity && it.status !== 'uploading' && (
+                                    <div className="d-flex align-items-center mt-2">
                                         <button
-                                            type="button"
                                             className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
                                             onClick={() => updateQuantity(it.id, (it.quantity || 1) - 1)}
                                         >
@@ -413,14 +374,12 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                                         </button>
                                         <span className="mx-1 qty-span-item">{it.quantity || 1}</span>
                                         <button
-                                            type="button"
                                             className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
                                             onClick={() => updateQuantity(it.id, (it.quantity || 1) + 1)}
                                         >
                                             +
                                         </button>
                                     </div>
-                                    </>
                                 )}
                             </div>
 
@@ -453,6 +412,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 <div className={styles.footerHint}>ფორმატი: {accept} • ზღვარი: {maxSizeMB}MB</div>
             </div>
 
+            {/* ✅ Auth Modal */}
             <AuthModal
                 show={showAuthModal}
                 onHide={() => setShowAuthModal(false)}
@@ -463,12 +423,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 };
 
 export default FileUploader;
-
 // 'use client'
 //
 // import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 // import styles from './FileUploader.module.css';
-// import AuthModal from "@/shared/components/theme/modal/auth/AuthModal";
 //
 // export type UploadStatus = 'queued' | 'uploading' | 'done' | 'error' | 'canceled' | 'too-big';
 //
@@ -530,28 +488,10 @@ export default FileUploader;
 //     const maxSizeBytes = useMemo(() => maxSizeMB * 1024 * 1024, [maxSizeMB]);
 //     const [items, setItems] = useState<FileItem[]>([]);
 //     const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
-//     const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
-//
-//     // ✅ შევამოწმოთ არის თუ არა მომხმარებელი ავტორიზებული
-//     const isAuthenticated = useCallback(() => {
-//         if (typeof window === 'undefined') return false;
-//         const token = localStorage.getItem('token');
-//         return !!token;
-//     }, []);
-//
-//     // ✅ ფაილის არჩევის ღილაკზე დაჭერისას ჯერ შევამოწმოთ ავტორიზაცია
-//     const handleFilePickClick = useCallback(() => {
-//         if (!isAuthenticated()) {
-//             setShowAuthModal(true);
-//             return;
-//         }
-//         fileInputRef.current?.click();
-//     }, [isAuthenticated]);
 //
 //     const enqueueFiles = useCallback(
 //         (fileList: FileList | null) => {
 //             if (!fileList) return;
-//
 //             const incoming: FileItem[] = Array.from(fileList).map((f) => ({
 //                 id: uid(),
 //                 file: f,
@@ -576,6 +516,7 @@ export default FileUploader;
 //
 //             setItems((prev) => [...incoming, ...prev]);
 //
+//             // ✅ აჩვენე ატვირთვის ღილაკი თუ autoUpload = false
 //             if (!autoUpload && incoming.length > 0) {
 //                 setShowUploadButton(true);
 //             }
@@ -586,15 +527,6 @@ export default FileUploader;
 //         },
 //         [autoUpload, maxSizeBytes, defaultQuantity]
 //     );
-//
-//     // ✅ ავტორიზაციის შემდეგ გახსენი ფაილის არჩევის dialogi
-//     const handleAuthSuccess = useCallback(() => {
-//         setShowAuthModal(false);
-//         // ავტორიზაციის შემდეგ დაკლიკე file input-ზე
-//         setTimeout(() => {
-//             fileInputRef.current?.click();
-//         }, 100);
-//     }, []);
 //
 //     const updateQuantity = useCallback((id: string, newQty: number) => {
 //         setItems((prev) =>
@@ -631,13 +563,20 @@ export default FileUploader;
 //
 //                     if (ok) {
 //                         try {
+//                             // ✅ თქვენი backend აბრუნებს plain text "Success" ან empty
+//                             // ასე რომ, file ID უნდა ავიღოთ სხვანაირად
+//
+//                             // ვცდილობთ JSON parse-ს
 //                             const text = xhr.responseText.trim();
 //                             if (text && text.startsWith('{')) {
 //                                 responseData = JSON.parse(text);
 //                                 fileId = responseData.id || responseData.file_id || responseData.data?.id;
 //                             } else {
+//                                 // თუ "Success" ან ცარიელია, დროებით mock ID
+//                                 // Backend უნდა შეიცვალოს რათა ID დააბრუნოს!
 //                                 console.warn('⚠️ Backend did not return file ID. Response:', text);
 //                                 responseData = { success: true, message: text };
+//                                 // დროებით timestamp როგორც ID (არ არის იდეალური!)
 //                                 fileId = Date.now() + Math.floor(Math.random() * 1000);
 //                             }
 //                         } catch (e) {
@@ -672,18 +611,21 @@ export default FileUploader;
 //                     setItems((cur) => cur.map((x) => (x.id === id ? { ...x, status: 'canceled' } : x)));
 //                 };
 //
+//                 // ✅ როგორც თქვენს admin panel-ში: image/resize?w=60%&folder_id=1
 //                 const url = uploadUrl.includes('?')
 //                     ? uploadUrl
 //                     : `${uploadUrl}?w=60%&folder_id=1`;
 //
 //                 xhr.open('POST', url);
 //
+//                 // Set headers
 //                 Object.entries(headers || {}).forEach(([k, v]) => {
 //                     try {
 //                         xhr.setRequestHeader(k, v);
 //                     } catch {}
 //                 });
 //
+//                 // Create FormData
 //                 const form = new FormData();
 //                 form.append(fieldName, target.file, target.name);
 //
@@ -703,12 +645,15 @@ export default FileUploader;
 //         setItems((prev) => {
 //             const it = prev.find((x) => x.id === id);
 //
+//             // თუ uploading-ში არის, abort გააკეთე
 //             if (it?.xhr && it.status === 'uploading') {
 //                 it.xhr.abort();
 //             }
 //
+//             // წაშალე item
 //             const newItems = prev.filter((x) => x.id !== id);
 //
+//             // ✅ თუ queued ფაილები დარჩა, აჩვენე ღილაკი
 //             const hasQueued = newItems.some(item => item.status === 'queued');
 //             if (hasQueued) {
 //                 setShowUploadButton(true);
@@ -720,10 +665,11 @@ export default FileUploader;
 //         });
 //     }, []);
 //
+//     // ✅ ყველა ფაილის ატვირთვა
 //     const uploadAll = useCallback(() => {
 //         const queuedItems = items.filter((i) => i.status === 'queued');
 //         queuedItems.forEach((item) => startUpload(item.id));
-//         setShowUploadButton(false);
+//         setShowUploadButton(false); // დამალე ღილაკი
 //     }, [items, startUpload]);
 //
 //     const allFinished = useMemo(() => {
@@ -734,6 +680,7 @@ export default FileUploader;
 //     useEffect(() => {
 //         if (!items.length || !allFinished) return;
 //
+//         // ✅ დამალე ღილაკი როცა ყველა ატვირთვა დასრულდა
 //         setShowUploadButton(false);
 //
 //         const anyError = items.some((i) => i.status === 'error' || i.status === 'too-big');
@@ -741,16 +688,9 @@ export default FileUploader;
 //         else onComplete?.(items);
 //     }, [allFinished, items, onComplete, onError]);
 //
-//     // ✅ Drag & Drop - ჯერ შევამოწმოთ ავტორიზაცია
 //     const onDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
 //         e.preventDefault();
 //         e.stopPropagation();
-//
-//         if (!isAuthenticated()) {
-//             setShowAuthModal(true);
-//             return;
-//         }
-//
 //         if (e.dataTransfer?.files?.length) enqueueFiles(e.dataTransfer.files);
 //     };
 //
@@ -760,131 +700,118 @@ export default FileUploader;
 //     };
 //
 //     return (
-//         <>
-//             <div className={`${styles.wrap} ${className || ''}`}>
-//                 <div
-//                     className={styles.dropzone}
-//                     onDrop={onDrop}
-//                     onDragOver={onDragOver}
-//                     role="button"
-//                     tabIndex={0}
-//                     onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleFilePickClick()}
-//                     aria-label="ფაილების არჩევა ან გადათრევა"
-//                 >
-//                     <div className={styles.dropLeft}>
-//                         <span className={styles.cloudIcon} aria-hidden>
-//                             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-//                                 <path d="M19.35 10.04A7.49 7.49 0 0 0 5.5 8.11a5.5 5.5 0 1 0-1.55 10.77h14.9A4.15 4.15 0 0 0 19.35 10.04ZM12 12v6m0-6-3 3m3-3 3 3" stroke="#111" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-//                             </svg>
-//                         </span>
-//                         <span className={styles.dropText}>ფოტოს/ფაილის ჩატვირთვა</span>
-//                     </div>
-//
-//                     {/* ✅ ღილაკზე დაჭერისას ჯერ ავტორიზაციის შემოწმება */}
-//                     <button
-//                         type="button"
-//                         className={styles.pickBtn + ' title_font'}
-//                         onClick={handleFilePickClick}
-//                     >
-//                         არჩევა
-//                     </button>
-//                     <input
-//                         ref={fileInputRef}
-//                         type="file"
-//                         className={styles.hidden}
-//                         multiple={multiple}
-//                         accept={accept}
-//                         onChange={(e) => enqueueFiles(e.target.files)}
-//                     />
+//         <div className={`${styles.wrap} ${className || ''}`}>
+//             <div
+//                 className={styles.dropzone}
+//                 onDrop={onDrop}
+//                 onDragOver={onDragOver}
+//                 role="button"
+//                 tabIndex={0}
+//                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
+//                 aria-label="ფაილების არჩევა ან გადათრევა"
+//             >
+//                 <div className={styles.dropLeft}>
+//                     <span className={styles.cloudIcon} aria-hidden>
+//                         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+//                             <path d="M19.35 10.04A7.49 7.49 0 0 0 5.5 8.11a5.5 5.5 0 1 0-1.55 10.77h14.9A4.15 4.15 0 0 0 19.35 10.04ZM12 12v6m0-6-3 3m3-3 3 3" stroke="#111" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+//                         </svg>
+//                     </span>
+//                     <span className={styles.dropText}>ფოტოს/ფაილის ჩატვირთვა</span>
 //                 </div>
 //
-//                 <p className={styles.note}>
-//                     ატვირთეთ ფაილი ან გადაათრიეთ აქ
-//                 </p>
-//
-//                 <div className={styles.list}>
-//                     {items.map((it) => (
-//                         <div key={it.id} className={styles.row}>
-//                             <div className={styles.fileIcon} aria-hidden>
-//                                 <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-//                                     <path d="M8 2h5l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#eef2f5" stroke="#9aa3af"/>
-//                                 </svg>
-//                             </div>
-//
-//                             <div className={styles.meta}>
-//                                 <div className={styles.name} title={it.name}>{it.name}</div>
-//                                 <div className={styles.sub}>
-//                                     {it.status === 'done' && (
-//                                         <>ატვირთულია • {formatBytes(it.size)}</>
-//                                     )}
-//                                     {it.status === 'uploading' && (
-//                                         <>იტვირთება… {it.progress}% • {formatBytes(it.size)}</>
-//                                     )}
-//                                     {it.status === 'queued' && <>მზადაა ატვირთვისთვის • {formatBytes(it.size)}</>}
-//                                     {it.status === 'error' && <span className={styles.err}>შეცდომა • {it.error || 'ვერ აიტვირთა'}</span>}
-//                                     {it.status === 'too-big' && <span className={styles.err}>ფაილი ძალიან დიდია • {formatBytes(it.size)}</span>}
-//                                     {it.status === 'canceled' && <span className={styles.muted}>გაუქმებულია</span>}
-//                                 </div>
-//
-//                                 <div className={styles.progressWrap} aria-hidden={it.status !== 'uploading'}>
-//                                     <div className={styles.progressBar} style={{ width: `${it.progress}%` }} />
-//                                 </div>
-//
-//                                 {showQuantity && it.status !== 'uploading' && (
-//                                     <div className="d-flex align-items-center mt-2">
-//                                         <button
-//                                             className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
-//                                             onClick={() => updateQuantity(it.id, (it.quantity || 1) - 1)}
-//                                         >
-//                                             -
-//                                         </button>
-//                                         <span className="mx-1 qty-span-item">{it.quantity || 1}</span>
-//                                         <button
-//                                             className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
-//                                             onClick={() => updateQuantity(it.id, (it.quantity || 1) + 1)}
-//                                         >
-//                                             +
-//                                         </button>
-//                                     </div>
-//                                 )}
-//                             </div>
-//
-//                             <button
-//                                 type="button"
-//                                 className={styles.removeBtn}
-//                                 aria-label={it.status === 'uploading' ? 'გაუქმება' : 'წაშლა'}
-//                                 onClick={() => removeItem(it.id)}
-//                             >
-//                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5">
-//                                     <path d="M6 6l12 12M18 6L6 18"/>
-//                                 </svg>
-//                             </button>
-//                         </div>
-//                     ))}
-//                 </div>
-//
-//                 {showUploadButton && items.some((i) => i.status === 'queued') && (
-//                     <div className={styles.actions}>
-//                         <button
-//                             type="button"
-//                             className={`${styles.primary} btn btn-primary w-100 py-3 fw-bold`}
-//                             onClick={uploadAll}
-//                         >
-//                             ფაილების ატვირთვა ({items.filter(i => i.status === 'queued').length})
-//                         </button>
-//                     </div>
-//                 )}
-//
-//                 <div className={styles.footerHint}>ფორმატი: {accept} • ზღვარი: {maxSizeMB}MB</div>
+//                 <button type="button" className={styles.pickBtn + ' title_font'} onClick={() => fileInputRef.current?.click()}>
+//                     არჩევა
+//                 </button>
+//                 <input
+//                     ref={fileInputRef}
+//                     type="file"
+//                     className={styles.hidden}
+//                     multiple={multiple}
+//                     accept={accept}
+//                     onChange={(e) => enqueueFiles(e.target.files)}
+//                 />
 //             </div>
 //
-//             {/* ✅ Auth Modal */}
-//             <AuthModal
-//                 show={showAuthModal}
-//                 onHide={() => setShowAuthModal(false)}
-//                 onSuccess={handleAuthSuccess}
-//             />
-//         </>
+//             <p className={styles.note}>
+//                 ატვირთეთ ფაილი ან გადაათრიეთ აქ
+//             </p>
+//
+//             <div className={styles.list}>
+//                 {items.map((it) => (
+//                     <div key={it.id} className={styles.row}>
+//                         <div className={styles.fileIcon} aria-hidden>
+//                             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+//                                 <path d="M8 2h5l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#eef2f5" stroke="#9aa3af"/>
+//                             </svg>
+//                         </div>
+//
+//                         <div className={styles.meta}>
+//                             <div className={styles.name} title={it.name}>{it.name}</div>
+//                             <div className={styles.sub}>
+//                                 {it.status === 'done' && (
+//                                     <>ატვირთულია • {formatBytes(it.size)}</>
+//                                 )}
+//                                 {it.status === 'uploading' && (
+//                                     <>იტვირთება… {it.progress}% • {formatBytes(it.size)}</>
+//                                 )}
+//                                 {it.status === 'queued' && <>მზადაა ატვირთვისთვის • {formatBytes(it.size)}</>}
+//                                 {it.status === 'error' && <span className={styles.err}>შეცდომა • {it.error || 'ვერ აიტვირთა'}</span>}
+//                                 {it.status === 'too-big' && <span className={styles.err}>ფაილი ძალიან დიდია • {formatBytes(it.size)}</span>}
+//                                 {it.status === 'canceled' && <span className={styles.muted}>გაუქმებულია</span>}
+//                             </div>
+//
+//                             <div className={styles.progressWrap} aria-hidden={it.status !== 'uploading'}>
+//                                 <div className={styles.progressBar} style={{ width: `${it.progress}%` }} />
+//                             </div>
+//
+//                             {showQuantity && it.status !== 'uploading' && (
+//                                 <div className="d-flex align-items-center mt-2">
+//                                     <button
+//                                         className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
+//                                         onClick={() => updateQuantity(it.id, (it.quantity || 1) - 1)}
+//                                     >
+//                                         -
+//                                     </button>
+//                                     <span className="mx-1 qty-span-item">{it.quantity || 1}</span>
+//                                     <button
+//                                         className={'btn btn-sm btn-light qty-btn-item fw-bolder'}
+//                                         onClick={() => updateQuantity(it.id, (it.quantity || 1) + 1)}
+//                                     >
+//                                         +
+//                                     </button>
+//                                 </div>
+//                             )}
+//                         </div>
+//
+//                         <button
+//                             type="button"
+//                             className={styles.removeBtn}
+//                             aria-label={it.status === 'uploading' ? 'გაუქმება' : 'წაშლა'}
+//                             onClick={() => removeItem(it.id)}
+//                         >
+//                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5">
+//                                 <path d="M6 6l12 12M18 6L6 18"/>
+//                             </svg>
+//                         </button>
+//                     </div>
+//                 ))}
+//             </div>
+//
+//             {/* ✅ ატვირთვის ღილაკი - ყოველთვის ჩანს როცა queued ფაილები არის */}
+//             {showUploadButton && items.some((i) => i.status === 'queued') && (
+//                 <div className={styles.actions}>
+//                     <button
+//                         type="button"
+//                         className={`${styles.primary} btn btn-primary w-100 py-3 fw-bold`}
+//                         onClick={uploadAll}
+//                     >
+//                         ფაილების ატვირთვა ({items.filter(i => i.status === 'queued').length})
+//                     </button>
+//                 </div>
+//             )}
+//
+//             <div className={styles.footerHint}>ფორმატი: {accept} • ზღვარი: {maxSizeMB}MB</div>
+//         </div>
 //     );
 // };
 //

@@ -28,12 +28,14 @@ const ProductList = () => {
     let navigate = useNavigate();
     const [data,setData] = useState([])
     const [selectedConfigOptionStatus, setSelectedConfigOptionStatus] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchKeyword, setSearchKeyword] = useState(null);
     const [pagination, setPagination] = useState([]);
     const [checkbox, setCheckbox] = useState([]);
     const [postPagination, setPostPagination] = useState(1);
     const [options,setOptions]= useState({
-        statuses:[]
+        statuses:[],
+        categories:[]
     })
     const [loading, setLoading] = useState({
         pageList:false
@@ -46,13 +48,14 @@ const ProductList = () => {
             params:{
                 language_id:state.form_active_lang.activeLangId,
                 keyword:searchKeyword??null,
-                status:selectedConfigOptionStatus??null
+                status:selectedConfigOptionStatus??null,
+                category_id:selectedCategory??null
             }
         }).then((response)=>{
-            console.log(response)
+
             if(response.status === 200){
-               setData(response.data.data)
-               setPagination(response.data)
+                setData(response.data.data)
+                setPagination(response.data)
             }
         }).catch(err=>{
             console.log(err.response)
@@ -67,6 +70,10 @@ const ProductList = () => {
 
     };
 
+    const handleChangeSelectCategory = (e, value) => {
+        setSelectedCategory(value?.value ?? null);
+    };
+
     const handleChangeSearch = (e) => {
         setSearchKeyword(e.target.value);
 
@@ -75,6 +82,7 @@ const ProductList = () => {
     const clear = () => {
         setSearchKeyword(null)
         setSelectedConfigOptionStatus(null)
+        setSelectedCategory(null)
     }
 
     // pagination
@@ -92,6 +100,7 @@ const ProductList = () => {
                     {item.info !=null &&<img height='100' src={item.info.covers&&item.info.covers.slice(0,1).map(image=> FileEndpoint+'/'+image.output_path )} />}
                 </td>
                 <td>{item.info !=null?item.info.name:'მონიშნულ ენაზე არ არის ნათარგმნი'}</td>
+                <td className={'fw-bolder'}>{item.category?.info?.title}</td>
                 <td>{item.info !=null?item.info.description:'მონიშნულ ენაზე არ არის ნათარგმნი'}</td>
                 <td>{item.sale_price?<><span className='text-danger'>{item.price}</span>  <span className='text-danger'>{item.sale_price}</span></>:item.price} </td>
                 <td>
@@ -133,7 +142,8 @@ const ProductList = () => {
             if(response.status === 200){
                 setOptions({
                     templates:response.data.data.templates,
-                    statuses:response.data.data.statuses
+                    statuses:response.data.data.statuses,
+                    categories:response.data.data.categories ?? []
                 })
 
             }
@@ -170,7 +180,7 @@ const ProductList = () => {
     useEffect(()=>{
         getData()
         getOptions()
-    },[state.form_active_lang.activeLangId,selectedConfigOptionStatus,searchKeyword,postPagination])
+    },[state.form_active_lang.activeLangId,selectedConfigOptionStatus,selectedCategory,searchKeyword,postPagination])
     return(
         <>
             <div className="col-md-12 col-xl-12 bg-w">
@@ -190,7 +200,7 @@ const ProductList = () => {
                                             alt=""
                                         />
                                     </Box>
-                                     ყველა პროდუქტი
+                                    ყველა პროდუქტი
                                 </h5>
                             </div>
                             <div className="col-xl-6 col-sm-6 text-right text-sm-center">
@@ -205,11 +215,33 @@ const ProductList = () => {
                     </div>
                     <div className="tools-choose-config ">
 
-                        <div className="col-xl-8 col-sm-12  p-1">
+                        <div className="col-xl-3 col-sm-12  p-1">
+                            <label htmlFor="category-combo-box" className='pb-2 font_form_title font-weight-bold'>კატეგორია</label>
+                            <Autocomplete
+                                size='small'
+                                onChange={handleChangeSelectCategory}
+                                id="category-combo-box"
+                                value={
+                                    selectedCategory
+                                        ? options.categories
+                                        .map((item) => ({ label: item.info?.title ?? item.title ?? `კატეგორია #${item.id}`, value: item.id }))
+                                        .find((opt) => opt.value === selectedCategory) ?? null
+                                        : null
+                                }
+                                options={options.categories.map((item) => ({
+                                    label: item.info?.title ?? item.title ?? `კატეგორია #${item.id}`,
+                                    value: item.id
+                                }))}
+                                isOptionEqualToValue={(option, value) => option.value === value.value}
+                                sx={{ width: '100%' }}
+                                renderInput={(params) => <TextField {...params} label="კატეგორია" />}
+                            />
+                        </div>
+                        <div className="col-xl-4 col-sm-12  p-1">
                             <label htmlFor="text" className='pb-2 font_form_title font-weight-bold'>ძებნა</label>
                             <TextField fullWidth onChange={handleChangeSearch} label="ძებნა" size='small' id="text"/>
                         </div>
-                        <div className="col-xl-2 col-sm-12   p-1">
+                        <div className="col-xl-3 col-sm-12   p-1">
                             <label htmlFor="page_status"
                                    className='pb-2 font_form_title font-weight-bold'>სტატუსი</label>
                             <FormControl sx={{width: '100%', padding: '0.2px'}} size="small">
@@ -247,6 +279,7 @@ const ProductList = () => {
                                             <th scope="col" className={'text-center'}># ID</th>
                                             <th scope="col">ფოტო</th>
                                             <th scope="col">სახელი</th>
+                                            <th scope="col">კატეგორია</th>
                                             <th scope="col">აღწერა</th>
                                             <th scope="col">ფასი</th>
                                             <th scope="col">ენა</th>
@@ -268,9 +301,12 @@ const ProductList = () => {
                                 : <h6 className={'text-center text_font p-5'}>ჩანაწერები არ არის...</h6>}
 
                         </div>}
-                    <div className='col-12 p-4 d-flex justify-content-end'><Pagination count={pagination.last_page}
-                                                                                       onChange={handleChangePagination}
-                                                                                       color="primary"/></div>
+                    <div className='col-12 p-4 d-flex justify-content-end'>
+                        <Pagination
+                            count={pagination.last_page}
+                            onChange={handleChangePagination}
+                            color="primary"/>
+                    </div>
 
                 </div>
             </div>

@@ -189,7 +189,7 @@ class BogPaymentService
     ): array
     {
         $payload = [
-            'callback_url' => $returnUrl,
+            'callback_url' => $callBackUrl,
             'external_order_id' => (string) $orderId,
             'purchase_units' => [
                 'currency' => 'GEL',
@@ -286,7 +286,7 @@ class BogPaymentService
             $payload['amount'] = $amount;
         }
 
-        $result = $this->makeAuthenticatedRequest('POST', "/payments/v1/ecommerce/orders/{$orderId}/refund", $payload);
+        $result = $this->makeAuthenticatedRequest('POST', "/payments/v1/payment/refund/{$orderId}", $payload);
 
         if ($result['success']) {
             $data = $result['data'];

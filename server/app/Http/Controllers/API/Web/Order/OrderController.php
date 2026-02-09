@@ -273,7 +273,7 @@ class OrderController extends Controller
                 'created_at' => $order->created_at->toISOString(),
                 'items' => $order->items->map(function ($item) {
                     return [
-                        'name' => $item->name ?? 'N/A',
+                         'name' => $item->name ?? 'N/A',
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
                         'product'=>$item->product,
