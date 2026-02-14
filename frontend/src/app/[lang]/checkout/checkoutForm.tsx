@@ -49,7 +49,7 @@ interface PaymentMethod {
 
 export default function CheckoutForm() {
     const router = useRouter();
-    const { items, total, clearCart, loading: cartLoading } = useCart();
+    const { items, total, clearCart, loading: cartLoading,refreshCart } = useCart();
     const {t, currentLanguage} = useLanguage();
 
     // Form State
@@ -290,6 +290,8 @@ export default function CheckoutForm() {
         setLoading(true);
 
         try {
+            // განაახლე cart submit-მდე რომ ახალი id-ები იყოს
+            await refreshCart();
             // Get cart IDs from items
             const cartIds = items.map(item => item.id);
 

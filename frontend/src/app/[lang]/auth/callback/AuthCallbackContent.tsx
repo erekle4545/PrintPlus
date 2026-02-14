@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'react-toastify';
+import {useCart} from "@/shared/hooks/useCart";
 
 export default function AuthCallbackContent() {
     const router = useRouter();
@@ -12,7 +13,7 @@ export default function AuthCallbackContent() {
     const { t, currentLanguage } = useLanguage();
     const { handleSocialCallback } = useAuth();
     const hasProcessed = useRef(false);
-
+    const {mergeGuestCart,refreshCart} = useCart();
     useEffect(() => {
         // თავიდან აცილება duplicate processing-ის
         if (hasProcessed.current) return;
@@ -27,13 +28,14 @@ export default function AuthCallbackContent() {
             // CRITICAL: ჯერ წაშალე ძველი token
             if (typeof window !== 'undefined') {
                 localStorage.removeItem('token');
-                console.log('Old token cleared');
+                // console.log('Old token cleared');
             }
 
             // Handle successful authentication
             handleSocialCallback(token)
-                .then(() => {
-                    console.log('Social callback successful');
+                .then(async () => {
+                    await mergeGuestCart();
+                    await refreshCart();
                     setTimeout(() => {
                         router.push(`/${langCode}`);
                     }, 500);

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers\API\Web\Order;
 
 use App\Http\Controllers\Controller;
@@ -9,6 +8,7 @@ use App\Models\Core\OrderItem;
 use App\Models\Core\Cover;
 use App\Models\Core\Cart;
 use App\Models\Core\GuestCart;
+use App\Traits\GuestSessionTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+    use GuestSessionTrait;
 
     public function index(Request $request)
     {
-        // პაგინაციის პარამეტრები
         $perPage = $request->input('per_page', 15);
         $status = $request->input('status');
         $search = $request->input('search');
@@ -27,12 +27,10 @@ class OrderController extends Controller
         $query = Order::where('user_id', $request->user()->id)->with(['items.product', 'items.covers', 'user'])
             ->orderBy('created_at', 'desc');
 
-        // სტატუსის ფილტრი
         if ($status) {
             $query->where('status', $status);
         }
 
-        // ძებნა
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('order_number', 'like', "%{$search}%")
@@ -49,13 +47,9 @@ class OrderController extends Controller
             'data' => $orders,
         ]);
     }
-    /**
-     * ახალი შეკვეთის შექმნა
-     */
+
     public function store(Request $request)
     {
-
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -66,7 +60,7 @@ class OrderController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
             'notes' => 'nullable|string|max:1000',
             'payment_method' => 'required|in:cash,card,bank_transfer',
-            'cart_ids' => 'required|array|min:1', // Cart IDs instead of items
+            'cart_ids' => 'required|array|min:1',
             'cart_ids.*' => 'required|integer',
             'total' => 'required|numeric|min:0',
         ]);
@@ -82,7 +76,6 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
-            // Get city name from config
             $cities = config('order.cities');
             $cityName = null;
 
@@ -93,11 +86,9 @@ class OrderController extends Controller
                 }
             }
 
-            // Check if user is authenticated
             $userId = auth()->check() ? auth()->id() : null;
-            $sessionId = !auth()->check() ? session()->getId() : null;
+            $sessionId = !$userId ? $this->getGuestSessionId($request) : null;
 
-            // Get cart items
             if ($userId) {
                 $cartItems = Cart::whereIn('id', $request->cart_ids)
                     ->where('user_id', $userId)
@@ -114,7 +105,6 @@ class OrderController extends Controller
                 throw new \Exception('კალათა ცარიელია');
             }
 
-            // შევქმნათ შეკვეთა
             $order = Order::create([
                 'user_id' => $userId,
                 'order_number' => $this->generateOrderNumber(),
@@ -134,7 +124,6 @@ class OrderController extends Controller
                 'status' => 'pending',
             ]);
 
-            // დავამატოთ შეკვეთის პროდუქტები Cart-დან
             foreach ($cartItems as $cartItem) {
                 $orderItem = OrderItem::create([
                     'order_id' => $order->id,
@@ -148,14 +137,11 @@ class OrderController extends Controller
                     'materials' => $cartItem->materials,
                     'print_type' => $cartItem->print_type,
                     'custom_dimensions' => $cartItem->custom_dimensions,
-//                    'uploaded_file' => $cartItem->uploaded_file,
                 ]);
 
-                // Copy covers from Cart to OrderItem
                 $this->copyCoversFromCart($cartItem, $orderItem);
             }
 
-            // Delete cart items after successful order
             if ($userId) {
                 Cart::whereIn('id', $request->cart_ids)
                     ->where('user_id', $userId)
@@ -186,57 +172,44 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Copy covers from Cart/GuestCart to OrderItem
-     */
     private function copyCoversFromCart($cartItem, $orderItem)
     {
-        // Get covers from cart
         $covers = Cover::where('coverable_id', $cartItem->id)
             ->where('coverable_type', get_class($cartItem))
             ->get();
 
-        // Copy to order item
         foreach ($covers as $cover) {
             Cover::create([
                 'coverable_id' => $orderItem->id,
                 'coverable_type' => OrderItem::class,
                 'files_id' => $cover->files_id,
                 'cover_type' => $cover->cover_type,
+                'quantity' => $cover->quantity,
             ]);
         }
-        // delete  cart cover
+
         if (!is_null($cartItem->id)) {
-            Cover::where('coverable_type', get_class($cartItem))->where('coverable_id', $cartItem->id)->delete();
+            Cover::where('coverable_type', get_class($cartItem))
+                ->where('coverable_id', $cartItem->id)
+                ->delete();
         }
     }
 
-    /**
-     * შეკვეთის ნომრის გენერაცია
-     */
     private function generateOrderNumber()
     {
-        // Get last order and increment
         $lastOrder = Order::latest('id')->first();
         $nextNumber = $lastOrder ? ((int)$lastOrder->order_number) + 1 : 1;
 
-        // Pad to 6 digits: 000001, 000002, etc.
         $orderNumber = str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
 
-        // Safety check
         while (Order::where('order_number', $orderNumber)->exists()) {
             $nextNumber++;
-            $orderNumber = "ORD-".str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+            $orderNumber = "ORD-" . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
         }
 
         return $orderNumber;
     }
 
-
-
-    /**
-     * კონკრეტული შეკვეთის მიღება
-     */
     public function show($orderNumber)
     {
         $order = Order::where('order_number', $orderNumber)
@@ -261,32 +234,29 @@ class OrderController extends Controller
                 'city' => $order->city,
                 'notes' => $order->notes,
                 'total' => (float) $order->total,
-                'payment_method' =>$order->payment_method,
-                'delivery_cost' =>$order->delivery_cost,
-                'subtotal' =>$order->subtotal,
+                'payment_method' => $order->payment_method,
+                'delivery_cost' => $order->delivery_cost,
+                'subtotal' => $order->subtotal,
                 'payment_status' => $order->payment_status,
                 'payment_status_color' => $order->payment_status_color,
                 'payment_status_label' => $order->payment_status_label,
                 'status_color' => $order->status_color,
                 'status_label' => $order->status_label,
-//                'transaction_id' => $order->transaction_id,
                 'created_at' => $order->created_at->toISOString(),
                 'items' => $order->items->map(function ($item) {
                     return [
-                         'name' => $item->name ?? 'N/A',
+                        'name' => $item->name ?? 'N/A',
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
-                        'product'=>$item->product,
-                        'covers'=>$item->covers,
+                        'product' => $item->product,
+                        'covers' => $item->covers,
                         'total' => (float) ($item->price * $item->quantity),
                     ];
                 }),
             ],
         ]);
     }
-    /**
-     * შეკვეთის სტატუსის განახლება
-     */
+
     public function updateStatus(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -311,9 +281,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * შეკვეთის გაუქმება
-     */
     public function cancel(Request $request, $id)
     {
         $order = Order::where('user_id', $request->user()->id)
@@ -329,4 +296,3 @@ class OrderController extends Controller
         ]);
     }
 }
-

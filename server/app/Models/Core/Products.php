@@ -100,6 +100,6 @@ class Products extends Model
      */
     public function covers()
     {
-        return $this->morphToMany(Multitenant::getModel('Files'), 'coverable')->withPivot('cover_type');
+        return $this->morphToMany(Multitenant::getModel('Files'), 'coverable')->withPivot(['cover_type','quantity']);
     }
 }

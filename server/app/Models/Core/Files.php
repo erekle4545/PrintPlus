@@ -1,26 +1,1 @@
-<?php
-
-namespace App\Models\Core;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Files extends Model
-{
-    use HasFactory;
-
-    const TYPE_RESIZE = 'resize';
-    const UPDATED_AT = null;
-    protected $fillable = ['name','type','path','data','extension','output_path','folder_id','user_id'];
-
-    protected $appends = [ 'cover_type'];
-
-    public function getCovertypeAttribute()
-    {
-        if (!is_null($this->pivot)) {
-            return $this->pivot->cover_type;
-        }
-    }
-
-
-}
+<?phpnamespace App\Models\Core;use App\Models\User;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;class Files extends Model{    use HasFactory;    const TYPE_RESIZE = 'resize';    const UPDATED_AT = null;    protected $fillable = ['name','type','path','data','extension','output_path','folder_id','user_id'];    public function user(){        return $this->belongsTo(User::class);    }    protected $appends = ['cover_type', 'quantity'];    public function getCoverTypeAttribute()    {        if (!is_null($this->pivot)) {            return $this->pivot->cover_type;        }    }    public function getQuantityAttribute($value)    {        if (!is_null($this->pivot)) {            return $this->pivot->quantity;        }        return $value;    }}

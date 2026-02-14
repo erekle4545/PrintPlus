@@ -34,7 +34,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const {t} = useLanguage();
-    // ✅ useRef-ით თავიდან ავიცილოთ infinite loop
+    // useRef-ით თავიდან ავიცილოთ infinite loop
     const hasMergedRef = useRef(false);
     const previousTokenRef = useRef<string | null>(null);
 

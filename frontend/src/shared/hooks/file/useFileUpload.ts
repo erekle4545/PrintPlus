@@ -52,10 +52,12 @@ export const useFileUpload = () => {
     const getCoverData = useCallback(() => {
         const cover_ids = uploadedFiles.map(f => f.file_id);
         const cover_types = uploadedFiles.map(f => f.cover_type || 'image');
+        const quantity = uploadedFiles.map(f => f.quantity || 1);
 
         return {
             cover_ids: cover_ids.length > 0 ? cover_ids : undefined,
             cover_types: cover_types.length > 0 ? cover_types : undefined,
+            cover_quantity: quantity.length > 0 ? quantity : undefined,
             uploaded_file: uploadedFiles.length > 0
                 ? JSON.stringify(uploadedFiles)
                 : undefined,

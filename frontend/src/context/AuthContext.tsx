@@ -141,7 +141,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             if (typeof window !== 'undefined') {
                 localStorage.removeItem('token');
                 clearAuthCookies();
-                console.log('Cleared auth data before OAuth');
+                // console.log('Cleared auth data before OAuth');
             }
 
             const response = await socialAuthHttp.sendRequest({
@@ -160,7 +160,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const handleSocialCallback = async (token: string): Promise<void> => {
         try {
-            console.log('Handling social callback with token:', token.substring(0, 20) + '...');
+            // console.log('Handling social callback with token:', token.substring(0, 20) + '...');
 
             // CRITICAL: Clear old token FIRST
             if (typeof window !== 'undefined') {
@@ -170,7 +170,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             // Save NEW token
             if (typeof window !== 'undefined') {
                 localStorage.setItem('token', token);
-                console.log('New token saved to localStorage');
+                // console.log('New token saved to localStorage');
             }
 
             // Fetch user data with NEW token
@@ -179,7 +179,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 method: 'GET',
             });
 
-            console.log('User fetched:', response?.user?.email);
+            // console.log('User fetched:', response?.user?.email);
 
             if (response && response.user) {
                 setUser(response.user);

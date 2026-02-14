@@ -53,6 +53,8 @@ Route::group(['prefix' => 'v1','middleware'=>['auth:sanctum','role:super_admin']
         Route::get('/users', [AuthController::class, 'getUsers']);
 
         // End User
+        // dictionary
+        Route::get('dictionary/languages-for-word', [DictionaryController::class, 'languagesForWord']);
         // Dashboard
         Route::resource('/dashboard', DashboardController::class);
         // End Dashboard
@@ -236,14 +238,15 @@ Route::prefix('web')->group(function () {
 
 
     // Cart routes - Available for BOTH Guest and Auth users
-    Route::prefix('cart')->group(function () {
-        Route::get('/', [CartController::class, 'index']);           // Get cart items
-        Route::get('/stats', [CartController::class, 'stats']);      // Cart statistics
-        Route::post('/', [CartController::class, 'store']);          // Add to cart
-        Route::put('/{id}', [CartController::class, 'update']);      // Update quantity
-        Route::delete('/{id}', [CartController::class, 'destroy']);  // Remove item
-        Route::post('/clear', [CartController::class, 'clear']);     // Clear cart
+    Route::prefix('cart')->middleware(\App\Http\Middleware\OptionalSanctumAuth::class)->group(function () {
+        Route::get('/', [CartController::class, 'index']);
+        Route::get('/stats', [CartController::class, 'stats']);
+        Route::post('/', [CartController::class, 'store']);
+        Route::put('/{id}', [CartController::class, 'update']);
+        Route::delete('/{id}', [CartController::class, 'destroy']);
+        Route::post('/clear', [CartController::class, 'clear']);
     });
+
 
     // contact info
     Route::get('/contact', [ContactController::class, 'index']);

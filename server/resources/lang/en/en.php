@@ -1,5 +1,5 @@
 <?php
 
-                return ['contact'=>'Contact',
+                return ['contact'=>'კონტაქტი',
 	'aboutUs'=>'About Us',
 	 ];

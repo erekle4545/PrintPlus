@@ -1,41 +1,55 @@
-import React, { useEffect, useState, useContext, useMemo } from "react";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import React, { useEffect, useState, useContext, useMemo, useCallback, useRef } from "react";
+import { DataGrid } from "@mui/x-data-grid";
 import {
     Button,
     Box,
     TextField,
     Paper,
     Stack,
-    Typography,
+    InputAdornment,
 } from "@mui/material";
 import Swal from "sweetalert2";
 
 import { Context } from "../../store/context/context";
 import LangData from "../../language/langs/formLangData.json";
 import useHttp from "../../store/hooks/http/useHttp";
-import {Add, AddBox, AddIcCall} from "@mui/icons-material";
+import { Add, Search, Translate } from "@mui/icons-material";
 
 export default function Dictionary() {
     const http = useHttp();
     const { state } = useContext(Context);
 
     const [rows, setRows] = useState([]);
+    const [rowCount, setRowCount] = useState(0);
     const [languagesLookup, setLanguagesLookup] = useState({});
     const [loading, setLoading] = useState(false);
 
-    // selected rows
     const [selectedIds, setSelectedIds] = useState([]);
+
+    // Pagination (server-side)
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 50,
+    });
 
     // Date filter state
     const [date1, setDate1] = useState("");
     const [date2, setDate2] = useState("");
 
-    const translate = (key) =>
-        LangData[key]?.[state.lang.code] ??
-        LangData[key]?.[localStorage.getItem("lang")];
+    // Search state
+    const [searchText, setSearchText] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const searchTimerRef = useRef(null);
+
+    const translate = useCallback(
+        (key) =>
+            LangData[key]?.[state.lang.code] ??
+            LangData[key]?.[localStorage.getItem("lang")],
+        [state.lang.code]
+    );
 
     // Load languages
-    const loadLanguages = () => {
+    const loadLanguages = useCallback(() => {
         http.get("languages").then((res) => {
             const obj = {};
             res.data.data.forEach((x) => {
@@ -43,58 +57,101 @@ export default function Dictionary() {
             });
             setLanguagesLookup(obj);
         });
-    };
+    }, []);
 
-    // Load rows
-    const loadData = () => {
+    // Load rows with server-side pagination & search
+    const loadData = useCallback(() => {
         setLoading(true);
-        http.get("dictionary").then((res) => {
-            const arr = res.data.map((item) => ({
-                id: item.id,
-                word: item.word,
-                value: item.info.value,
-                language_id: item.info.language_id,
-                created_at: item.created_at,
-            }));
-            setRows(arr);
-        }).finally(()=>{
-            setLoading(false);
-        });
-    };
+
+        const params = {
+            page: paginationModel.page + 1, // Laravel is 1-based
+            per_page: paginationModel.pageSize,
+        };
+
+        if (debouncedSearch) params.search = debouncedSearch;
+        if (date1) params.date_from = date1;
+        if (date2) params.date_to = date2;
+
+        http.get("dictionary", { params })
+            .then((res) => {
+                const data = res.data;
+                const arr = (data.data || []).map((item) => ({
+                    id: item.id,
+                    word: item.word,
+                    value: item.info?.value,
+                    language_id: item.info?.language_id,
+                    created_at: item.created_at
+                        ? new Date(item.created_at).toLocaleDateString("ka-GE", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })
+                        : "",
+                }));
+                setRows(arr);
+                setRowCount(data.total || 0);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [paginationModel, debouncedSearch, date1, date2]);
 
     useEffect(() => {
         loadLanguages();
+    }, []);
+
+    // Reload when pagination, search or dates change
+    useEffect(() => {
         loadData();
+    }, [loadData]);
+
+    // Debounced search
+    const handleSearchChange = useCallback((e) => {
+        const val = e.target.value;
+        setSearchText(val);
+
+        if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+        searchTimerRef.current = setTimeout(() => {
+            setDebouncedSearch(val.trim());
+            setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        }, 400);
     }, []);
 
     // CREATE
-    const createRow = async (row) => {
+    const createRow = useCallback(async (row) => {
         try {
             const res = await http.post("dictionary", row);
-            setRows((prev) => [
-                { ...row, id: res.data.id, created_at: res.data.created_at },
-                ...prev,
-            ]);
+
+            if (res.status === 208) {
+                Swal.fire("ყურადღება", res.data.message || "ეს სიტყვა უკვე ნათარგმნია არჩეულ ენაზე", "warning");
+                return;
+            }
+
+            loadData();
+            Swal.fire("წარმატება", "ჩანაწერი დაემატა!", "success");
         } catch (e) {
+            if (e?.response?.status === 208) {
+                Swal.fire("ყურადღება", e.response.data.message || "ეს სიტყვა უკვე ნათარგმნია არჩეულ ენაზე", "warning");
+                return;
+            }
             Swal.fire("გაუქმებულია", "ვერ დაემატა!", "error");
         }
-    };
+    }, [loadData]);
 
     // UPDATE
-    const updateRow = async (row) => {
-        console.log(row);
+    const updateRow = useCallback(async (row) => {
         try {
             await http.put(`dictionary/update/${row.id}`, row);
-            setRows((prev) =>
-                prev.map((x) => (x.id === row.id ? row : x))
-            );
+            setRows((prev) => prev.map((x) => (x.id === row.id ? row : x)));
         } catch (e) {
             Swal.fire("შეცდომა", "ვერ განახლდა!", "error");
         }
-    };
+    }, []);
 
     // DELETE
-    const deleteRows = async (ids) => {
+    const deleteRows = useCallback(async (ids) => {
         for (let id of ids) {
             try {
                 await http.delete("dictionary/delete/" + id);
@@ -102,11 +159,11 @@ export default function Dictionary() {
                 // ignore per-id error
             }
         }
-        setRows((prev) => prev.filter((x) => !ids.includes(x.id)));
-        setSelectedIds([]); // clear selection after delete
-    };
+        setSelectedIds([]);
+        loadData();
+    }, [loadData]);
 
-    // Columns (memoized so they recalc only when languages change)
+    // Columns
     const columns = useMemo(
         () => [
             { field: "id", headerName: "ID", width: 80 },
@@ -140,39 +197,42 @@ export default function Dictionary() {
                 headerName: "Created",
                 width: 170,
             },
+            {
+                field: "actions",
+                headerName: "",
+                width: 120,
+                sortable: false,
+                filterable: false,
+                renderCell: (params) => (
+                    <button
+                        className="btn btn-sm btn-outline-primary rounded-3"
+                        title="სხვა ენაზე თარგმნა"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleTranslate(params.row);
+                        }}
+                    >
+                        <Translate fontSize="small" />{" "}
+                        <span style={{ fontSize: 12 }}>თარგმნა</span>
+                    </button>
+                ),
+            },
         ],
         [languagesLookup]
     );
 
-    // Filter by date
-    const filteredRows = useMemo(
-        () =>
-            rows.filter((x) => {
-                if (!date1 && !date2) return true;
-                return (
-                    (!date1 || x.created_at >= date1) &&
-                    (!date2 || x.created_at <= date2)
-                );
-            }),
-        [rows, date1, date2]
-    );
-
     // Handle create dialog
-    const handleCreate = () => {
-        // build options HTML for languages
+    const handleCreate = useCallback(() => {
         const langOptionsHtml = Object.entries(languagesLookup)
-            .map(
-                ([id, label]) =>
-                    `<option value="${id}">${label}</option>`
-            )
+            .map(([id, label]) => `<option value="${id}">${label}</option>`)
             .join("");
 
         Swal.fire({
             title: "ახალი ჩანაწერი",
             html: `
                 <div style="display:flex;flex-direction:column;gap:8px;">
-                    <input id="w1" class="swal2-input" placeholder="Abbr">
-                    <input id="w2" class="swal2-input" placeholder="Word">
+                    <input id="w1" class="swal2-input" placeholder="Abbr (აბრევიატურა)">
+                    <input id="w2" class="swal2-input" placeholder="Word (სიტყვა)">
                     <select id="lang" class="swal2-select">
                         ${langOptionsHtml}
                     </select>
@@ -183,12 +243,8 @@ export default function Dictionary() {
             confirmButtonText: "შენახვა",
             cancelButtonText: "გაუქმება",
             preConfirm: () => {
-                const word = document
-                    .getElementById("w1")
-                    .value.trim();
-                const value = document
-                    .getElementById("w2")
-                    .value.trim();
+                const word = document.getElementById("w1").value.trim();
+                const value = document.getElementById("w2").value.trim();
                 const lang = document.getElementById("lang").value;
 
                 if (!word || !value || !lang) {
@@ -207,10 +263,74 @@ export default function Dictionary() {
                 createRow(res.value);
             }
         });
-    };
+    }, [languagesLookup, createRow]);
+
+    // Handle translate
+    const handleTranslate = useCallback(
+        (row) => {
+            http.get("dictionary/languages-for-word", { params: { word: row.word } })
+                .then((res) => {
+                    const existingLangIds = res.data || [];
+                    const availableLangs = Object.entries(languagesLookup).filter(
+                        ([id]) => !existingLangIds.includes(Number(id))
+                    );
+
+                    if (availableLangs.length === 0) {
+                        Swal.fire("ინფორმაცია", "ეს აბრევიატურა უკვე ყველა ენაზეა ნათარგმნი!", "info");
+                        return;
+                    }
+
+                    const langOptionsHtml = availableLangs
+                        .map(([id, label]) => `<option value="${id}">${label}</option>`)
+                        .join("");
+
+                    Swal.fire({
+                        title: `"${row.word}" - სხვა ენაზე თარგმნა`,
+                        html: `
+                            <div style="display:flex;flex-direction:column;gap:8px;">
+                                <input id="w1" class="swal2-input" value="${row.word}" disabled
+                                       style="background:#f0f0f0;color:#666;">
+                                <input id="w2" class="swal2-input" placeholder="თარგმანი">
+                                <select id="lang" class="swal2-select">
+                                    ${langOptionsHtml}
+                                </select>
+                            </div>
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: "შენახვა",
+                        cancelButtonText: "გაუქმება",
+                        preConfirm: () => {
+                            const value = document.getElementById("w2").value.trim();
+                            const lang = document.getElementById("lang").value;
+
+                            if (!value || !lang) {
+                                Swal.showValidationMessage("შეავსე ყველა ველი!");
+                                return false;
+                            }
+
+                            return {
+                                id: row.id,
+                                word: row.word,
+                                value,
+                                language_id: Number(lang),
+                            };
+                        },
+                    }).then((res) => {
+                        if (res.isConfirmed && res.value) {
+                            createRow(res.value);
+                        }
+                    });
+                })
+                .catch(() => {
+                    Swal.fire("შეცდომა", "ენების ჩატვირთვა ვერ მოხერხდა", "error");
+                });
+        },
+        [languagesLookup, createRow]
+    );
 
     // Handle delete selected
-    const handleDeleteSelected = () => {
+    const handleDeleteSelected = useCallback(() => {
         if (!selectedIds.length) return;
 
         Swal.fire({
@@ -223,11 +343,19 @@ export default function Dictionary() {
         }).then((res) => {
             if (res.isConfirmed) deleteRows(selectedIds);
         });
-    };
+    }, [selectedIds, deleteRows]);
+
+    // Clear all filters
+    const handleClearFilters = useCallback(() => {
+        setDate1("");
+        setDate2("");
+        setSearchText("");
+        setDebouncedSearch("");
+        setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    }, []);
 
     return (
         <Box sx={{ width: "100%" }} className="card">
-            {/* Header + filters */}
             <Paper
                 elevation={1}
                 sx={{
@@ -239,32 +367,27 @@ export default function Dictionary() {
                     justifyContent: "space-between",
                     gap: 2,
                 }}
-
             >
-                <div className={'d-flex justify-content-between gap-3 align-items-center'}>
+                <div className="d-flex justify-content-between gap-3 align-items-center">
                     <div>
-                        <h2 className={'title_font m-1'}  >
+                        <h2 className="title_font m-1">
                             {translate("dictionary_title") || "ლექსიკონი"}
                         </h2>
                     </div>
-                    {/* Actions */}
                     <div className="d-flex justify-content-between gap-3 align-items-center">
-
-
-                        {/* Delete button – only when there is selection */}
                         {selectedIds.length > 0 && (
                             <button
-                                className={"btn text_font btn-danger rounded-3"}
+                                className="btn text_font btn-danger rounded-3"
                                 onClick={handleDeleteSelected}
                             >
                                 მონიშნულის წაშლა
                             </button>
                         )}
-
                         <button
-                            className={"btn text_font btn-light rounded-3"}
+                            className="btn text_font btn-light rounded-3"
                             onClick={handleCreate}
-                        ><Add/>
+                        >
+                            <Add />
                             დამატება
                         </button>
                     </div>
@@ -275,6 +398,20 @@ export default function Dictionary() {
                     alignItems="center"
                     flexWrap="wrap"
                 >
+                    <TextField
+                        size="small"
+                        placeholder="ძებნა..."
+                        value={searchText}
+                        onChange={handleSearchChange}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Search />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ minWidth: 200 }}
+                    />
                     <TextField
                         type="date"
                         label="Begin"
@@ -291,41 +428,36 @@ export default function Dictionary() {
                         value={date2}
                         onChange={(e) => setDate2(e.target.value)}
                     />
-
                     <Button
                         color="secondary"
                         variant="outlined"
-                        onClick={() => {
-                            setDate1("");
-                            setDate2("");
-                        }}
+                        onClick={handleClearFilters}
                     >
                         გასუფთავება
                     </Button>
-
                     <Button variant="outlined" onClick={loadData}>
                         განახლება
                     </Button>
                 </Stack>
             </Paper>
 
-            {/* DataGrid */}
             <Box sx={{ height: 650, width: "100%" }}>
                 <DataGrid
-                    rows={filteredRows}
+                    rows={rows}
                     columns={columns}
-
+                    rowCount={rowCount}
+                    paginationMode="server"
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    pageSizeOptions={[25, 50, 100]}
                     disableRowSelectionOnClick={false}
                     checkboxSelection
-                    pageSizeOptions={[5, 10, 20, 50]}
-                    // slots={{ toolbar: GridToolbar }}
                     processRowUpdate={(newRow) => {
                         updateRow(newRow);
                         return newRow;
                     }}
                     loading={loading}
                     onRowSelectionModelChange={(ids) => {
-                        // ids is an array of selected row ids
                         setSelectedIds(ids);
                     }}
                     onProcessRowUpdateError={() =>

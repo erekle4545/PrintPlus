@@ -694,6 +694,7 @@ const OrderDetailsModal = ({
                                                                 position: 'relative',
                                                                 display: 'inline-block'
                                                             }}>
+
                                                                 <a
                                                                     href={FileEndpoint + '/' + cover.path}
                                                                     target="_blank"
@@ -725,6 +726,7 @@ const OrderDetailsModal = ({
                                                                             display: 'block'
                                                                         }}
                                                                     />
+
                                                                     <div style={{
                                                                         position: 'absolute',
                                                                         bottom: '0',
@@ -738,7 +740,11 @@ const OrderDetailsModal = ({
                                                                     }}>
                                                                         #{idx + 1}
                                                                     </div>
+
                                                                 </a>
+                                                                <div className={''}>
+                                                                    რაოდენობა:  {cover.quantity}
+                                                                </div>
                                                             </div>
                                                         ))}
                                                     </div>
@@ -840,6 +846,9 @@ const OrderDetailsModal = ({
                                                                         color: '#6c757d'
                                                                     }}>
                                                                         ფაილი #{idx + 1}
+                                                                    </div>
+                                                                    <div className={''}>
+                                                                        რაოდენობა:  {cover.quantity}
                                                                     </div>
                                                                 </a>
                                                             </div>
