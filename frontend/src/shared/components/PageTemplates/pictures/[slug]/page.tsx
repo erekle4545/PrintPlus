@@ -189,7 +189,7 @@ export default function PicturesPageDetails({ product }: PicturesPageDetailsProp
                 product_id: product.id,
                 name: product.info.name,
                 price: price,
-                quantity: quantity,
+                quantity: totalFilesQuantity || quantity,
                 image: product.info.covers && product.info.covers.length > 0
                     ? getImageUrl(product.info.covers[0].output_path)
                     : undefined,
