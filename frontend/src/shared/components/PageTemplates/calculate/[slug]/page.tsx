@@ -227,18 +227,18 @@ export default function CalculatePage({ page, products }: CalculatePageProps) {
                             </div>
 
                             {/* კვადრატული მეტრი და გამოთვლა */}
-                            {/*<div className="text-center mt-3 mb-3">*/}
-                            {/*    <span className="text-muted">ფართობი: </span>*/}
-                            {/*    <span className="fw-bold">{m2.toFixed(2)} კვ.მ</span>*/}
-                            {/*    {selectedSize && (*/}
-                            {/*        <>*/}
-                            {/*            <span className="text-muted mx-2">×</span>*/}
-                            {/*            <span className="fw-bold">{GEL(parseFloat((selectedSize.pivot?.price || selectedSize.base_price).toString()))}/კვ.მ</span>*/}
-                            {/*            <span className="text-muted mx-2">=</span>*/}
-                            {/*            <span className="fw-bold text-primary">{GEL(Math.round(sizePrice))}</span>*/}
-                            {/*        </>*/}
-                            {/*    )}*/}
-                            {/*</div>*/}
+                            <div className="text-center mt-3 mb-3">
+                                <span className="text-muted">ფართობი: </span>
+                                <span className="fw-bold">{m2.toFixed(2)} კვ.მ</span>
+                                {selectedSize && (
+                                    <>
+                                        <span className="text-muted mx-2">×</span>
+                                        <span className="fw-bold">{GEL(parseFloat((selectedSize.pivot?.price || selectedSize.base_price).toString()))}/კვ.მ</span>
+                                        <span className="text-muted mx-2">=</span>
+                                        <span className="fw-bold text-primary">{GEL(Math.round(sizePrice))}</span>
+                                    </>
+                                )}
+                            </div>
 
                             {/* დამატებითი ოფციები */}
                             {selectedProduct?.extras && selectedProduct.extras.length > 0 && (

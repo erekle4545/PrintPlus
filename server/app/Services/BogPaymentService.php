@@ -239,21 +239,23 @@ class BogPaymentService
      */
     public function checkPaymentStatus(string $orderId): array
     {
-        $result = $this->makeAuthenticatedRequest('GET', "/payments/v1/ecommerce/orders/{$orderId}");
+        $result = $this->makeAuthenticatedRequest('GET', "/payments/v1/receipt/orders/{$orderId}");
 
         if ($result['success']) {
             $data = $result['data'];
 
             // Map BOG status to our status
             $statusMap = [
-                'CREATED' => 'pending',
-                'PENDING' => 'processing',
-                'COMPLETED' => 'success',
-                'REJECTED' => 'failed',
-                'CANCELLED' => 'cancelled',
+                'created'   => 'pending',
+                'pending'   => 'processing',
+                'completed' => 'success',
+                'rejected'  => 'failed',
+                'cancelled' => 'cancelled',
+                'refunded'  => 'refunded',
             ];
 
-            $bogStatus = $data['status'] ?? 'UNKNOWN';
+            // ✅ სწორი გზა
+            $bogStatus = strtolower($data['order_status']['key'] ?? 'unknown');
             $mappedStatus = $statusMap[$bogStatus] ?? 'pending';
 
             return [
@@ -269,6 +271,38 @@ class BogPaymentService
             'error' => $result['error'] ?? 'Failed to check payment status',
         ];
     }
+//    public function checkPaymentStatus(string $orderId): array
+//    {
+//        $result = $this->makeAuthenticatedRequest('GET', "/payments/v1/ecommerce/orders/{$orderId}");
+//
+//        if ($result['success']) {
+//            $data = $result['data'];
+//
+//            // Map BOG status to our status
+//            $statusMap = [
+//                'CREATED' => 'pending',
+//                'PENDING' => 'processing',
+//                'COMPLETED' => 'success',
+//                'REJECTED' => 'failed',
+//                'CANCELLED' => 'cancelled',
+//            ];
+//
+//            $bogStatus = $data['status'] ?? 'UNKNOWN';
+//            $mappedStatus = $statusMap[$bogStatus] ?? 'pending';
+//
+//            return [
+//                'success' => true,
+//                'status' => $mappedStatus,
+//                'bog_status' => $bogStatus,
+//                'data' => $data,
+//            ];
+//        }
+//
+//        return [
+//            'success' => false,
+//            'error' => $result['error'] ?? 'Failed to check payment status',
+//        ];
+//    }
 
     /**
      * Refund payment (full or partial)

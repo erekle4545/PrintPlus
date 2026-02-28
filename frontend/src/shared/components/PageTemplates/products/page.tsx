@@ -58,7 +58,7 @@ export default function ProductPage({page, products}: ProductPageProps) {
                                         </div>
 
                                         <h3 className="mt-3 title_font borders-card-title text-dark fw-bold">
-                                            {product.info?.name}sds
+                                            {product.info?.name}
                                         </h3>
                                     </div>
                                 </Link>

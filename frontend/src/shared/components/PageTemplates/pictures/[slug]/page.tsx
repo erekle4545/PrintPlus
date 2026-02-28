@@ -274,7 +274,7 @@ export default function PicturesPageDetails({ product }: PicturesPageDetailsProp
                                 headers={{
                                     Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('token') || '' : ''}`
                                 }}
-                                showImage={true}
+                                // showImage={true}
                                 fieldName="file[]"
                                 accept="application/pdf,image/*"
                                 multiple
